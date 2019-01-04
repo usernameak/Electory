@@ -2,8 +2,11 @@ package tinycraft;
 
 import static tinycraft.math.MathUtils.deg2rad;
 
+import java.nio.FloatBuffer;
+
 import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -15,6 +18,8 @@ import org.lwjgl.util.glu.GLU;
 import tinycraft.block.Block;
 import tinycraft.entity.Entity;
 import tinycraft.entity.EntityPlayer;
+import tinycraft.gui.GuiInGame;
+import tinycraft.gui.ResolutionScaler;
 import tinycraft.math.Ray;
 import tinycraft.math.Ray.AABBIntersectionResult;
 import tinycraft.render.AtlasManager;
@@ -32,6 +37,8 @@ public class TinyCraft {
 	public EntityPlayer player = new EntityPlayer(world);
 	public TextureManager textureManager = new TextureManager();
 	public TickTimer tickTimer = new TickTimer();
+	public ResolutionScaler resolutionScaler = new ResolutionScaler(2.0f);
+	public GuiInGame theHUD = new GuiInGame(this);
 
 	public static void main(String[] args) {
 		getInstance().start();
@@ -130,7 +137,8 @@ public class TinyCraft {
 						if (Mouse.getEventButton() == 0) {
 							world.setBlockAt(tx, ty, tz, null);
 						} else if (Mouse.getEventButton() == 1) {
-							world.setBlockAt(tx + tres.side.offsetX, ty + tres.side.offsetY, tz + tres.side.offsetZ, Block.blockStone);
+							world.setBlockAt(tx + tres.side.offsetX, ty + tres.side.offsetY, tz
+									+ tres.side.offsetZ, player.selectedBlock);
 						}
 						// System.out.println("Hit x: " + tx + " y: " + ty + " z: " + tz);
 					} else {
@@ -138,6 +146,10 @@ public class TinyCraft {
 					}
 				}
 			}
+		}
+		
+		while(Keyboard.next()) {
+			theHUD.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState());
 		}
 
 		tickTimer.update();
@@ -156,11 +168,18 @@ public class TinyCraft {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
-		/*
-		 * GL11.glEnable(GL11.GL_FOG); GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR);
-		 * GL11.glFogf(GL11.GL_FOG_START, 128.0f); GL11.glFogf(GL11.GL_FOG_END,
-		 * 1024.0f);
-		 */
+
+		GL11.glEnable(GL11.GL_FOG);
+		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR);
+		GL11.glFogf(GL11.GL_FOG_START, 64.0f);
+		GL11.glFogf(GL11.GL_FOG_END, 128.0f);
+		FloatBuffer fcb = BufferUtils.createFloatBuffer(4);
+		fcb.put(.5f);
+		fcb.put(.5f);
+		fcb.put(.5f);
+		fcb.put(1.0f);
+		fcb.flip();
+		GL11.glFog(GL11.GL_FOG_COLOR, fcb);
 
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
@@ -182,20 +201,17 @@ public class TinyCraft {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_FOG);
 
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		GLU.gluOrtho2D(0.0f, Display.getWidth(), Display.getHeight(), 0.0f);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glLoadIdentity();
+		resolutionScaler.setupOrtho();
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
 		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glVertex2f(Display.getWidth() / 2 - 2.0f, Display.getHeight() / 2 - 2.0f);
-		GL11.glVertex2f(Display.getWidth() / 2 - 2.0f, Display.getHeight() / 2 + 2.0f);
-		GL11.glVertex2f(Display.getWidth() / 2 + 2.0f, Display.getHeight() / 2 + 2.0f);
-		GL11.glVertex2f(Display.getWidth() / 2 + 2.0f, Display.getHeight() / 2 - 2.0f);
+		GL11.glVertex2f(resolutionScaler.getWidth() / 2 - 2.0f, resolutionScaler.getHeight() / 2 - 2.0f);
+		GL11.glVertex2f(resolutionScaler.getWidth() / 2 - 2.0f, resolutionScaler.getHeight() / 2 + 2.0f);
+		GL11.glVertex2f(resolutionScaler.getWidth() / 2 + 2.0f, resolutionScaler.getHeight() / 2 + 2.0f);
+		GL11.glVertex2f(resolutionScaler.getWidth() / 2 + 2.0f, resolutionScaler.getHeight() / 2 - 2.0f);
 		GL11.glEnd();
 		GL11.glDisable(GL11.GL_BLEND);
+		theHUD.renderGui(resolutionScaler);
 	}
 
 	public void tick() {

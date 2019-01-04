@@ -17,25 +17,36 @@ public abstract class Entity {
 	public boolean onGround = false;
 
 	public final World world;
+	
+	@SuppressWarnings("unused") // TODO: use
+	private float xSize, ySize, zSize, xSizeHalf, ySizeHalf, zSizeHalf;
 
 	public Entity(World world) {
 		this.world = world;
+		setSize(0.75f, 2.0f, 0.75f);
 	}
 
 	public boolean hasGravity() {
 		return true;
+	}
+	
+	protected void setSize(float x, float y, float z) {
+		this.xSize = x;
+		this.xSizeHalf = x / 2;
+		this.ySize = y;
+		this.ySizeHalf = y / 2;
+		this.zSize = z;
+		this.zSizeHalf = z / 2;
 	}
 
 	public void update() {
 		if (onGround) {
 			velocity.y = 0f;
 		}
-		//System.out.println("1: " + onGround);
+		
 		Vector3f affectedVel = getAcceleration();
 		velocity.add(affectedVel);
 		moveClipped(velocity.x, velocity.y, velocity.z);
-
-		//System.out.println("2: " + onGround);
 	}
 
 	public Vector3f getAcceleration() {
@@ -86,6 +97,6 @@ public abstract class Entity {
 	}
 
 	public AABB getAABB() {
-		return new AABB(x - 0.5f, y, z - 0.5f, x + 0.5f, y + 2.0f, z + 0.5f);
+		return new AABB(x - xSizeHalf, y, z - zSizeHalf, x + xSizeHalf, y + ySize, z + zSizeHalf);
 	}
 }

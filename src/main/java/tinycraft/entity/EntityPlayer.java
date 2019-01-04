@@ -6,6 +6,7 @@ import org.joml.Matrix4x3f;
 import org.joml.Vector3f;
 import org.lwjgl.input.Keyboard;
 
+import tinycraft.block.Block;
 import tinycraft.world.World;
 
 public class EntityPlayer extends EntityLiving {
@@ -14,6 +15,7 @@ public class EntityPlayer extends EntityLiving {
 		super(world);
 	}
 	
+	public Block selectedBlock = Block.blockStone;
 	protected Vector3f movementForce;
 
 	@Override

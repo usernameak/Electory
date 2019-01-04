@@ -1,5 +1,6 @@
 package tinycraft.block.render;
 
+import tinycraft.block.Block;
 import tinycraft.render.ChunkRenderer;
 import tinycraft.render.TriangleBuffer;
 import tinycraft.world.World;
@@ -9,4 +10,6 @@ public interface IBlockRenderer {
 	
 	int getTriangleCount(World world, ChunkRenderer renderer, int x, int y, int z);
 	void getTriangles(World world, ChunkRenderer renderer, int x, int y, int z, TriangleBuffer buffer);
+	
+	void renderBlockInGUI(Block block);
 }
