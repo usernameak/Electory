@@ -1,6 +1,6 @@
 package tinycraft.math;
 
-public class AABB {
+public class AABB implements Cloneable {
 	public static final float epsilon = 1.19e-07f;
 	public float x0;
 	public float y0;
@@ -10,6 +10,10 @@ public class AABB {
 	@Override
 	public String toString() {
 		return "AABB [x0=" + x0 + ", y0=" + y0 + ", z0=" + z0 + ", x1=" + x1 + ", y1=" + y1 + ", z1=" + z1 + "]";
+	}
+	
+	public AABB copy() {
+		return new AABB(x0, y0, z0, x1, y1, z1);
 	}
 
 	@Override

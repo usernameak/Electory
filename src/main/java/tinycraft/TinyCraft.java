@@ -1,9 +1,8 @@
 package tinycraft;
 
-import org.joml.AABBf;
+import static tinycraft.math.MathUtils.deg2rad;
+
 import org.joml.AxisAngle4f;
-import org.joml.Matrix4x3f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -18,8 +17,10 @@ import tinycraft.entity.Entity;
 import tinycraft.entity.EntityPlayer;
 import tinycraft.math.Ray;
 import tinycraft.math.Ray.AABBIntersectionResult;
+import tinycraft.render.AtlasManager;
 import tinycraft.render.ChunkRenderer;
 import tinycraft.render.TextureManager;
+import tinycraft.utils.EnumSide;
 import tinycraft.utils.TickTimer;
 import tinycraft.world.Chunk;
 import tinycraft.world.World;
@@ -72,6 +73,7 @@ public class TinyCraft {
 			e.printStackTrace();
 		}
 
+		AtlasManager.registerAllTerrainSprites();
 		world.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(ChunkRenderer::init);
 	}
 
@@ -83,21 +85,18 @@ public class TinyCraft {
 		player.pitch = 0.0f;
 	}
 
-	private static double deg2rad(double deg) {
-		return (deg * Math.PI / 180.0);
-	}
-
 	public void update() {
 		while (Mouse.next()) {
 			player.yaw += Mouse.getEventDX() * 0.1f;
 			player.pitch += Mouse.getEventDY() * 0.1f;
-			if (Mouse.getEventButton() == 0) {
+			if (Mouse.getEventButton() == 0 || Mouse.getEventButton() == 1) {
 				if (Mouse.getEventButtonState()) {
 					Ray ray = new Ray(new Vector3f(player.x, player.y + 1.5f, player.z), new Vector3f(0f, 0f, 1f))
 							.rotate(new AxisAngle4f((float) deg2rad(-player.pitch), 1f, 0f, 0f))
 							.rotate(new AxisAngle4f((float) deg2rad(-player.yaw), 0f, 1f, 0f));
 
-					// System.out.println("Hit dir x: " + ray.direction.x + " y: " + ray.direction.y + " z: " + ray.direction.z);
+					// System.out.println("Hit dir x: " + ray.direction.x + " y: " + ray.direction.y
+					// + " z: " + ray.direction.z);
 
 					int x1 = (int) (player.x - 5);
 					int y1 = (int) (player.y - 5);
@@ -107,7 +106,7 @@ public class TinyCraft {
 					int z2 = (int) (player.z + 6);
 
 					int tx = 0, ty = 0, tz = 0;
-					AABBIntersectionResult tres = new AABBIntersectionResult(false, Float.MAX_VALUE);
+					AABBIntersectionResult tres = new AABBIntersectionResult(false, Float.MAX_VALUE, EnumSide.UNKNOWN);
 
 					for (int x = x1; x <= x2; x++) {
 						for (int y = y1; y <= y2; y++) {
@@ -128,10 +127,14 @@ public class TinyCraft {
 					}
 
 					if (tres.hasHit && tres.distance <= 5.0f) {
-						world.setBlockAt(tx, ty, tz, null);
-						//System.out.println("Hit x: " + tx + " y: " + ty + " z: " + tz);
+						if (Mouse.getEventButton() == 0) {
+							world.setBlockAt(tx, ty, tz, null);
+						} else if (Mouse.getEventButton() == 1) {
+							world.setBlockAt(tx + tres.side.offsetX, ty + tres.side.offsetY, tz + tres.side.offsetZ, Block.blockStone);
+						}
+						// System.out.println("Hit x: " + tx + " y: " + ty + " z: " + tz);
 					} else {
-						//System.out.println("No hit");
+						// System.out.println("No hit");
 					}
 				}
 			}
@@ -147,16 +150,17 @@ public class TinyCraft {
 
 		GL11.glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		
+
 		// GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_FASTEST);
 
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
-		/*GL11.glEnable(GL11.GL_FOG);
-		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR);
-		GL11.glFogf(GL11.GL_FOG_START, 128.0f);
-		GL11.glFogf(GL11.GL_FOG_END, 1024.0f);*/
+		/*
+		 * GL11.glEnable(GL11.GL_FOG); GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR);
+		 * GL11.glFogf(GL11.GL_FOG_START, 128.0f); GL11.glFogf(GL11.GL_FOG_END,
+		 * 1024.0f);
+		 */
 
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
@@ -168,13 +172,13 @@ public class TinyCraft {
 		GL11.glRotatef(player.yaw, 0.0f, 1.0f, 0.0f);
 		GL11.glTranslatef(-player.x, -(player.y + 1.5f), -player.z);
 
-		textureManager.bindTexture("/grass.png");
+		textureManager.bindTexture("/terrain.png");
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
 		world.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(ChunkRenderer::render);
 
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		
+
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_FOG);
 
@@ -195,36 +199,8 @@ public class TinyCraft {
 	}
 
 	public void tick() {
-		Matrix4x3f movementMatrix = new Matrix4x3f();
-
-		movementMatrix.rotate((float) deg2rad(-player.yaw), 0.0f, 1.0f, 0.0f);
-
-		Vector3f movementVector = new Vector3f(0.0f, 0.0f, 0.0f);
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			movementVector.add(0.0f, 0.0f, 0.3f);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			movementVector.add(-0.3f, 0.0f, 0.0f);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			movementVector.add(0.3f, 0.0f, 0.0f);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			movementVector.add(0.0f, 0.0f, -0.3f);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && player.onGround) {
-			player.velY += 0.5f;
-		}
-
-		movementMatrix.transformDirection(movementVector);
-
-		player.moveClipped(movementVector.x, 0, movementVector.z);
 
 		world.getEntities().stream().forEach(Entity::update);
+
 	}
 }

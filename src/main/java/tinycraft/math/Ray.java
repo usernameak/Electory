@@ -7,6 +7,8 @@ import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import tinycraft.utils.EnumSide;
+
 public class Ray {
 	public final Vector3f origin;
 	public final Vector3f direction;
@@ -35,20 +37,36 @@ public class Ray {
 		float tmax = min(min(max(t1, t2), max(t3, t4)), max(t5, t6));
 		
 		if(tmax < 0 || tmin > tmax) {
-			return new AABBIntersectionResult(false, tmax);
+			return new AABBIntersectionResult(false, tmax, EnumSide.UNKNOWN);
 		}
 
-		return new AABBIntersectionResult(true, tmin);
+		EnumSide side = EnumSide.UNKNOWN;
+		if(tmin == t1) {
+			side = EnumSide.WEST;
+		} else if(tmin == t2) {
+			side = EnumSide.EAST;
+		} else if(tmin == t3) {
+			side = EnumSide.DOWN;
+		} else if(tmin == t4) {
+			side = EnumSide.UP;
+		} else if(tmin == t5) {
+			side = EnumSide.NORTH;
+		} else if(tmin == t6) {
+			side = EnumSide.SOUTH;
+		}
+		return new AABBIntersectionResult(true, tmin, side);
 	}
 	
 	public static class AABBIntersectionResult {
 		public final boolean hasHit;
 		public final float distance;
+		public final EnumSide side;
 		
-		public AABBIntersectionResult(boolean hasHit, float distance) {
+		public AABBIntersectionResult(boolean hasHit, float distance, EnumSide side) {
 			super();
 			this.hasHit = hasHit;
 			this.distance = distance;
+			this.side = side;
 		}
 	}
 }

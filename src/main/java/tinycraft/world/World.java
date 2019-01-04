@@ -42,6 +42,14 @@ public class World {
 		}
 	}
 
+	public Chunk getChunkFromChunkCoord(int x, int z) {
+		try {
+			return chunks[x][z];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
 	public void addEntity(Entity entity) {
 		this.entities.add(entity);
 	}
