@@ -80,13 +80,16 @@ public class Chunk {
 	}
 
 	public void generate() {
-		DSNoise noise = new DSNoise(60000000, 60000000 / 100.0f, 0L);
+		DSNoise noise = new DSNoise(60000000, 60000000 / 100.0f, world.seed);
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
 				int h = (int) (noise.val(x + getChunkBlockCoordX() + 30000000, z + getChunkBlockCoordZ() + 30000000)
-						* 8.0f + 63.0f);
-				for (int y = 0; y < h; y++) {
+						* 32.0f + 63.0f);
+				for (int y = 0; y < h - 5; y++) {
 					setBlockAt(x, y, z, Block.blockStone);
+				}
+				for (int y = h - 5; y < h; y++) {
+					setBlockAt(x, y, z, Block.blockDirt);
 				}
 				setBlockAt(x, h, z, Block.blockGrass);
 			}

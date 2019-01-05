@@ -15,14 +15,14 @@ import org.lwjgl.opengl.GL11;
 import tinycraft.utils.CrashException;
 
 public class TextureManager {
-	private Map<URL, Integer> loadedTextures = new HashMap<>();
+	private Map<String, Integer> loadedTextures = new HashMap<>();
 
 	public void bindTexture(String texture) {
-		URL resourceURL = getClass().getResource(texture);
-		if (loadedTextures.containsKey(resourceURL)) {
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, loadedTextures.get(resourceURL));
+		if (loadedTextures.containsKey(texture)) {
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, loadedTextures.get(texture));
 			return;
 		}
+		URL resourceURL = getClass().getResource(texture);
 		try {
 			BufferedImage image = ImageIO.read(resourceURL);
 			int[] pixels = new int[image.getWidth() * image.getHeight()];
@@ -57,7 +57,7 @@ public class TextureManager {
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, image.getWidth(), image
 					.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 
-			loadedTextures.put(resourceURL, textureUnit);
+			loadedTextures.put(texture, textureUnit);
 		} catch (IOException e) {
 			throw new CrashException(e);
 		}

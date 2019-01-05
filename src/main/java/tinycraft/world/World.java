@@ -2,16 +2,23 @@ package tinycraft.world;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import tinycraft.block.Block;
 import tinycraft.entity.Entity;
+import tinycraft.entity.particle.EntityBlockParticle;
 import tinycraft.math.AABB;
 
 public class World {
 	private Chunk[][] chunks = new Chunk[16][16];
 	private Set<Chunk> loadedChunks = new HashSet<>();
 	private Set<Entity> entities = new HashSet<>();
+	
+	public long seed = ThreadLocalRandom.current().nextLong();
+	
+	public Random random = new Random(seed);
 
 	public Set<Entity> getEntities() {
 		return entities;
@@ -53,6 +60,17 @@ public class World {
 	public void addEntity(Entity entity) {
 		this.entities.add(entity);
 	}
+	
+	public void breakBlockWithParticles(int x, int y, int z) {
+		Block oldBlock = getBlockAt(x, y, z);
+		setBlockAt(x, y, z, null);
+		for(int i = 0; i < 8; i++) {
+			EntityBlockParticle particle = new EntityBlockParticle(this, oldBlock.getAtlasSprite());
+			particle.setPosition(x + 0.5f, y + 0.5f, z + 0.5f, false);
+			particle.setVelocity(random.nextFloat() * 0.1f - 0.05f, random.nextFloat() * 0.1f - 0.05f, random.nextFloat() * 0.1f - 0.05f);
+			addEntity(particle);
+		}
+	}
 
 	public Set<AABB> getBlockAABBsWithinAABB(AABB aabbIn) {
 		int x1 = (int) aabbIn.x0;
@@ -78,5 +96,11 @@ public class World {
 
 	public Set<Chunk> getAllLoadedChunks() {
 		return Collections.unmodifiableSet(loadedChunks);
+	}
+	
+	public void update() {
+		getEntities().removeIf(Entity::shouldDespawn);
+		getEntities().stream().forEach(Entity::update);
+		getEntities().stream().forEach(Entity::postUpdate);
 	}
 }

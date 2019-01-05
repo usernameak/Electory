@@ -8,28 +8,44 @@ import tinycraft.math.AABB;
 import tinycraft.world.World;
 
 public abstract class Entity {
-	public float x;
-	public float y;
-	public float z;
+	protected float oldX;
+	protected float oldY;
+	protected float oldZ;
+	protected float x;
+	protected float y;
+	protected float z;
+	protected float newX;
+	protected float newY;
+	protected float newZ;
 
 	protected Vector3f velocity = new Vector3f();
 
 	public boolean onGround = false;
 
 	public final World world;
-	
+
 	@SuppressWarnings("unused") // TODO: use
 	private float xSize, ySize, zSize, xSizeHalf, ySizeHalf, zSizeHalf;
 
+	private boolean shouldDespawn = false;
+
 	public Entity(World world) {
 		this.world = world;
-		setSize(0.75f, 2.0f, 0.75f);
+		setSize(0.75f, 1.75f, 0.75f);
 	}
 
 	public boolean hasGravity() {
 		return true;
 	}
-	
+
+	public void scheduleDespawn() {
+		shouldDespawn = true;
+	}
+
+	public boolean shouldDespawn() {
+		return shouldDespawn;
+	}
+
 	protected void setSize(float x, float y, float z) {
 		this.xSize = x;
 		this.xSizeHalf = x / 2;
@@ -43,10 +59,23 @@ public abstract class Entity {
 		if (onGround) {
 			velocity.y = 0f;
 		}
-		
+
 		Vector3f affectedVel = getAcceleration();
 		velocity.add(affectedVel);
 		moveClipped(velocity.x, velocity.y, velocity.z);
+	}
+
+	public void postUpdate() {
+		oldX = x;
+		oldY = y;
+		oldZ = z;
+		x = newX;
+		y = newY;
+		z = newZ;
+	}
+	
+	public void setVelocity(float x, float y, float z) {
+		velocity.set(x, y, z);
 	}
 
 	public Vector3f getAcceleration() {
@@ -81,22 +110,38 @@ public abstract class Entity {
 		AABB gaabb = paabb.expand(0f, -0.01f, 0f);
 		float gofs = -0.005f;
 		Set<AABB> gAABBs = world.getBlockAABBsWithinAABB(gaabb);
-		
+
 		onGround = false;
-		
+
 		for (AABB aabb : gAABBs) {
 			gofs = aabb.clipYCollide(paabb, gofs);
-			if(gofs >= -0.0025f) {
+			if (gofs >= -0.0025f) {
 				onGround = true;
 			}
 		}
 
-		x += xofs;
-		y += yofs;
-		z += zofs;
+		newX += xofs;
+		newY += yofs;
+		newZ += zofs;
 	}
 
 	public AABB getAABB() {
 		return new AABB(x - xSizeHalf, y, z - zSizeHalf, x + xSizeHalf, y + ySize, z + zSizeHalf);
+	}
+
+	public void setPosition(float x, float y, float z, boolean interpolate) {
+		if (interpolate) {
+			newX = x;
+			newY = y;
+			newZ = z;
+		} else {
+			this.x = this.newX = this.oldX = x;
+			this.y = this.newY = this.oldY = y;
+			this.z = this.newZ = this.oldZ = z;
+		}
+	}
+
+	public Vector3f getInterpolatedPosition(float renderPartialTicks) {
+		return new Vector3f(oldX, oldY, oldZ).lerp(new Vector3f(x, y, z), renderPartialTicks);
 	}
 }

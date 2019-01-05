@@ -13,6 +13,7 @@ public class Block {
 	public static Block blockStone;
 	public static Block blockGrass;
 	public static Block blockPlanks;
+	public static Block blockDirt;
 	
 	public int blockID;
 	
@@ -31,6 +32,10 @@ public class Block {
 	
 	public IAtlasSprite getAtlasSprite() {
 		return blockSprite;
+	}
+	
+	public IAtlasSprite getAtlasSprite(EnumSide side) {
+		return getAtlasSprite();
 	}
 	
 	public void registerAtlasSprites(IAtlasSpriteManager manager) {
@@ -56,7 +61,8 @@ public class Block {
 	
 	static {
 		blockStone = new Block(1).setSpriteNumber(1);
-		blockGrass = new Block(2).setSpriteNumber(2);
+		blockGrass = new BlockGrass(2);
 		blockPlanks = new Block(3).setSpriteNumber(3);
+		blockDirt = new Block(4).setSpriteNumber(4);
 	}
 }
