@@ -18,11 +18,18 @@ const float RADIUS = 0.75;
 //softness of our vignette, between 0.0 and 1.0
 const float SOFTNESS = 0.45;
 
+float smoothstep2(float edge0, float edge1, float x) {
+  // Scale, bias and saturate x to 0..1 range
+  x = clamp((x - edge0) / (edge1 - edge0), 0.0, 1.0); 
+  // Evaluate polynomial
+  return x * x * (3.0 - 2.0 * x);
+}
+
 void main() {
 	vec2 tTexCoord = vTexCoord;
 	tTexCoord += texture2D(watermask_texture, vTexCoord).rb * .1;
 	
-	vec2 uwvoro = vec2(voronoi(vTexCoord * 30 + 76.45798) * 0.01, voronoi(vTexCoord * 30) * 0.01);
+	vec2 uwvoro = vec2(voronoi(vTexCoord * 30.0 + 76.45798) * 0.01, voronoi(vTexCoord * 30.0) * 0.01);
 	
 	if(isSubmergedUnderwater) {
 		tTexCoord += uwvoro * 0.3;
@@ -42,7 +49,7 @@ void main() {
 	// TODO: make better coefficients
 	
 	if(isSubmergedUnderwater) {
-		fc.rgb = mix(fc.rgb, vec3(0.14117, 0.14117, 1.0), clamp((texture2D(depth_texture, vTexCoord).r - 0.9999) * (1.0 / 0.0001), 0.0, 1.0));
+		fc.rgb = mix(fc.rgb, vec3(0.14117, 0.14117, 1.0), clamp((texture2D(depth_texture, vTexCoord).r - 0.9995) * 5000.0, 0.0, 1.0));
 	} else {
 		fc.rgb = mix(fc.rgb, mix(fc.rgb, vec3(0.14117, 0.14117, 1.0), d), texture2D(watermask_texture, vTexCoord).g);
 	}
@@ -58,8 +65,10 @@ void main() {
 	
 	vec2 vignettePos = vTexCoord - vec2(0.5);
 	float len = length(vignettePos); 
-	float vignette = smoothstep(RADIUS, RADIUS-SOFTNESS, len);
+	float vignette = smoothstep2(RADIUS, RADIUS-SOFTNESS, len);
 	fc = mix(fc, fc * vignette, 0.5);
+	
+	// fc = vec4(vec3(clamp((texture2D(depth_texture, vTexCoord).r - 0.9995) * 5000.0, 0.0, 1.0)), 1.0);
 	
 	if(fc.a < 0.1) {
 		discard;

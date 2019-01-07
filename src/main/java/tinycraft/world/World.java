@@ -43,26 +43,19 @@ public class World {
 	}
 
 	public Block getBlockAt(int x, int y, int z) {
-		try {
-			return loadedChunks.get(new ChunkPosition(x >> 4, z >> 4)).getBlockAt(x & 0xF, y, z & 0xF);
-		} catch (NullPointerException e) {
-			return null;
-		}
+		Chunk chunk = loadedChunks.get(new ChunkPosition(x >> 4, z >> 4));
+		return chunk == null ? null : chunk.getBlockAt(x & 0xF, y, z & 0xF);
 	}
 
 	public void setBlockAt(int x, int y, int z, Block block) {
-		try {
-			loadedChunks.get(new ChunkPosition(x >> 4, z >> 4)).setBlockAt(x & 0xF, y, z & 0xF, block);
-		} catch (NullPointerException e) {
+		Chunk chunk = loadedChunks.get(new ChunkPosition(x >> 4, z >> 4));
+		if (chunk != null) {
+			chunk.setBlockAt(x & 0xF, y, z & 0xF, block);
 		}
 	}
 
 	public Chunk getChunkFromChunkCoord(int x, int z) {
-		try {
-			return loadedChunks.get(new ChunkPosition(x >> 4, z >> 4));
-		} catch (ArrayIndexOutOfBoundsException e) {
-			return null;
-		}
+		return loadedChunks.get(new ChunkPosition(x, z));
 	}
 
 	public void addEntity(Entity entity) {
@@ -87,7 +80,8 @@ public class World {
 
 	public void interactWithBlock(EntityPlayer player, int x, int y, int z, EnumSide side) {
 		AABB blockAABB = player.selectedBlock.getAABB(this, x + side.offsetX, y + side.offsetY, z + side.offsetZ, true);
-		if(entities.stream().noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
+		if (entities.stream()
+				.noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
 			setBlockAt(x + side.offsetX, y + side.offsetY, z + side.offsetZ, player.selectedBlock);
 		}
 	}

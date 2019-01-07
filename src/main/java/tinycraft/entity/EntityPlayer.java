@@ -19,7 +19,7 @@ public class EntityPlayer extends EntityLiving {
 		super(world);
 	}
 	
-	public Block selectedBlock = Block.blockStone;
+	public Block selectedBlock = Block.blockCobblestone;
 
 	@Override
 	public void update() {
@@ -81,7 +81,7 @@ public class EntityPlayer extends EntityLiving {
 
 	@Override
 	public Vector3f getAcceleration() {
-		return super.getAcceleration().add(0f, Keyboard.isKeyDown(Keyboard.KEY_SPACE) && (onGround || isUnderwater) ? (isUnderwater ? 0.0981f : 0.512f) : 0f, 0f);
+		return super.getAcceleration().add(0f, Keyboard.isKeyDown(Keyboard.KEY_SPACE) && (onGround || isUnderwater) ? (isUnderwater ? 0.006f : 0.512f) : 0f, 0f);
 	}
 
 }

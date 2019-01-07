@@ -90,7 +90,7 @@ public abstract class Entity {
 	}
 
 	public Vector3f getAcceleration() {
-		return new Vector3f(0f, (hasGravity() && !onGround) ? (isUnderwater ? -0.001f : -0.0981f) : 0f, 0f);
+		return new Vector3f(0f, (hasGravity() && !onGround) ? (isUnderwater ? -0.003f : -0.0981f) : 0f, 0f);
 	}
 
 	public void moveClipped(float xofs, float yofs, float zofs) {

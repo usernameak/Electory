@@ -80,6 +80,10 @@ public class TinyCraft {
 			update();
 			if (Display.isActive() || Display.isDirty()) {
 				render();
+				if(!Display.isActive()) {
+					Display.update();
+					render();
+				}
 			}
 			Display.update();
 			fpsc++;

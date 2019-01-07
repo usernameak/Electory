@@ -11,7 +11,7 @@ import tinycraft.world.World;
 public class Block {
 	public static Block blockList[] = new Block[256];
 	
-	public static Block blockStone;
+	public static Block blockCobblestone;
 	public static Block blockGrass;
 	public static Block blockPlanks;
 	public static Block blockDirt;
@@ -21,6 +21,7 @@ public class Block {
 	public static Block blockLeaves;
 	public static Block blockWater;
 	public static Block blockSand;
+	public static Block blockStone;
 	
 	public int blockID;
 	
@@ -97,7 +98,7 @@ public class Block {
 	}
 	
 	static {
-		blockStone = new Block(1).setSpriteNumber(1);
+		blockCobblestone = new Block(1).setSpriteNumber(1);
 		blockGrass = new BlockGrass(2);
 		blockPlanks = new Block(3).setSpriteNumber(3);
 		blockDirt = new Block(4).setSpriteNumber(4);
@@ -107,5 +108,6 @@ public class Block {
 		blockLeaves = new Block(8).setSpriteNumber(15);
 		blockWater = new BlockWater(9).setSpriteNumber(16).setSolid(false).setLiquid(true);
 		blockSand = new Block(10).setSpriteNumber(11);
+		blockStone = new Block(11).setSpriteNumber(18);
 	}
 }

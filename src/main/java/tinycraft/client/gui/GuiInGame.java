@@ -17,8 +17,8 @@ public class GuiInGame extends Gui {
 		super(tc);
 	}
 
-	private final Block[] pickableBlocks = new Block[] { Block.blockStone, Block.blockGrass, Block.blockPlanks,
-			Block.blockDirt, Block.blockGlass, Block.blockLog, Block.blockLeaves, Block.blockWater, Block.blockSand, null };
+	private final Block[] pickableBlocks = new Block[] { Block.blockCobblestone, Block.blockGrass, Block.blockPlanks,
+			Block.blockDirt, Block.blockGlass, Block.blockLog, Block.blockLeaves, Block.blockStone, Block.blockSand };
 
 	@Override
 	public void renderGui(GuiRenderState rs) {
