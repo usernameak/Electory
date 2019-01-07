@@ -1,7 +1,7 @@
 package tinycraft.block;
 
-import tinycraft.render.IAtlasSprite;
-import tinycraft.render.IAtlasSpriteManager;
+import tinycraft.client.render.IAtlasSprite;
+import tinycraft.client.render.IAtlasSpriteManager;
 import tinycraft.utils.EnumSide;
 
 public class BlockGrass extends Block {

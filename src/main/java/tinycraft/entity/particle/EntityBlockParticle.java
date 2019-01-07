@@ -2,8 +2,8 @@ package tinycraft.entity.particle;
 
 import java.util.Random;
 
+import tinycraft.client.render.IAtlasSprite;
 import tinycraft.entity.Entity;
-import tinycraft.render.IAtlasSprite;
 import tinycraft.world.World;
 
 public class EntityBlockParticle extends Entity {
@@ -60,4 +60,8 @@ public class EntityBlockParticle extends Entity {
 		};
 	}
 
+	@Override
+	public boolean isPersistent() {
+		return false;
+	}
 }

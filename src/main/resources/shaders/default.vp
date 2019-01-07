@@ -1,0 +1,19 @@
+#version 120
+
+attribute vec3 position;
+attribute vec2 texCoord;
+attribute vec4 color;
+
+varying vec2 vTexCoord;
+varying vec4 vColor;
+varying vec3 vPosition;
+varying vec4 vScreenPosition;
+
+uniform mat4 modelViewMatrix, projectionMatrix;
+
+void main() {
+	vTexCoord = texCoord;
+	vColor = color;
+	vPosition = position;
+	gl_Position = vScreenPosition = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}

@@ -1,6 +1,6 @@
 package tinycraft.utils;
 
-import tinycraft.TinyCraft;
+import tinycraft.client.TinyCraft;
 import tinycraft.math.MathUtils;
 
 public class TickTimer {
@@ -18,6 +18,8 @@ public class TickTimer {
 	 * capped at 10.
 	 */
 	public int elapsedTicks;
+	
+	public int totalTicks;
 
 	/**
 	 * How much time has elapsed since the last tick, in ticks, for use by display
@@ -102,6 +104,8 @@ public class TickTimer {
 		if (this.elapsedTicks > 10) {
 			this.elapsedTicks = 10;
 		}
+		
+		totalTicks += elapsedTicks;
 
 		this.renderPartialTicks = this.elapsedPartialTicks;
 	}
