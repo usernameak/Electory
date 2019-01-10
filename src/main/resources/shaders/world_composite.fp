@@ -7,6 +7,7 @@ uniform sampler2D texture;
 uniform sampler2D watermask_texture;
 uniform sampler2D depth_texture;
 uniform sampler2D opaque_depth_texture;
+uniform sampler2D depth_shadow_texture;
 uniform float timer;
 uniform bool isSubmergedUnderwater = false;
 
@@ -67,6 +68,8 @@ void main() {
 	float len = length(vignettePos); 
 	float vignette = smoothstep2(RADIUS, RADIUS-SOFTNESS, len);
 	fc = mix(fc, fc * vignette, 0.5);
+	
+	// fc = /*mix(fc, */vec4(texture2D(depth_shadow_texture, vTexCoord).rgb, 1.0)/*, 0.5)*/;
 	
 	// fc = vec4(vec3(clamp((texture2D(depth_texture, vTexCoord).r - 0.9995) * 5000.0, 0.0, 1.0)), 1.0);
 	

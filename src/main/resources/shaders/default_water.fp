@@ -2,7 +2,7 @@
 
 varying vec2 vTexCoord;
 varying vec4 vColor;
-varying vec3 vPosition;
+varying vec4 vPosition;
 
 uniform sampler2D texture;
 uniform float timer;

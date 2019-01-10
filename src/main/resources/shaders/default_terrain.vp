@@ -1,0 +1,22 @@
+#version 120
+
+attribute vec3 position;
+attribute vec2 texCoord;
+attribute vec4 color;
+
+varying vec2 vTexCoord;
+varying vec4 vColor;
+varying vec4 vPosition;
+varying vec4 vScreenPosition;
+varying float lightDepth;
+varying vec4 lightPos;
+
+uniform mat4 modelMatrix, viewMatrix, projectionMatrix, lightMatrix;
+
+void main() {
+	vTexCoord = texCoord;
+	vColor = color;
+	vPosition = modelMatrix * vec4(position, 1.0);
+	gl_Position = vScreenPosition = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+	lightPos = lightMatrix * modelMatrix * vec4(position, 1.0);
+}
