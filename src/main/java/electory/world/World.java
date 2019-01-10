@@ -230,21 +230,28 @@ public class World implements IChunkSaveStatusHandler {
 	}
 
 	private boolean checkSpawnAreaLoaded() {
-		if (TinyCraft.getInstance().player == null
-				&& isChunkLoaded((int) Math.floor(spawnPoint.x) >> 4, (int) Math.floor(spawnPoint.z) >> 4)) {
+		if (TinyCraft.getInstance().player == null) {
 			if (playerToSpawn == null) {
-				EntityPlayer player = new EntityPlayer(this);
-				player.setPosition(	spawnPoint.x + 0.5f,
-									getHeightAt((int) Math.floor(spawnPoint.x), (int) Math.floor(spawnPoint.z)) + 1.0f,
-									spawnPoint.z + 0.5f,
-									false);
-				addEntity(player);
-				TinyCraft.getInstance().player = player;
+				if (isChunkLoaded((int) Math.floor(spawnPoint.x) >> 4, (int) Math.floor(spawnPoint.z) >> 4)) {
+					EntityPlayer player = new EntityPlayer(this);
+					player.setPosition(	spawnPoint.x + 0.5f,
+										getHeightAt((int) Math.floor(spawnPoint.x), (int) Math.floor(spawnPoint.z))
+												+ 1.0f,
+										spawnPoint.z + 0.5f,
+										false);
+					addEntity(player);
+					TinyCraft.getInstance().player = player;
+					return true;
+				}
 			} else {
-				TinyCraft.getInstance().player = playerToSpawn;
-				playerToSpawn = null;
+				Vector3f spawnPos = playerToSpawn.getInterpolatedPosition(1.0f);
+				if (isChunkLoaded((int) Math.floor(spawnPos.x) >> 4, (int) Math.floor(spawnPos.z) >> 4)) {
+					TinyCraft.getInstance().player = playerToSpawn;
+					addEntity(playerToSpawn);
+					playerToSpawn = null;
+					return true;
+				}
 			}
-			return true;
 		}
 		return TinyCraft.getInstance().player != null;
 	}
@@ -290,11 +297,12 @@ public class World implements IChunkSaveStatusHandler {
 	}
 
 	public void load() throws IOException {
-		if (new File(getWorldSaveDir(), "world_info.sav").exists()) {
+		if (new File(getWorldSaveDir(), "world_info.sav").isFile()) {
 			entities.clear();
 			chunkProvider.reset();
 			generationChunkProvider = null;
 			loadedChunks.clear();
+			TinyCraft.getInstance().player = null;
 			{
 				CompoundTag tag = (CompoundTag) NBTUtil.readTag(new File(getWorldSaveDir(), "world_info.sav"));
 				seed = tag.getLong("seed");
@@ -311,9 +319,10 @@ public class World implements IChunkSaveStatusHandler {
 					try {
 						Entity entity = clazz.getConstructor(World.class).newInstance(this);
 						entity.readEntityData(entityTag);
-						addEntity(entity);
 						if (entity instanceof EntityPlayer) {
 							playerToSpawn = (EntityPlayer) entity;
+						} else {
+							addEntity(entity);
 						}
 					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 							| InvocationTargetException | NoSuchMethodException | SecurityException e) {
