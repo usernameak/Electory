@@ -132,4 +132,8 @@ public class Block {
 		blockGravel = new Block(12).setSpriteNumber(9);
 		blockTallGrass = new BlockTallGrass(13).setSpriteNumber(20).setSolid(false).setImpassable(false);
 	}
+
+	public boolean canBeReplaced() {
+		return false;
+	}
 }

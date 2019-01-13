@@ -1,11 +1,11 @@
 package electory.math;
 
 public class AABB implements Cloneable {
-	public static final float epsilon = 1.19e-07f;
-	public float x0;
-	public float y0;
-	public float z0;
-	public float x1;
+	public static final double epsilon = 1.19e-07f;
+	public double x0;
+	public double y0;
+	public double z0;
+	public double x1;
 	
 	@Override
 	public String toString() {
@@ -20,12 +20,19 @@ public class AABB implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Float.floatToIntBits(x0);
-		result = prime * result + Float.floatToIntBits(x1);
-		result = prime * result + Float.floatToIntBits(y0);
-		result = prime * result + Float.floatToIntBits(y1);
-		result = prime * result + Float.floatToIntBits(z0);
-		result = prime * result + Float.floatToIntBits(z1);
+		long temp;
+		temp = Double.doubleToLongBits(x0);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(x1);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y0);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(y1);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z0);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(z1);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -38,25 +45,25 @@ public class AABB implements Cloneable {
 		if (getClass() != obj.getClass())
 			return false;
 		AABB other = (AABB) obj;
-		if (Float.floatToIntBits(x0) != Float.floatToIntBits(other.x0))
+		if (Double.doubleToLongBits(x0) != Double.doubleToLongBits(other.x0))
 			return false;
-		if (Float.floatToIntBits(x1) != Float.floatToIntBits(other.x1))
+		if (Double.doubleToLongBits(x1) != Double.doubleToLongBits(other.x1))
 			return false;
-		if (Float.floatToIntBits(y0) != Float.floatToIntBits(other.y0))
+		if (Double.doubleToLongBits(y0) != Double.doubleToLongBits(other.y0))
 			return false;
-		if (Float.floatToIntBits(y1) != Float.floatToIntBits(other.y1))
+		if (Double.doubleToLongBits(y1) != Double.doubleToLongBits(other.y1))
 			return false;
-		if (Float.floatToIntBits(z0) != Float.floatToIntBits(other.z0))
+		if (Double.doubleToLongBits(z0) != Double.doubleToLongBits(other.z0))
 			return false;
-		if (Float.floatToIntBits(z1) != Float.floatToIntBits(other.z1))
+		if (Double.doubleToLongBits(z1) != Double.doubleToLongBits(other.z1))
 			return false;
 		return true;
 	}
 
-	public float y1;
-	public float z1;
+	public double y1;
+	public double z1;
 
-	public AABB(float x0, float y0, float z0, float x1, float y1, float z1) {
+	public AABB(double x0, double y0, double z0, double x1, double y1, double z1) {
 		this.x0 = x0;
 		this.y0 = y0;
 		this.z0 = z0;
@@ -65,13 +72,13 @@ public class AABB implements Cloneable {
 		this.z1 = z1;
 	}
 
-	public AABB expand(float xa, float ya, float za) {
-		float _x0 = this.x0;
-		float _y0 = this.y0;
-		float _z0 = this.z0;
-		float _x1 = this.x1;
-		float _y1 = this.y1;
-		float _z1 = this.z1;
+	public AABB expand(double xa, double ya, double za) {
+		double _x0 = this.x0;
+		double _y0 = this.y0;
+		double _z0 = this.z0;
+		double _x1 = this.x1;
+		double _y1 = this.y1;
+		double _z1 = this.z1;
 		if (xa < 0.0f) {
 			_x0 += xa;
 		}
@@ -93,18 +100,18 @@ public class AABB implements Cloneable {
 		return new AABB(_x0, _y0, _z0, _x1, _y1, _z1);
 	}
 
-	public AABB grow(float xa, float ya, float za) {
-		float _x0 = this.x0 - xa;
-		float _y0 = this.y0 - ya;
-		float _z0 = this.z0 - za;
-		float _x1 = this.x1 + xa;
-		float _y1 = this.y1 + ya;
-		float _z1 = this.z1 + za;
+	public AABB grow(double xa, double ya, double za) {
+		double _x0 = this.x0 - xa;
+		double _y0 = this.y0 - ya;
+		double _z0 = this.z0 - za;
+		double _x1 = this.x1 + xa;
+		double _y1 = this.y1 + ya;
+		double _z1 = this.z1 + za;
 		return new AABB(_x0, _y0, _z0, _x1, _y1, _z1);
 	}
 
-	public float clipXCollide(AABB c, float xa) {
-		float max;
+	public double clipXCollide(AABB c, double xa) {
+		double max;
 		if (c.y1 <= this.y0)
 			return xa;
 		if (c.y0 >= this.y1) {
@@ -128,8 +135,8 @@ public class AABB implements Cloneable {
 		return max;
 	}
 
-	public float clipYCollide(AABB c, float ya) {
-		float max;
+	public double clipYCollide(AABB c, double ya) {
+		double max;
 		if (c.x1 <= this.x0)
 			return ya;
 		if (c.x0 >= this.x1) {
@@ -153,8 +160,8 @@ public class AABB implements Cloneable {
 		return max;
 	}
 
-	public float clipZCollide(AABB c, float za) {
-		float max;
+	public double clipZCollide(AABB c, double za) {
+		double max;
 		if (c.x1 <= this.x0)
 			return za;
 		if (c.x0 >= this.x1) {
@@ -196,7 +203,7 @@ public class AABB implements Cloneable {
 		return false;
 	}
 
-	public void move(float xa, float ya, float za) {
+	public void move(double xa, double ya, double za) {
 		this.x0 += xa;
 		this.y0 += ya;
 		this.z0 += za;

@@ -1,14 +1,20 @@
 package electory.world.gen;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import electory.block.Block;
+import electory.math.MathUtils;
 import electory.world.BiomeGenBase;
 import electory.world.Chunk;
+import electory.world.ChunkPosition;
 import electory.world.IChunkProvider;
 import electory.world.IChunkSaveStatusHandler;
 import electory.world.World;
 import electory.world.gen.biome.BiomeConditionHeightMapFilter;
+import electory.world.gen.biome.DummyBiomeAccessor;
 import electory.world.gen.biome.IBiomeAccessor;
 import electory.world.gen.biome.IBiomeMutator;
 import electory.world.gen.condition.IntegerCondition;
@@ -68,10 +74,47 @@ public class ChunkGenerator implements IChunkProvider {
 				world.setBlockAt(wx, y + 1, wz, Block.blockTallGrass);
 			}
 		}
+
+		rand.setSeed(x ^ (z << 16) ^ world.seed ^ 0x36l);
+
+		int forestness = forestnessGen.generateHeightmap(new DummyBiomeAccessor(), x, z)[0][0];
+		float forestnessF = MathUtils.rangeRemap(forestness, -100.f, 100.f, 0.0f, 10.0f);
+		if (forestnessF >= 1 || this.rand.nextFloat() <= forestnessF) {
+			int forestnessI = (int) (forestnessF >= 1 ? forestnessF : 1);
+
+			for (int i = 0; i < forestnessI; i++) {
+				int wx = (x << 4) + 8 + rand.nextInt(16);
+				int wz = (z << 4) + 8 + rand.nextInt(16);
+
+				for (int y = 255; y >= 0; y--) {
+					Block block = world.getBlockAt(wx, y, wz);
+					if (block == Block.blockDirt || block == Block.blockGrass) {
+						for (int by = y + 1; by < y + 7; by++) {
+							if (by >= y + 3) {
+								int radius = by >= y + 6 ? 1 : 2;
+								for (int bx = wx - radius; bx <= wx + radius; bx++) {
+									for (int bz = wz - radius; bz <= wz + radius; bz++) {
+										if (radius == 1 || !(bx == wx && bz == wz)) {
+											world.setBlockAt(bx, by, bz, Block.blockLeaves);
+										}
+									}
+								}
+							}
+							if (by < y + 6) {
+								world.setBlockAt(wx, by, wz, Block.blockLog);
+							}
+						}
+						break;
+					} else if (block != null && !block.canBeReplaced()) {
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	@Override
-	public Chunk provideChunk(int cx, int cy) {
+	public Chunk loadChunk(int cx, int cy) {
 		byte[] chunkData = new byte[32768];
 		byte[] chunkDataExt = new byte[32768];
 		final byte[] biomeData = new byte[0x100];
@@ -122,7 +165,8 @@ public class ChunkGenerator implements IChunkProvider {
 					chunk.setBlockAt(	i,
 										z,
 										j,
-										Block.blockList[(z >= 128 ? chunkDataExt : chunkData)[i << 11 | j << 7
+										Block.blockList[(z >= 128 ? chunkDataExt : chunkData)[i << 11
+												| j << 7
 												| (z & 0x7F)]],
 										World.FLAG_SKIP_LIGHT_UPDATE);
 				}
@@ -141,7 +185,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public boolean canProvideChunk(int cx, int cy) {
+	public boolean canLoadChunk(int cx, int cy) {
 		return true;
 	}
 
@@ -151,5 +195,33 @@ public class ChunkGenerator implements IChunkProvider {
 
 	@Override
 	public void reset() {
+	}
+
+	@Override
+	public Chunk provideChunk(int cx, int cy) {
+		return null;
+	}
+
+	@Override
+	public Collection<Chunk> getAllLoadedChunks() {
+		return null;
+	}
+
+	@Override
+	public boolean isChunkLoaded(int x, int z) {
+		return true; // don't ask wtf
+	}
+
+	@Override
+	public void unloadChunk(Chunk chunk, Iterator<Chunk> it, boolean doSave) {
+	}
+
+	@Override
+	public void coldUnloadAllChunks() {
+	}
+
+	@Override
+	public Map<ChunkPosition, Chunk> getLoadedChunkMap() {
+		return null;
 	}
 }

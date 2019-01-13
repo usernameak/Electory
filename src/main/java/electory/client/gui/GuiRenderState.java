@@ -1,14 +1,14 @@
 package electory.client.gui;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4d;
 
 import electory.client.render.IRenderState;
 
 public class GuiRenderState implements IRenderState {
 	public ResolutionScaler scaler;
-	public Matrix4f projectionMatrix = new Matrix4f();
-	public Matrix4f viewMatrix = new Matrix4f();
-	public Matrix4f modelMatrix = new Matrix4f();
+	public Matrix4d projectionMatrix = new Matrix4d();
+	public Matrix4d viewMatrix = new Matrix4d();
+	public Matrix4d modelMatrix = new Matrix4d();
 	
 	public GuiRenderState(GuiRenderState orig) {
 		super();
@@ -18,7 +18,7 @@ public class GuiRenderState implements IRenderState {
 		this.modelMatrix.set(orig.modelMatrix);
 	}
 
-	public GuiRenderState(ResolutionScaler scaler, Matrix4f projectionMatrix, Matrix4f viewMatrix, Matrix4f modelMatrix) {
+	public GuiRenderState(ResolutionScaler scaler, Matrix4d projectionMatrix, Matrix4d viewMatrix, Matrix4d modelMatrix) {
 		super();
 		this.scaler = scaler;
 		this.projectionMatrix = projectionMatrix;
@@ -30,16 +30,16 @@ public class GuiRenderState implements IRenderState {
 		super();
 	}
 
-	public Matrix4f getProjectionMatrix() {
+	public Matrix4d getProjectionMatrix() {
 		return projectionMatrix;
 	}
 
-	public Matrix4f getViewMatrix() {
+	public Matrix4d getViewMatrix() {
 		return viewMatrix;
 	}
 
 	@Override
-	public Matrix4f getModelMatrix() {
+	public Matrix4d getModelMatrix() {
 		return modelMatrix;
 	}
 }

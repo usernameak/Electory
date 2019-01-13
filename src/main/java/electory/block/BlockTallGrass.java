@@ -17,4 +17,9 @@ public class BlockTallGrass extends Block {
 	public byte getSkyLightOpacity() {
 		return 0;
 	}
+	
+	@Override
+	public boolean canBeReplaced() {
+		return true;
+	}
 }

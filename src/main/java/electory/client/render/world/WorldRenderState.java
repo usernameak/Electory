@@ -1,13 +1,13 @@
 package electory.client.render.world;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4d;
 
 import electory.client.render.IRenderState;
 
 public class WorldRenderState implements IRenderState {
-	public Matrix4f projectionMatrix = new Matrix4f();
-	public Matrix4f viewMatrix = new Matrix4f();
-	public Matrix4f modelMatrix = new Matrix4f();
+	public Matrix4d projectionMatrix = new Matrix4d();
+	public Matrix4d viewMatrix = new Matrix4d();
+	public Matrix4d modelMatrix = new Matrix4d();
 	
 	public WorldRenderState() {
 	}
@@ -19,17 +19,17 @@ public class WorldRenderState implements IRenderState {
 	}
 
 	@Override
-	public Matrix4f getProjectionMatrix() {
+	public Matrix4d getProjectionMatrix() {
 		return projectionMatrix;
 	}
 
 	@Override
-	public Matrix4f getModelMatrix() {
+	public Matrix4d getModelMatrix() {
 		return modelMatrix;
 	}
 
 	@Override
-	public Matrix4f getViewMatrix() {
+	public Matrix4d getViewMatrix() {
 		return viewMatrix;
 	}
 }

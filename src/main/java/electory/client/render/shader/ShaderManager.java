@@ -14,7 +14,7 @@ public class ShaderManager {
 	public static DefaultProgram waterProgram;
 	public static TerrainProgram terrainProgram;
 	public static CompositeProgram worldCompositeProgram;
-	public static DefaultProgram whiteProgram;
+	public static DefaultProgram solidProgram;
 	private static Map<String, Integer> compiledShaders = new HashMap<String, Integer>();
 	public static DefaultProgram shadowTerrainProgram;
 
@@ -31,8 +31,8 @@ public class ShaderManager {
 		worldCompositeProgram = new CompositeProgram(compile("/shaders/default.vp", GL20.GL_VERTEX_SHADER),
 				compile("/shaders/world_composite.fp", GL20.GL_FRAGMENT_SHADER),
 				compile("/shaders/fragment_library.fp", GL20.GL_FRAGMENT_SHADER));
-		whiteProgram = new DefaultProgram(compile("/shaders/default.vp", GL20.GL_VERTEX_SHADER),
-		                    				compile("/shaders/default_white.fp", GL20.GL_FRAGMENT_SHADER));
+		solidProgram = new DefaultProgram(compile("/shaders/default.vp", GL20.GL_VERTEX_SHADER),
+		                    				compile("/shaders/default_solid.fp", GL20.GL_FRAGMENT_SHADER));
 	}
 
 	public static int compile(String name, int type) throws ShaderCompileException, IOException {

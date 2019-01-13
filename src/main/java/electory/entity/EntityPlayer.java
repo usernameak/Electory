@@ -1,10 +1,7 @@
 package electory.entity;
 
-import static electory.math.MathUtils.deg2rad;
-
 import java.io.IOException;
 
-import org.joml.Matrix4x3f;
 import org.joml.Vector3f;
 import org.lwjgl.input.Keyboard;
 
@@ -19,34 +16,16 @@ public class EntityPlayer extends EntityLiving {
 	}
 	
 	public Block selectedBlock = Block.blockCobblestone;
+	
+	public transient IPlayerController playerController = null;
 
 	@Override
 	public void update() {
-		Matrix4x3f movementMatrix = new Matrix4x3f();
-
-		movementMatrix.rotate((float) deg2rad(-yaw), 0.0f, 1.0f, 0.0f);
-
 		Vector3f movementVector = new Vector3f(0.0f, 0.0f, 0.0f);
 		
-		float movementSpeed = isUnderwater ? 0.25f : (onGround ? 0.3f : 0.2f);
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			movementVector.add(0.0f, 0.0f, movementSpeed);
+		if(playerController != null) {
+			playerController.doMovement(this, movementVector);
 		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			movementVector.add(-movementSpeed, 0.0f, 0.0f);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			movementVector.add(movementSpeed, 0.0f, 0.0f);
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			movementVector.add(0.0f, 0.0f, -movementSpeed);
-		}
-		
-		movementMatrix.transformDirection(movementVector);
 		
 		moveClipped(movementVector.x, movementVector.y, movementVector.z);
 		

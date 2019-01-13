@@ -34,6 +34,36 @@ public class Chunk {
 		this.chunkZ = chunkZ;
 	}
 
+	public void tryPopulateWithNeighbours(IChunkProvider provider) {
+		if (!isPopulated
+				&& provider.isChunkLoaded(chunkX + 1, chunkZ + 1)
+				&& provider.isChunkLoaded(chunkX, chunkZ + 1)
+				&& provider.isChunkLoaded(chunkX + 1, chunkZ)) {
+			provider.populate(null, chunkX, chunkZ);
+		}
+
+		if (provider.isChunkLoaded(chunkX - 1, chunkZ)
+				&& !provider.provideChunk(chunkX - 1, chunkZ).isPopulated
+				&& provider.isChunkLoaded(chunkX, chunkZ + 1)
+				&& provider.isChunkLoaded(chunkX - 1, chunkZ + 1)) {
+			provider.populate(null, chunkX - 1, chunkZ);
+		}
+
+		if (provider.isChunkLoaded(chunkX, chunkZ - 1)
+				&& !provider.provideChunk(chunkX, chunkZ - 1).isPopulated
+				&& provider.isChunkLoaded(chunkX + 1, chunkZ)
+				&& provider.isChunkLoaded(chunkX + 1, chunkZ - 1)) {
+			provider.populate(null, chunkX, chunkZ - 1);
+		}
+
+		if (provider.isChunkLoaded(chunkX - 1, chunkZ - 1)
+				&& !provider.provideChunk(chunkX - 1, chunkZ - 1).isPopulated
+				&& provider.isChunkLoaded(chunkX - 1, chunkZ)
+				&& provider.isChunkLoaded(chunkX, chunkZ - 1)) {
+			provider.populate(null, chunkX - 1, chunkZ - 1);
+		}
+	}
+
 	public void buildHeightMap() {
 		for (int x = 0; x < 16; x++) {
 			for (int z = 0; z < 16; z++) {
@@ -221,7 +251,8 @@ public class Chunk {
 				Block block = getWorldBlockFast(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ);
 				int curLightLevel = getWorldSunLightLevelFast(pos.x, pos.y, pos.z);
 
-				if ((block == null || block.getSkyLightOpacity() == 0) && curLightLevel == 15
+				if ((block == null || block.getSkyLightOpacity() == 0)
+						&& curLightLevel == 15
 						&& side == EnumSide.DOWN) {
 					setWorldSunLightLevelFast(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ, 15);
 					bfsSkyQueue
@@ -288,6 +319,7 @@ public class Chunk {
 		tag.put("lightArray", new ShortArrayTag(lightArray));
 		tag.put("biomeArray", new ByteArrayTag(biomeArray));
 		tag.put("heightMap", new ShortArrayTag(heightMap));
+		tag.putBoolean("isPopulated", isPopulated);
 		tag.serialize(dos, 0);
 	}
 
@@ -297,6 +329,7 @@ public class Chunk {
 		lightArray = ((ShortArrayTag) tag.get("lightArray")).getValue();
 		biomeArray = ((ByteArrayTag) tag.get("biomeArray")).getValue();
 		heightMap = ((ShortArrayTag) tag.get("heightMap")).getValue();
+		isPopulated = tag.getBoolean("isPopulated");
 		scheduleChunkUpdate();
 	}
 }

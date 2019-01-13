@@ -3,6 +3,7 @@ package electory.entity;
 import java.io.IOException;
 import java.util.Set;
 
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import electory.math.AABB;
@@ -10,19 +11,20 @@ import electory.nbt.CompoundTag;
 import electory.world.World;
 
 public abstract class Entity {
-	protected float oldX;
-	protected float oldY;
-	protected float oldZ;
-	protected float x;
-	protected float y;
-	protected float z;
-	protected float newX;
-	protected float newY;
-	protected float newZ;
+	protected double oldX;
+	protected double oldY;
+	protected double oldZ;
+	protected double x;
+	protected double y;
+	protected double z;
+	protected double newX;
+	protected double newY;
+	protected double newZ;
 
 	protected Vector3f velocity = new Vector3f();
 
 	public boolean onGround = false;
+	public boolean onCeiling = false;
 	public boolean isUnderwater = false;
 
 	public final World world;
@@ -63,7 +65,10 @@ public abstract class Entity {
 
 		isUnderwater = world.isAABBWithinLiquid(getAABB());
 
-		if (onGround) {
+		if (onGround && velocity.y < 0) {
+			velocity.y = 0f;
+		}
+		if (onCeiling && velocity.y > 0) {
 			velocity.y = 0f;
 		}
 		if (!wasUnderwater && isUnderwater) {
@@ -92,7 +97,9 @@ public abstract class Entity {
 		return new Vector3f(0f, (hasGravity() && !onGround) ? (isUnderwater ? -0.003f : -0.0981f) : 0f, 0f);
 	}
 
-	public void moveClipped(float xofs, float yofs, float zofs) {
+	public void moveClipped(double xofs, double yofs, double zofs) {
+		double origYOfs = yofs;
+		
 		AABB taabb = getAABB().expand(xofs, yofs, zofs);
 		AABB paabb = getAABB();
 
@@ -116,19 +123,51 @@ public abstract class Entity {
 		}
 
 		paabb.move(0, 0, zofs);
+		
+		
 
-		AABB gaabb = paabb.expand(0f, -0.01f, 0f);
-		float gofs = -0.005f;
-		Set<AABB> gAABBs = world.getBlockAABBsWithinAABB(gaabb, true);
+		/**/
+		
+		if(origYOfs < -0.05f) {
+			// Passive ground collision check
+			onGround = yofs > origYOfs;
+			onCeiling = false;
+		} else if(origYOfs > 0.05f) {
+			// Passive ceiling collision check
+			onGround = false;
+			onCeiling = yofs < origYOfs;
+		} else {
+			// Active ground collision check
+			onCeiling = false;
+			AABB gaabb = paabb.expand(0f, -0.01f, 0f);
+			double gofs = -0.005;
+			Set<AABB> gAABBs = world.getBlockAABBsWithinAABB(gaabb, true);
 
-		onGround = false;
+			onGround = false;
 
-		for (AABB aabb : gAABBs) {
-			gofs = aabb.clipYCollide(paabb, gofs);
-			if (gofs >= -0.0025f) {
-				onGround = true;
+			for (AABB aabb : gAABBs) {
+				gofs = aabb.clipYCollide(paabb, gofs);
+				if (gofs >= -0.0025f) {
+					onGround = true;
+				}
 			}
+		
 		}
+		
+		/*{
+			AABB gaabb = paabb.expand(0f, 0.01f, 0f);
+			float gofs = 0.005f;
+			Set<AABB> gAABBs = world.getBlockAABBsWithinAABB(gaabb, true);
+
+			onCeiling = false;
+
+			for (AABB aabb : gAABBs) {
+				gofs = aabb.clipYCollide(paabb, gofs);
+				if (gofs >= 0.0025f) {
+					onCeiling = true;
+				}
+			}
+		}*/
 
 		newX += xofs;
 		newY += yofs;
@@ -139,7 +178,7 @@ public abstract class Entity {
 		return new AABB(newX - xSizeHalf, newY, newZ - zSizeHalf, newX + xSizeHalf, newY + ySize, newZ + zSizeHalf);
 	}
 
-	public void setPosition(float x, float y, float z, boolean interpolate) {
+	public void setPosition(double x, double y, double z, boolean interpolate) {
 		if (interpolate) {
 			newX = x;
 			newY = y;
@@ -151,14 +190,14 @@ public abstract class Entity {
 		}
 	}
 
-	public Vector3f getInterpolatedPosition(float renderPartialTicks) {
-		return new Vector3f(oldX, oldY, oldZ).lerp(new Vector3f(x, y, z), renderPartialTicks);
+	public Vector3d getInterpolatedPosition(float renderPartialTicks) {
+		return new Vector3d(oldX, oldY, oldZ).lerp(new Vector3d(x, y, z), renderPartialTicks);
 	}
 
 	public void writeEntityData(CompoundTag tag) throws IOException {
-		tag.putFloat("x", newX);
-		tag.putFloat("y", newY);
-		tag.putFloat("z", newZ);
+		tag.putDouble("x", newX);
+		tag.putDouble("y", newY);
+		tag.putDouble("z", newZ);
 		tag.putFloat("vx", velocity.x);
 		tag.putFloat("vy", velocity.y);
 		tag.putFloat("vz", velocity.z);
@@ -166,7 +205,7 @@ public abstract class Entity {
 		tag.putBoolean("shouldDespawn", shouldDespawn);
 
 	}
-	
+
 	public boolean canBlockPlacedInto() {
 		return true;
 	}
@@ -176,9 +215,9 @@ public abstract class Entity {
 	}
 
 	public void readEntityData(CompoundTag tag) throws IOException {
-		newX = x = oldX = tag.getFloat("x");
-		newY = y = oldY = tag.getFloat("y");
-		newZ = z = oldZ = tag.getFloat("z");
+		newX = x = oldX = tag.getDouble("x");
+		newY = y = oldY = tag.getDouble("y");
+		newZ = z = oldZ = tag.getDouble("z");
 		velocity.x = tag.getFloat("vx");
 		velocity.y = tag.getFloat("vy");
 		velocity.z = tag.getFloat("vz");

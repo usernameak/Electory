@@ -2,11 +2,11 @@ package electory.client.render.shader;
 
 import java.nio.FloatBuffer;
 
-import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
+import org.joml.Matrix4d;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 
+import electory.client.BufferPool;
 import electory.client.TinyCraft;
 import electory.client.render.IRenderState;
 
@@ -40,20 +40,20 @@ public class DefaultProgram extends ShaderProgram {
 		GL20.glUniform1i(textureUniform, 0);
 	}
 	
-	public void setProjectionMatrix(Matrix4f matrix) {
-		FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+	public void setProjectionMatrix(Matrix4d matrix) {
+		FloatBuffer fb = BufferPool.get().getFloatBuffer(16);
 		matrix.get(fb);
 		GL20.glUniformMatrix4(projectionUniform, false, fb);
 	}
 	
-	public void setViewMatrix(Matrix4f matrix) {
-		FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+	public void setViewMatrix(Matrix4d matrix) {
+		FloatBuffer fb = BufferPool.get().getFloatBuffer(16);
 		matrix.get(fb);
 		GL20.glUniformMatrix4(viewUniform, false, fb);
 	}
 	
-	public void setModelMatrix(Matrix4f matrix) {
-		FloatBuffer fb = BufferUtils.createFloatBuffer(16);
+	public void setModelMatrix(Matrix4d matrix) {
+		FloatBuffer fb = BufferPool.get().getFloatBuffer(16);
 		matrix.get(fb);
 		GL20.glUniformMatrix4(modelUniform, false, fb);
 	}

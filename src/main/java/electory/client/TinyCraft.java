@@ -1,17 +1,14 @@
 package electory.client;
 
-import static electory.math.MathUtils.deg2rad;
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 
-import org.joml.AxisAngle4f;
-import org.joml.Vector3f;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -27,24 +24,20 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
 
-import electory.block.Block;
 import electory.client.audio.SoundManager;
 import electory.client.gui.FontRenderer;
-import electory.client.gui.GuiInGame;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;
+import electory.client.gui.screen.GuiInGame;
+import electory.client.gui.screen.GuiScreen;
 import electory.client.render.AtlasManager;
 import electory.client.render.shader.ShaderCompileException;
 import electory.client.render.shader.ShaderManager;
 import electory.client.render.texture.TextureManager;
 import electory.client.render.world.WorldRenderer;
 import electory.entity.EntityPlayer;
-import electory.math.Ray;
-import electory.math.Ray.AABBIntersectionResult;
 import electory.nbt.ShortArrayTag;
-import electory.nbt.TagFactory;
 import electory.utils.CrashException;
-import electory.utils.EnumSide;
 import electory.utils.TickTimer;
 import electory.world.World;
 
@@ -62,6 +55,7 @@ public class TinyCraft {
 	private GuiRenderState renderState = new GuiRenderState();
 	public FontRenderer fontRenderer = new FontRenderer();
 	public SoundManager soundManager = new SoundManager();
+	public GuiScreen currentGui = null;
 	// public ChunkLoadThread chunkLoadThread = new ChunkLoadThread();
 	private int width = 0, height = 0;
 
@@ -72,6 +66,8 @@ public class TinyCraft {
 	private long fpsNanoCounterLast = System.nanoTime();
 	private long fpsNanoCounter = System.nanoTime();
 	
+	private boolean shutdown = false;
+
 	static {
 		ShortArrayTag.register();
 	}
@@ -87,14 +83,22 @@ public class TinyCraft {
 	public TinyCraft() {
 	}
 
+	public boolean isPaused() {
+		return currentGui == null ? false : currentGui.doesGuiPauseGame();
+	}
+	
+	public void shutdown() {
+		shutdown = true;
+	}
+
 	public void start() {
 		initRenderer();
 		initGame();
 
-		while (!Display.isCloseRequested()) {
+		while (!Display.isCloseRequested() && !shutdown) {
 			update();
-			//if (Display.isActive() || Display.isDirty()) {
-				render();
+			// if (Display.isActive() || Display.isDirty()) {
+			render();
 			// }
 			Display.update();
 			fpsc++;
@@ -108,11 +112,11 @@ public class TinyCraft {
 				fpsc = 0;
 			}
 		}
-		
+
 		soundManager.destroy();
-		
+
 		world.unload();
-		
+
 		Display.destroy();
 	}
 
@@ -150,8 +154,16 @@ public class TinyCraft {
 			ARBDebugOutput.glDebugMessageCallbackARB(new ARBDebugOutputCallback(new ARBDebugOutputCallback.Handler() {
 				@Override
 				public void handleMessage(int source, int type, int id, int severity, String message) {
-					System.out.println("OpenGL message, source " + source + " type " + type + " id " + id + " severity "
-							+ severity + ": " + message);
+					System.out.println("OpenGL message, source "
+							+ source
+							+ " type "
+							+ type
+							+ " id "
+							+ id
+							+ " severity "
+							+ severity
+							+ ": "
+							+ message);
 				}
 			}));
 		}
@@ -161,7 +173,7 @@ public class TinyCraft {
 		} catch (IOException | ShaderCompileException e) {
 			throw new CrashException(e);
 		}
-		
+
 		soundManager.init();
 		// ShaderManager.defaultProgram.use();
 		AtlasManager.registerAllTerrainSprites();
@@ -173,10 +185,6 @@ public class TinyCraft {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		/*
-		 * player.setPosition(0, 128, 0, false); player.yaw = 0.0f; player.pitch = 0.0f;
-		 */
-		// chunkLoadThread.start();
 	}
 
 	public void update() {
@@ -187,66 +195,22 @@ public class TinyCraft {
 		}
 
 		while (Mouse.next()) {
-			if (player != null) {
-				player.yaw += Mouse.getEventDX() * 0.1f;
-				player.pitch += Mouse.getEventDY() * 0.1f;
-				if (player.pitch > 90f) {
-					player.pitch = 90f;
-				} else if (player.pitch < -90f) {
-					player.pitch = -90f;
-				}
-				if (Mouse.getEventButton() == 0 || Mouse.getEventButton() == 1) {
-					if (Mouse.getEventButtonState()) {
-						Vector3f pos = player.getInterpolatedPosition(tickTimer.renderPartialTicks);
-						pos.add(0f, player.getEyeHeight(), 0f);
-
-						Ray ray = new Ray(new Vector3f(pos.x, pos.y, pos.z), new Vector3f(0f, 0f, 1f))
-								.rotate(new AxisAngle4f((float) deg2rad(-player.pitch), 1f, 0f, 0f))
-								.rotate(new AxisAngle4f((float) deg2rad(-player.yaw), 0f, 1f, 0f));
-
-						int x1 = (int) Math.floor(pos.x - 5);
-						int y1 = (int) Math.floor(pos.y - 5);
-						int z1 = (int) Math.floor(pos.z - 5);
-						int x2 = (int) Math.ceil(pos.x + 5);
-						int y2 = (int) Math.ceil(pos.y + 5);
-						int z2 = (int) Math.ceil(pos.z + 5);
-
-						int tx = 0, ty = 0, tz = 0;
-						AABBIntersectionResult tres = new AABBIntersectionResult(false, Float.MAX_VALUE,
-								EnumSide.UNKNOWN);
-
-						for (int x = x1; x <= x2; x++) {
-							for (int y = y1; y <= y2; y++) {
-								for (int z = z1; z <= z2; z++) {
-									Block block = world.getBlockAt(x, y, z);
-									if (block != null && !block.isLiquid()) {
-										AABBIntersectionResult res = ray
-												.intersectsAABB(block.getAABB(world, x, y, z, false));
-										if (res.hasHit && res.distance < tres.distance) {
-											tres = res;
-											tx = x;
-											ty = y;
-											tz = z;
-										}
-									}
-								}
-							}
-						}
-
-						if (tres.hasHit && tres.distance <= 5.0f) {
-							if (Mouse.getEventButton() == 0 && world.getBlockAt(tx, ty, tz).isBreakable()) {
-								world.breakBlockWithParticles(tx, ty, tz);
-							} else if (Mouse.getEventButton() == 1) {
-								world.interactWithBlock(player, tx, ty, tz, tres.side);
-							}
-						}
-					}
-				}
+			if (player != null && currentGui == null && !isPaused()) {
+				player.playerController.processMouseEvent(player);
+			}
+			if (currentGui != null) {
+				currentGui.handleMouseEvent(MouseEvent.fromLWJGLEvent().adjustToGuiScale(resolutionScaler));
 			}
 		}
 
 		while (Keyboard.next()) {
-			theHUD.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+			if (currentGui == null) {
+				if (player != null && !isPaused()) {
+					theHUD.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+				}
+			} else {
+				currentGui.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_F11 && Keyboard.getEventKeyState()) {
 				if (Display.isFullscreen()) {
 					try {
@@ -255,7 +219,7 @@ public class TinyCraft {
 						Mouse.setGrabbed(false);
 						Mouse.destroy();
 						Mouse.create();
-						Mouse.setGrabbed(true);
+						// Mouse.setGrabbed(true);
 					} catch (LWJGLException e) {
 						e.printStackTrace();
 					}
@@ -266,7 +230,7 @@ public class TinyCraft {
 						Mouse.setGrabbed(false);
 						Mouse.destroy();
 						Mouse.create();
-						Mouse.setGrabbed(true);
+						// Mouse.setGrabbed(true);
 					} catch (LWJGLException e) {
 						e.printStackTrace();
 					}
@@ -300,19 +264,31 @@ public class TinyCraft {
 			width = Display.getWidth();
 			height = Display.getHeight();
 			worldRenderer.updateScreenSize();
+			if (currentGui != null) {
+				currentGui.setupGuiElementsForScreenSize(resolutionScaler);
+			}
 		}
+
+		resolutionScaler.setupOrtho(renderState);
 
 		if (player != null) {
 			worldRenderer.render(tickTimer.renderPartialTicks);
 
-			resolutionScaler.setupOrtho(renderState);
-
 			theHUD.renderGui(renderState);
+		}
+
+		if (currentGui != null) {
+			currentGui.renderGui(renderState);
+			Mouse.setGrabbed(false);
+		} else {
+			Mouse.setGrabbed(true);
 		}
 	}
 
 	public void tick(float renderPartialTicks) {
-		world.update();
+		if (!isPaused()) {
+			world.update();
+		}
 	}
 
 	public static ByteBuffer[] loadIcon(String filepath) {
@@ -372,5 +348,20 @@ public class TinyCraft {
 			}
 		}
 		return ByteBuffer.wrap(imageBuffer);
+	}
+
+	public void setPlayer(EntityPlayer player) {
+		if (this.player != null) {
+			this.player.playerController = null;
+		}
+		this.player = player;
+		this.player.playerController = new PlayerControllerClient();
+	}
+
+	public void openGui(GuiScreen gui) {
+		currentGui = gui;
+		if (gui != null) {
+			gui.setupGuiElementsForScreenSize(resolutionScaler);
+		}
 	}
 }

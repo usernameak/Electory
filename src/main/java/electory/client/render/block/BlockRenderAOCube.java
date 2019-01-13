@@ -86,23 +86,23 @@ public class BlockRenderAOCube extends BlockRendererCube {
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.EAST) {
 			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.EAST);
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_XYz, sunLightAvg_zX, sunLightAvg_XY, lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zX, sunLightAvg_XY, sunLightAvg_XYz, lightLevel)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_XYZ, sunLightAvg_ZX, sunLightAvg_XY, lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_ZX, sunLightAvg_XY, sunLightAvg_XYZ, lightLevel)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_XYZ, sunLightAvg_ZX, sunLightAvg_Xy, lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_ZX, sunLightAvg_Xy, sunLightAvg_XYZ, lightLevel)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Xyz, sunLightAvg_zX, sunLightAvg_Xy, lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zX, sunLightAvg_Xy, sunLightAvg_Xyz, lightLevel)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.WEST) {
 			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.WEST);
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_xyz, sunLightAvg_zx, sunLightAvg_xy, lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zx, sunLightAvg_xy, sunLightAvg_xyz, lightLevel)]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_xyZ, sunLightAvg_Zx, sunLightAvg_xy, lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Zx, sunLightAvg_xy, sunLightAvg_xyZ, lightLevel)]);
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_xYZ, sunLightAvg_Zx, sunLightAvg_xY, lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Zx, sunLightAvg_xY, sunLightAvg_xYZ, lightLevel)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_xYz, sunLightAvg_zx, sunLightAvg_xY, lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zx, sunLightAvg_xY, sunLightAvg_xYz, lightLevel)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMinU(), sprite.getMinV());
 		}
 	}

@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
@@ -16,33 +19,46 @@ import electory.utils.io.BufferedDataOutputStream;
 public class ChunkProviderSP implements IChunkProvider {
 
 	private World world;
-	private Map<ChunkPosition, Thread> savingChunks = new ConcurrentHashMap<>(); 
+	private Map<ChunkPosition, Thread> savingChunks = new ConcurrentHashMap<>();
+	private Map<ChunkPosition, Chunk> loadedChunks = new HashMap<>();
 
 	public ChunkProviderSP(World world) {
 		this.world = world;
 	}
 
 	@Override
-	public Chunk provideChunk(int cx, int cy) {
+	public Chunk loadChunk(int cx, int cy) {
 		File chunkFile = new File(world.getChunkSaveDir(), "c_" + cx + "_" + cy + ".sav.gz");
+		Chunk chunk = null;
 		if (chunkFile.isFile()) {
-			Chunk chunk = new Chunk(world, cx, cy);
+			chunk = new Chunk(world, cx, cy);
 			try {
-				BufferedDataInputStream bdis = new BufferedDataInputStream(new GZIPInputStream(new FileInputStream(chunkFile)));
+				BufferedDataInputStream bdis = new BufferedDataInputStream(
+						new GZIPInputStream(new FileInputStream(chunkFile)));
 				chunk.readChunkData(bdis);
 				chunk.isPopulated = true;
 				bdis.close();
 			} catch (IOException e) {
-				throw new CrashException(e);
+				
 			}
-			return chunk;
 		}
-		return world.generationChunkProvider.provideChunk(cx, cy);
+		if (chunk == null) {
+			chunk = world.generationChunkProvider.loadChunk(cx, cy);
+		}
+
+		ChunkPosition cpos = new ChunkPosition(chunk.getChunkX(), chunk.getChunkZ());
+		loadedChunks.put(cpos, chunk);
+
+		chunk.notifyNeighbourChunks();
+		
+		chunk.tryPopulateWithNeighbours(this);
+		
+		return chunk;
 	}
-	
+
 	@Override
-	public boolean canProvideChunk(int cx, int cy) {
-		if(savingChunks.containsKey(new ChunkPosition(cx, cy))) {
+	public boolean canLoadChunk(int cx, int cy) {
+		if (savingChunks.containsKey(new ChunkPosition(cx, cy))) {
 			return false;
 		}
 		return true;
@@ -50,7 +66,8 @@ public class ChunkProviderSP implements IChunkProvider {
 
 	@Override
 	public void populate(IChunkProvider saveProvider, int cx, int cy) {
-
+		this.world.generationChunkProvider.populate(this, cx, cy);
+		provideChunk(cx, cy).isPopulated = true;
 	}
 
 	@Override
@@ -64,7 +81,8 @@ public class ChunkProviderSP implements IChunkProvider {
 				File chunkFile = new File(world.getChunkSaveDir(),
 						"c_" + chunk.getChunkX() + "_" + chunk.getChunkZ() + ".sav.gz");
 				try {
-					BufferedDataOutputStream bdos = new BufferedDataOutputStream(new GZIPOutputStream(new FileOutputStream(chunkFile)));
+					BufferedDataOutputStream bdos = new BufferedDataOutputStream(
+							new GZIPOutputStream(new FileOutputStream(chunkFile)));
 					chunk.writeChunkData(bdos);
 					bdos.close();
 				} catch (IOException e) {
@@ -80,7 +98,7 @@ public class ChunkProviderSP implements IChunkProvider {
 
 	@Override
 	public void waitUntilAllChunksSaved() {
-		for(Thread thread : savingChunks.values()) {
+		for (Thread thread : savingChunks.values()) {
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
@@ -92,8 +110,46 @@ public class ChunkProviderSP implements IChunkProvider {
 	@Override
 	public void reset() {
 		savingChunks.clear();
-		
-		
 	}
 
+	@Override
+	public boolean isChunkLoaded(int x, int z) {
+		return loadedChunks.containsKey(new ChunkPosition(x, z));
+	}
+
+	@Override
+	public Collection<Chunk> getAllLoadedChunks() {
+		return loadedChunks.values();
+	}
+	
+	@Override
+	public void unloadChunk(Chunk chunk, Iterator<Chunk> it, boolean doSave) {
+		if (chunk != null) { // for the sake of god
+			chunk.unload();
+			ChunkPosition cpos = new ChunkPosition(chunk.getChunkX(), chunk.getChunkZ());
+
+			if (it != null) {
+				it.remove();
+			} else {
+				loadedChunks.remove(cpos);
+			}
+
+			save(world, chunk);
+		}
+	}
+
+	@Override
+	public Chunk provideChunk(int cx, int cy) {
+		return loadedChunks.get(new ChunkPosition(cx, cy));
+	}
+
+	@Override
+	public void coldUnloadAllChunks() {
+		loadedChunks.clear();
+	}
+
+	@Override
+	public Map<ChunkPosition, Chunk> getLoadedChunkMap() {
+		return loadedChunks;
+	}
 }

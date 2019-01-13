@@ -4,8 +4,7 @@ import static electory.math.MathUtils.deg2rad;
 
 import java.nio.IntBuffer;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.Vector3d;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBCopyImage;
 import org.lwjgl.opengl.ARBDrawBuffers;
@@ -14,7 +13,6 @@ import org.lwjgl.opengl.EXTFramebufferBlit;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTPackedDepthStencil;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.NVCopyImage;
 
@@ -35,11 +33,9 @@ public class WorldRenderer {
 
 	private int framebuffer = 0;
 	private int framebuffer2 = 0;
-	private int framebuffer3 = 0;
 
 	public boolean debugShadows = false;
 
-	public static final int RENDERPASS_BASE_SHADOW = 1111;
 	public static final int RENDERPASS_BASE = 0;
 	public static final int RENDERPASS_LIQUID1 = 1;
 	public static final int RENDERPASS_LAST = 2;
@@ -120,7 +116,7 @@ public class WorldRenderer {
 			ShaderManager.waterProgram.use();
 			ShaderManager.waterProgram.setTimer(TinyCraft.getInstance().tickTimer.totalTicks
 					+ TinyCraft.getInstance().tickTimer.renderPartialTicks);
-		} else if (pass == RENDERPASS_BASE_SHADOW) {
+		}/* else if (pass == RENDERPASS_BASE_SHADOW) {
 			EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebuffer3);
 			GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -129,19 +125,19 @@ public class WorldRenderer {
 			 * IntBuffer drawbuffers = BufferUtils.createIntBuffer(2);
 			 * drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 			 * drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT);
-			 * drawbuffers.flip(); ARBDrawBuffers.glDrawBuffersARB(drawbuffers); Matrix4f
-			 * lightMatrix = new Matrix4f(); lightMatrix.ortho(-10, 10, -10, 10, -10, 20);
+			 * drawbuffers.flip(); ARBDrawBuffers.glDrawBuffersARB(drawbuffers); Matrix4d
+			 * lightMatrix = new Matrix4d(); lightMatrix.ortho(-10, 10, -10, 10, -10, 20);
 			 * lightMatrix.lookAt(128f, 128f, 128f, 0f, 0f, 0f, 0f, 1f, 0f);
 			 * ShaderManager.terrainProgram.setLightMatrix(lightMatrix);
 			 */
-		} else if (pass == RENDERPASS_BASE) {
-			ShaderManager.terrainProgram.bindTextureDepthShadow("/dynamic/framebuffer_world_sunspace_depth.png");
-			Matrix4f lightMatrix = new Matrix4f();
+		/*} */else if (pass == RENDERPASS_BASE) {
+			/*ShaderManager.terrainProgram.bindTextureDepthShadow("/dynamic/framebuffer_world_sunspace_depth.png");
+			Matrix4d lightMatrix = new Matrix4d();
 			lightMatrix.ortho(-25, 25, -25, 25, 1.0f, 512.0f);
 			Vector3f pos = TinyCraft.getInstance().player
 					.getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks);
 			lightMatrix.lookAt(pos.x + (256f - pos.y), 256f, pos.z, pos.x, pos.y, pos.z, 0f, 1f, 0f);
-			ShaderManager.terrainProgram.setLightMatrix(lightMatrix);
+			ShaderManager.terrainProgram.setLightMatrix(lightMatrix);*/
 		}
 	}
 
@@ -150,19 +146,19 @@ public class WorldRenderer {
 			GL11.glDrawBuffer(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glCullFace(GL11.GL_BACK);
-		} else if (pass == RENDERPASS_BASE_SHADOW) {
+		} /*else if (pass == RENDERPASS_BASE_SHADOW) {
 			EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebuffer);
 			GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 			GL11.glDepthRange(0.01f, 1000f);
-		}
+		}*/
 	}
 
 	public DefaultProgram getRenderPassShader(int pass) {
 		if (pass == WorldRenderer.RENDERPASS_LIQUID1) {
 			return ShaderManager.waterProgram;
-		} else if (pass == RENDERPASS_BASE_SHADOW) {
+		}/* else if (pass == RENDERPASS_BASE_SHADOW) {
 			return ShaderManager.shadowTerrainProgram;
-		}
+		}*/
 		return ShaderManager.terrainProgram;
 	}
 
@@ -174,11 +170,11 @@ public class WorldRenderer {
 	}
 
 	public boolean doesPassAllowConditionalRendering(int pass) {
-		return pass != RENDERPASS_BASE_SHADOW;
+		return true;//pass != RENDERPASS_BASE_SHADOW;
 	}
 
 	public WorldRenderState processRenderStateForPass(int pass, WorldRenderState stateIn) {
-		if (pass == RENDERPASS_BASE_SHADOW) {
+		/*if (pass == RENDERPASS_BASE_SHADOW) {
 			WorldRenderState state = new WorldRenderState();
 			state.projectionMatrix.ortho(-25, 25, -25, 25, 1.0f, 512.0f);
 			GL11.glDepthRange(1.0f, 512.0f);
@@ -187,7 +183,7 @@ public class WorldRenderer {
 			state.viewMatrix.lookAt(pos.x + (256f - pos.y), 256f, pos.z, pos.x, pos.y, pos.z, 0f, 1f, 0f);
 			state.modelMatrix = stateIn.modelMatrix;
 			return state;
-		}
+		}*/
 		return stateIn;
 	}
 
@@ -217,12 +213,12 @@ public class WorldRenderer {
 		renderState.viewMatrix.lookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
 		renderState.viewMatrix.rotate((float) deg2rad(TinyCraft.getInstance().player.pitch), 1.0f, 0.0f, 0.0f);
 		renderState.viewMatrix.rotate((float) deg2rad(TinyCraft.getInstance().player.yaw), 0.0f, 1.0f, 0.0f);
-		Vector3f pos = TinyCraft.getInstance().player.getInterpolatedPosition(renderPartialTicks);
+		Vector3d pos = TinyCraft.getInstance().player.getInterpolatedPosition(renderPartialTicks);
 		pos.add(0f, TinyCraft.getInstance().player.getEyeHeight(), 0f);
 		renderState.viewMatrix.translate(-pos.x, -pos.y, -pos.z);
 		GL11.glDepthRange(0.01f, 1000f);
 
-		world.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(cr -> {
+		world.chunkProvider.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(cr -> {
 			cr.doChunkQuery(renderState);
 		});
 
@@ -235,7 +231,7 @@ public class WorldRenderer {
 			final int pass = i;
 
 			final boolean c = doesPassAllowConditionalRendering(pass);
-			world.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(cr -> {
+			world.chunkProvider.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(cr -> {
 				if (c)
 					cr.beginConditionalRender();
 				cr.render(	processRenderStateForPass(pass, renderState),
@@ -261,15 +257,15 @@ public class WorldRenderer {
 			ShaderManager.worldCompositeProgram.bindTextureWaterMask("/dynamic/framebuffer_world_watermask.png");
 			ShaderManager.worldCompositeProgram.bindTextureDepth("/dynamic/framebuffer_world_depth.png");
 			ShaderManager.worldCompositeProgram.bindTextureOpaqueDepth("/dynamic/framebuffer_world_opaque_depth.png");
-			ShaderManager.worldCompositeProgram.bindTextureDepthShadow("/dynamic/framebuffer_world_sunspace_depth.png");
+			// ShaderManager.worldCompositeProgram.bindTextureDepthShadow("/dynamic/framebuffer_world_sunspace_depth.png");
 			ShaderManager.worldCompositeProgram.setSubmergedInWater(TinyCraft.getInstance().player.isHeadUnderwater());
 			ShaderManager.worldCompositeProgram.loadRenderState(grs);
 			ShaderManager.worldCompositeProgram.setTimer(TinyCraft.getInstance().tickTimer.totalTicks
 					+ TinyCraft.getInstance().tickTimer.renderPartialTicks);
 		} else {
-			ShaderManager.defaultProgram.use();
+			/*ShaderManager.defaultProgram.use();
 			ShaderManager.defaultProgram.bindTexture("/dynamic/framebuffer_world_sunspace_depth.png");
-			ShaderManager.worldCompositeProgram.loadRenderState(grs);
+			ShaderManager.worldCompositeProgram.loadRenderState(grs);*/
 		}
 		Tessellator tess = Tessellator.instance;
 		tess.getBuffer().addQuadVertexWithUV(0, 0, 0, 0, 1);
@@ -382,7 +378,7 @@ public class WorldRenderer {
 			}
 		}
 
-		// Shadow buffer
+		/*// Shadow buffer
 
 		if (framebuffer3 != 0) {
 			EXTFramebufferObject.glDeleteFramebuffersEXT(framebuffer3);
@@ -404,7 +400,7 @@ public class WorldRenderer {
 		 * TinyCraft.getInstance().textureManager
 		 * .getTextureUnit("/dynamic/framebuffer_world_sunspace_debug.png"), 0);
 		 */
-		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_sunspace_depth.png");
+		/*TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_sunspace_depth.png");
 		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_sunspace_depth.png",
 																	LIGHTMAP_SIZE,
 																	LIGHTMAP_SIZE,
@@ -423,7 +419,7 @@ public class WorldRenderer {
 		status = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT);
 		if (status != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT) {
 			throw new IllegalArgumentException("Framebuffer incomplete, error " + status);
-		}
+		}*/
 
 		// Unbind
 

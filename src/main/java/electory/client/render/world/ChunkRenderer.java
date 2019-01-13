@@ -26,6 +26,8 @@ public class ChunkRenderer {
 			0xffefefef, 0xffffffff };
 
 	public boolean needsUpdate = true;
+	
+	private boolean isInitialized = false;
 
 	public ChunkRenderer(Chunk chunk) {
 		this.chunk = chunk;
@@ -35,19 +37,22 @@ public class ChunkRenderer {
 		return chunk;
 	}
 
-	public void init() {
+	private void init() {
+		if(isInitialized) return;
 		for (int i = 0; i < vbos.length; i++) {
 			vbos[i] = GL15.glGenBuffers();
 		}
 		query = ARBOcclusionQuery.glGenQueriesARB();
+		isInitialized = true;
 		update();
 	}
 
 	public void doChunkQuery(WorldRenderState rs) {
+		init();
 		GL11.glColorMask(false, false, false, false);
 		ARBOcclusionQuery.glBeginQueryARB(ARBOcclusionQuery.GL_SAMPLES_PASSED_ARB, query);
-		ShaderManager.whiteProgram.use();
-		ShaderManager.whiteProgram.loadRenderState(rs);
+		ShaderManager.solidProgram.use();
+		ShaderManager.solidProgram.loadRenderState(rs);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		TriangleBuffer buf = Tessellator.instance.getBuffer();
 		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, getChunk().getChunkBlockCoordZ());
@@ -96,6 +101,7 @@ public class ChunkRenderer {
 	}
 
 	public void update() {
+		init();
 		needsUpdate = false;
 		TinyCraft.getInstance().chunkUpdCounter++;
 		for (int i = 0; i < vbos.length; i++) {
@@ -144,6 +150,8 @@ public class ChunkRenderer {
 	}
 
 	public void render(WorldRenderState rs, DefaultProgram shader, int pass, int vbo) {
+		init();
+		
 		if (needsUpdate) {
 			update();
 		}

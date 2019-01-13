@@ -20,7 +20,7 @@ public class Tessellator {
 		return buffer;
 	}
 
-	public void draw() {
+	public void draw(int mode) {
 		getBuffer().getBuffer().flip();
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, getBuffer().getBuffer(), GL15.GL_STREAM_DRAW);
@@ -30,10 +30,14 @@ public class Tessellator {
 		GL20.glEnableVertexAttribArray(DefaultProgram.POSITION_ATTRIB);
 		GL20.glEnableVertexAttribArray(DefaultProgram.TEXCOORD_ATTRIB);
 		GL20.glEnableVertexAttribArray(DefaultProgram.COLOR_ATTRIB);
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, getBuffer().getVertexCount());
+		GL11.glDrawArrays(mode, 0, getBuffer().getVertexCount());
 		GL20.glDisableVertexAttribArray(DefaultProgram.POSITION_ATTRIB);
 		GL20.glDisableVertexAttribArray(DefaultProgram.TEXCOORD_ATTRIB);
 		GL20.glDisableVertexAttribArray(DefaultProgram.COLOR_ATTRIB);
 		getBuffer().reset();
+	}
+
+	public void draw() {
+		draw(GL11.GL_TRIANGLES);
 	}
 }

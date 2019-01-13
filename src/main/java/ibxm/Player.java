@@ -1,8 +1,15 @@
 
 package ibxm;
 
-import java.io.*;
-import javax.sound.sampled.*;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
 public class Player {
 	private Thread play_thread;

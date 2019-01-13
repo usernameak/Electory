@@ -1,10 +1,10 @@
 package electory.client.render;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4d;
 
 public interface IRenderState {
-	Matrix4f getProjectionMatrix();
-	Matrix4f getViewMatrix();
+	Matrix4d getProjectionMatrix();
+	Matrix4d getViewMatrix();
 
-	Matrix4f getModelMatrix();
+	Matrix4d getModelMatrix();
 }

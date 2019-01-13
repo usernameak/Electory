@@ -63,7 +63,6 @@ public final class PrimitiveTypes {
     public static final PrimitiveType<Buffer> UNKNOWN = new UnknownType();
 
     private PrimitiveTypes() {
-        // TODO Auto-generated constructor stub
     }
 
 }

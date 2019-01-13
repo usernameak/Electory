@@ -1,6 +1,6 @@
 package electory.client.render.entity.particle;
 
-import org.joml.Vector3f;
+import org.joml.Vector3d;
 
 import electory.client.render.IAtlasSprite;
 import electory.client.render.Tessellator;
@@ -17,10 +17,10 @@ public class RenderBlockParticle extends EntityRenderer<EntityBlockParticle> {
 		Tessellator tess = Tessellator.instance;
 		TriangleBuffer buffer = tess.getBuffer();
 		IAtlasSprite sprite = entity.sprite;
-		Vector3f pos = entity.getInterpolatedPosition(renderPartialTicks);
-		float x = pos.x;
-		float y = pos.y;
-		float z = pos.z;
+		Vector3d pos = entity.getInterpolatedPosition(renderPartialTicks);
+		double x = pos.x;
+		double y = pos.y;
+		double z = pos.z;
 		
 		ShaderManager.defaultProgram.use();
 		ShaderManager.defaultProgram.bindTexture("/terrain.png");
