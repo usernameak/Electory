@@ -10,7 +10,6 @@ import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.joml.Vector3d;
-import org.joml.Vector3f;
 
 import electory.block.Block;
 import electory.client.TinyCraft;
@@ -88,6 +87,8 @@ public class World implements IChunkSaveStatusHandler {
 				addEntity(particle);
 			}
 		}
+		oldBlock.getSound().play(this, x, y, z);
+		
 	}
 
 	public void interactWithBlock(EntityPlayer player, int x, int y, int z, EnumSide side) {
@@ -340,5 +341,8 @@ public class World implements IChunkSaveStatusHandler {
 		}
 	}
 
+	public void playSFX(String path, float x, float y, float z, float radius) {
+		TinyCraft.getInstance().soundManager.playSFX(path, "world;" + path, x, y, z, radius);
+	}
 }
 

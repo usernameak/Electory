@@ -44,6 +44,12 @@
 			<artifactId>miglayout-core</artifactId>
 			<version>5.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jcraft</groupId>
+			<artifactId>jorbis</artifactId>
+			<version>0.0.17</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

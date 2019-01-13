@@ -32,8 +32,12 @@ public class Block {
 	private boolean solid = true;
 	private boolean liquid = false;
 	private boolean impassable = true;
+	private BlockSound sound = SOUND_WOOD;
 
 	protected IAtlasSprite blockSprite;
+	
+	public static final BlockSound SOUND_WOOD = new BlockSound("sfx/break/wood1.ogg");
+	public static final BlockSound SOUND_SAND = new BlockSound("sfx/break/sand1.ogg");
 
 	public Block setSpriteNumber(int spriteNumber) {
 		this.spriteNumber = spriteNumber;
@@ -117,6 +121,15 @@ public class Block {
 		return isSolid();
 	}
 
+	public BlockSound getSound() {
+		return sound;
+	}
+
+	public Block setSound(BlockSound sound) {
+		this.sound = sound;
+		return this;
+	}
+
 	static {
 		blockCobblestone = new Block(1).setSpriteNumber(1);
 		blockGrass = new BlockGrass(2);
@@ -127,7 +140,7 @@ public class Block {
 		blockLog = new BlockLog(7);
 		blockLeaves = new Block(8).setSpriteNumber(15);
 		blockWater = new BlockWater(9).setSpriteNumber(16).setSolid(false).setLiquid(true).setImpassable(false);
-		blockSand = new Block(10).setSpriteNumber(11);
+		blockSand = new Block(10).setSpriteNumber(11).setSound(SOUND_SAND);
 		blockStone = new Block(11).setSpriteNumber(18);
 		blockGravel = new Block(12).setSpriteNumber(9);
 		blockTallGrass = new BlockTallGrass(13).setSpriteNumber(20).setSolid(false).setImpassable(false);

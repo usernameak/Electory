@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
@@ -194,6 +193,10 @@ public class TinyCraft {
 		}
 
 		tickTimer.updateTimer();
+
+		if (player != null) {
+			soundManager.updateListener(player);
+		}
 
 		for (int i = 0; i < tickTimer.elapsedTicks; i++) {
 			tick(tickTimer.renderPartialTicks);

@@ -194,6 +194,10 @@ public abstract class Entity {
 		return new Vector3d(oldX, oldY, oldZ).lerp(new Vector3d(x, y, z), renderPartialTicks);
 	}
 
+	public Vector3f getVelocity() {
+		return velocity;
+	}
+
 	public void writeEntityData(CompoundTag tag) throws IOException {
 		tag.putDouble("x", newX);
 		tag.putDouble("y", newY);
