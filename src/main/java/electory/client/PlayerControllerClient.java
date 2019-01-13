@@ -27,19 +27,23 @@ public class PlayerControllerClient implements IPlayerController {
 		float movementSpeed = player.isUnderwater ? 0.25f : (player.onGround ? 0.3f : 0.2f);
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			movementVector.add(0.0f, 0.0f, movementSpeed);
+			movementVector.add(0.0f, 0.0f, 1.0f);
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-			movementVector.add(-movementSpeed, 0.0f, 0.0f);
+			movementVector.add(-1.0f, 0.0f, 0.0f);
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-			movementVector.add(movementSpeed, 0.0f, 0.0f);
+			movementVector.add(1.0f, 0.0f, 0.0f);
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-			movementVector.add(0.0f, 0.0f, -movementSpeed);
+			movementVector.add(0.0f, 0.0f, -1.0f);
+		}
+
+		if (movementVector.lengthSquared() != 0f) {
+			movementVector.normalize().mul(movementSpeed);
 		}
 
 		movementMatrix.transformDirection(movementVector);
@@ -78,7 +82,8 @@ public class PlayerControllerClient implements IPlayerController {
 						for (int z = z1; z <= z2; z++) {
 							Block block = player.world.getBlockAt(x, y, z);
 							if (block != null && !block.isLiquid()) {
-								AABBIntersectionResult res = ray.intersectsAABB(block.getAABB(player.world, x, y, z, false));
+								AABBIntersectionResult res = ray
+										.intersectsAABB(block.getAABB(player.world, x, y, z, false));
 								if (res.hasHit && res.distance < tres.distance) {
 									tres = res;
 									tx = x;
