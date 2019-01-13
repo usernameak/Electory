@@ -29,6 +29,7 @@ import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;
 import electory.client.gui.screen.GuiInGame;
+import electory.client.gui.screen.GuiPause;
 import electory.client.gui.screen.GuiScreen;
 import electory.client.render.AtlasManager;
 import electory.client.render.shader.ShaderCompileException;
@@ -65,7 +66,7 @@ public class TinyCraft {
 	public int chunkUpdates = 0;
 	private long fpsNanoCounterLast = System.nanoTime();
 	private long fpsNanoCounter = System.nanoTime();
-	
+
 	private boolean shutdown = false;
 
 	static {
@@ -86,7 +87,7 @@ public class TinyCraft {
 	public boolean isPaused() {
 		return currentGui == null ? false : currentGui.doesGuiPauseGame();
 	}
-	
+
 	public void shutdown() {
 		shutdown = true;
 	}
@@ -188,6 +189,10 @@ public class TinyCraft {
 	}
 
 	public void update() {
+		if (!Display.isActive() && world != null && player != null) {
+			openGui(new GuiPause(this));
+		}
+
 		tickTimer.updateTimer();
 
 		for (int i = 0; i < tickTimer.elapsedTicks; i++) {
@@ -237,6 +242,7 @@ public class TinyCraft {
 				}
 			}
 		}
+
 	}
 
 	public File getGameDir() {
