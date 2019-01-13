@@ -19,7 +19,7 @@ public class FontRenderer {
 	public void drawText(GuiRenderState rs, String s, int x, int y) {
 		ShaderManager.defaultProgram.use();
 		ShaderManager.defaultProgram.loadRenderState(rs);
-		ShaderManager.defaultProgram.bindTexture("/font.png");
+		ShaderManager.defaultProgram.bindTexture("/img/font/font.png");
 		for (int i = 0; i < s.length(); i++) {
 			cb.clear();
 			cb.put(s.charAt(i));

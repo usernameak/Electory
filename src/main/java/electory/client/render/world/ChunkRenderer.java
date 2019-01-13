@@ -12,6 +12,7 @@ import electory.client.render.Tessellator;
 import electory.client.render.TriangleBuffer;
 import electory.client.render.shader.DefaultProgram;
 import electory.client.render.shader.ShaderManager;
+import electory.client.render.texture.TextureManager;
 import electory.world.Chunk;
 
 public class ChunkRenderer {
@@ -157,7 +158,7 @@ public class ChunkRenderer {
 		}
 
 		shader.use();
-		shader.bindTexture("/terrain.png");
+		shader.bindTexture(TextureManager.TERRAIN_TEXTURE);
 		shader.loadRenderState(rs);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbos[vbo]);
 		GL20.glEnableVertexAttribArray(DefaultProgram.POSITION_ATTRIB);

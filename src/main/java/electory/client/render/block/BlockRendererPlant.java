@@ -6,6 +6,7 @@ import electory.client.render.IAtlasSprite;
 import electory.client.render.Tessellator;
 import electory.client.render.TriangleBuffer;
 import electory.client.render.shader.ShaderManager;
+import electory.client.render.texture.TextureManager;
 import electory.client.render.world.ChunkRenderer;
 import electory.world.World;
 
@@ -46,7 +47,7 @@ public class BlockRendererPlant implements IBlockRenderer {
 	public void renderBlockInGUI(Block block, GuiRenderState rs) {
 		IAtlasSprite sprite = block.getAtlasSprite();
 		ShaderManager.defaultProgram.use();
-		ShaderManager.defaultProgram.bindTexture("/terrain.png");
+		ShaderManager.defaultProgram.bindTexture(TextureManager.TERRAIN_TEXTURE);
 
 		GuiRenderState rs2 = new GuiRenderState(rs);
 		rs2.viewMatrix.translate(16, 16, 0);

@@ -15,6 +15,8 @@ import org.lwjgl.opengl.GL11;
 import electory.utils.CrashException;
 
 public class TextureManager {
+	public static final String TERRAIN_TEXTURE = "/img/items/terrain.png";
+	
 	private Map<String, Integer> loadedTextures = new HashMap<>();
 
 	public void bindTexture(String texture) {

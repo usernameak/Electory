@@ -7,6 +7,7 @@ import electory.client.render.Tessellator;
 import electory.client.render.TriangleBuffer;
 import electory.client.render.entity.EntityRenderer;
 import electory.client.render.shader.ShaderManager;
+import electory.client.render.texture.TextureManager;
 import electory.client.render.world.WorldRenderState;
 import electory.entity.particle.EntityBlockParticle;
 
@@ -23,7 +24,7 @@ public class RenderBlockParticle extends EntityRenderer<EntityBlockParticle> {
 		double z = pos.z;
 		
 		ShaderManager.defaultProgram.use();
-		ShaderManager.defaultProgram.bindTexture("/terrain.png");
+		ShaderManager.defaultProgram.bindTexture(TextureManager.TERRAIN_TEXTURE);
 		
 		WorldRenderState rs2 = new WorldRenderState(rs);
 		rs2.modelMatrix.translate(x - 0.0625f, y, z - 0.0625f);

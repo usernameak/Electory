@@ -26,7 +26,7 @@ public class GuiInGame extends GuiScreen {
 	public void renderGui(GuiRenderState rs) {
 		ShaderManager.defaultProgram.use();
 		ShaderManager.defaultProgram.loadRenderState(rs);
-		ShaderManager.defaultProgram.bindTexture("/gui/xhair.png");
+		ShaderManager.defaultProgram.bindTexture("/img/hud/xhair.png");
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
 
@@ -42,7 +42,7 @@ public class GuiInGame extends GuiScreen {
 		Tessellator.instance.draw();
 		GL11.glDisable(GL11.GL_BLEND);
 
-		ShaderManager.defaultProgram.bindTexture("/gui/hot_bar.png");
+		ShaderManager.defaultProgram.bindTexture("/img/hud/hot_bar.png");
 		// GL11.glEnable(GL11.GL_TEXTURE_2D);
 		Tessellator.instance.getBuffer().setColor(0xFFFFFFFF);
 
@@ -65,7 +65,7 @@ public class GuiInGame extends GuiScreen {
 				ShaderManager.defaultProgram.loadRenderState(rs2);
 
 				if (tc.player.selectedBlock == pickableBlocks[i]) {
-					ShaderManager.defaultProgram.bindTexture("/gui/hot_bar_selection.png");
+					ShaderManager.defaultProgram.bindTexture("/img/hud/hot_bar_selection.png");
 					Tessellator.instance.getBuffer().addQuadVertexWithUV(-5f, -5f, 0f, 0f, 0f);
 					Tessellator.instance.getBuffer().addQuadVertexWithUV(-5f, 37f, 0f, 0f, 1f);
 					Tessellator.instance.getBuffer().addQuadVertexWithUV(37f, 37f, 0f, 1f, 1f);
