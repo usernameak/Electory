@@ -2,8 +2,10 @@ package electory.client;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
@@ -65,6 +67,8 @@ public class TinyCraft {
 	public int chunkUpdates = 0;
 	private long fpsNanoCounterLast = System.nanoTime();
 	private long fpsNanoCounter = System.nanoTime();
+	
+	private static String version = "version unknown";
 
 	private boolean shutdown = false;
 
@@ -89,6 +93,25 @@ public class TinyCraft {
 
 	public void shutdown() {
 		shutdown = true;
+	}
+	
+	static {
+		BufferedReader isr = new BufferedReader(new InputStreamReader(TinyCraft.class.getResourceAsStream("/version.def")));
+		try {
+			version = isr.readLine().trim();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				isr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static String getVersion() {
+		return version;
 	}
 
 	public void start() {

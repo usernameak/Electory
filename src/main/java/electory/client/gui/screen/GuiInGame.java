@@ -76,10 +76,11 @@ public class GuiInGame extends GuiScreen {
 			}
 		}
 
-		tc.fontRenderer.drawText(rs, tc.fps + " FPS, " + tc.chunkUpdates + " chunk updates", 2, 2);
+		tc.fontRenderer.drawText(rs, "Electory " + TinyCraft.getVersion(), 2, 2);
+		tc.fontRenderer.drawText(rs, tc.fps + " FPS, " + tc.chunkUpdates + " chunk updates", 2, 10);
 		if (tc.world != null) {
-			tc.fontRenderer.drawText(rs, "seed: " + tc.world.seed, 2, 10);
-			tc.fontRenderer.drawText(rs, tc.world.chunkProvider.getAllLoadedChunks().size() + " chunks loaded", 2, 34);
+			tc.fontRenderer.drawText(rs, "seed: " + tc.world.seed, 2, 18);
+			tc.fontRenderer.drawText(rs, tc.world.chunkProvider.getAllLoadedChunks().size() + " chunks loaded", 2, 52);
 		}
 		if (tc.player != null) {
 			Vector3d pos = tc.player.getInterpolatedPosition(0f);
@@ -91,7 +92,7 @@ public class GuiInGame extends GuiScreen {
 												+ ", z: "
 												+ (int) Math.floor(pos.z),
 										2,
-										18);
+										26);
 			if (tc.world != null) {
 				tc.fontRenderer
 						.drawText(	rs,
@@ -99,7 +100,7 @@ public class GuiInGame extends GuiScreen {
 											+ tc.world.getBiomeAt((int) Math.floor(pos.x), (int) Math.floor(pos.z))
 													.toString(),
 									2,
-									26);
+									34);
 			}
 		}
 	}
