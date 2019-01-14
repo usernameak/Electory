@@ -37,8 +37,8 @@ public class GuiRowLayout extends GuiWidget {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState) {
-		children.stream().forEach(c -> c.handleKeyEvent(eventKey, eventKeyState));
+	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
+		children.stream().forEach(c -> c.handleKeyEvent(eventKey, eventKeyState, keyChar));
 	}
 
 	@Override

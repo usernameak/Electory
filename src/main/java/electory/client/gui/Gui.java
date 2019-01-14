@@ -13,7 +13,7 @@ public abstract class Gui {
 
 	public abstract void renderGui(GuiRenderState rs);
 
-	public abstract void handleKeyEvent(int eventKey, boolean eventKeyState);
+	public abstract void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar);
 
 	public abstract void handleMouseEvent(MouseEvent event);
 }

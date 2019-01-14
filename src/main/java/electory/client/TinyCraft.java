@@ -201,7 +201,7 @@ public class TinyCraft {
 		try {
 			Display.setDisplayMode(windowedDisplayMode);
 			Display.setResizable(true);
-			Display.setTitle("Electory");
+			Display.setTitle("Electorate");
 			PixelFormat pf = new PixelFormat();
 			ContextAttribs attribs = new ContextAttribs(2, 1);
 			Display.setIcon(loadIcon("/img/icon.png"));
@@ -292,10 +292,10 @@ public class TinyCraft {
 		while (Keyboard.next()) {
 			if (currentGui == null) {
 				if (player != null && !isPaused()) {
-					theHUD.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+					theHUD.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState(), Keyboard.getEventCharacter());
 				}
 			} else {
-				currentGui.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+				currentGui.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState(), Keyboard.getEventCharacter());
 			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_F11 && Keyboard.getEventKeyState()) {
 				if (Display.isFullscreen()) {

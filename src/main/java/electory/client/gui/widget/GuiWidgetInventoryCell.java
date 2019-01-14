@@ -46,7 +46,7 @@ public class GuiWidgetInventoryCell extends GuiWidget {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState) {
+	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
 		// TODO:
 		
 	}

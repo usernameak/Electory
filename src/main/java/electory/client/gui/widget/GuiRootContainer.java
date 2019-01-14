@@ -108,9 +108,9 @@ public class GuiRootContainer extends GuiWidget {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState) {
-		super.handleKeyEvent(eventKey, eventKeyState);
-		child.handleKeyEvent(eventKey, eventKeyState);
+	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
+		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
+		child.handleKeyEvent(eventKey, eventKeyState, keyChar);
 	}
 
 	@Override

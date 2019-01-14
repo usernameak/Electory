@@ -2,7 +2,6 @@ package electory.client.gui.widget;
 
 import org.lwjgl.opengl.GL11;
 
-import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.IActionListener;
