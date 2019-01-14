@@ -8,6 +8,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import electory.block.Block;
+import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
 import electory.client.render.Tessellator;
@@ -127,6 +128,29 @@ public class GuiInGame extends GuiScreen {
 			} else if (eventKey == GuiConsole.KEY_TILDE) {
 				tc.openGui(new GuiConsole(tc));
 			}
+		}
+	}
+
+	@Override
+	public void handleMouseEvent(MouseEvent event) {
+		super.handleMouseEvent(event);
+
+		if (event.getDWheel() != 0) {
+			int i = 0;
+			for (; i < 9; i++) {
+				if (pickableBlocks[i] != null) {
+					if (pickableBlocks[i] == tc.player.selectedBlock) {
+						break;
+					}
+				}
+			}
+			i += -event.getDWheel() / 120;
+			if (i >= 9) {
+				i = 0;
+			} else if (i < 0) {
+				i = 8;
+			}
+			tc.player.selectedBlock = pickableBlocks[i];
 		}
 	}
 

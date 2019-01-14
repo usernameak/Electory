@@ -228,6 +228,7 @@ public class TinyCraft {
 		while (Mouse.next()) {
 			if (player != null && currentGui == null && !isPaused()) {
 				player.playerController.processMouseEvent(player);
+				theHUD.handleMouseEvent(MouseEvent.fromLWJGLEvent().adjustToGuiScale(resolutionScaler));
 			}
 			if (currentGui != null) {
 				currentGui.handleMouseEvent(MouseEvent.fromLWJGLEvent().adjustToGuiScale(resolutionScaler));
