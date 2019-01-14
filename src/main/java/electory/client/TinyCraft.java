@@ -214,10 +214,10 @@ public class TinyCraft {
 		while (Keyboard.next()) {
 			if (currentGui == null) {
 				if (player != null && !isPaused()) {
-					theHUD.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+					theHUD.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState(), Keyboard.getEventCharacter());
 				}
 			} else {
-				currentGui.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+				currentGui.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState(), Keyboard.getEventCharacter());
 			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_F11 && Keyboard.getEventKeyState()) {
 				if (Display.isFullscreen()) {

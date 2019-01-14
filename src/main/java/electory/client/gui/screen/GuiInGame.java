@@ -105,7 +105,7 @@ public class GuiInGame extends GuiScreen {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState) {
+	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
 		if (eventKeyState) {
 			if (eventKey >= Keyboard.KEY_1 && eventKey <= Keyboard.KEY_9) {
 				int i = eventKey - Keyboard.KEY_1;

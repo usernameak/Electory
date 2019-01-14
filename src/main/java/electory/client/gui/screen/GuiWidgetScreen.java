@@ -28,9 +28,9 @@ public abstract class GuiWidgetScreen extends GuiScreen {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState) {
-		super.handleKeyEvent(eventKey, eventKeyState);
-		rootContainer.handleKeyEvent(eventKey, eventKeyState);
+	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
+		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
+		rootContainer.handleKeyEvent(eventKey, eventKeyState, keyChar);
 	}
 	
 	@Override

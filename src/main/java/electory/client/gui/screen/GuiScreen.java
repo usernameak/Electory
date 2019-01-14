@@ -20,7 +20,7 @@ public abstract class GuiScreen extends Gui {
 	}
 	
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState) {
+	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
 		
 	}
 	

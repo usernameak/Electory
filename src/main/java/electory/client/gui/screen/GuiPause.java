@@ -19,14 +19,14 @@ public class GuiPause extends GuiWidgetScreen implements IActionListener {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState) {
+	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
 		if (eventKeyState) {
 			if (eventKey == Keyboard.KEY_ESCAPE) {
 				tc.openGui(null);
 				return;
 			}
 		}
-		super.handleKeyEvent(eventKey, eventKeyState);
+		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
 	}
 
 	@Override
