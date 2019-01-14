@@ -188,6 +188,7 @@ public class TinyCraft {
 			crashFrame.setContentPane(contentPane);
 			crashFrame.setLocation(100, 100);
 			crashFrame.setSize(640, 480);
+			crashFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			crashFrame.setVisible(true);
 			
 			System.out.println("Showing crash report window.");
