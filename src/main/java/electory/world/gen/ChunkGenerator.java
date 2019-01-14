@@ -168,7 +168,7 @@ public class ChunkGenerator implements IChunkProvider {
 										Block.blockList[(z >= 128 ? chunkDataExt : chunkData)[i << 11
 												| j << 7
 												| (z & 0x7F)]],
-										World.FLAG_SKIP_LIGHT_UPDATE);
+										World.FLAG_SKIP_UPDATE);
 				}
 				chunk.setBiomeAt(i, j, BiomeGenBase.biomeList[biomeData[j << 4 | i]]);
 			}

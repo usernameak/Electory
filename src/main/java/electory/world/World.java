@@ -37,6 +37,7 @@ public class World implements IChunkSaveStatusHandler {
 
 	public static final int FLAG_SKIP_RENDER_UPDATE = 1;
 	public static final int FLAG_SKIP_LIGHT_UPDATE = 2;
+	public static final int FLAG_SKIP_UPDATE = FLAG_SKIP_LIGHT_UPDATE | FLAG_SKIP_RENDER_UPDATE;
 	
 	public static final int CHUNKLOAD_DISTANCE = 8;
 	public static final int CHUNKLOAD_DISTANCE2 = CHUNKLOAD_DISTANCE * 2;
