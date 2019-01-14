@@ -47,7 +47,8 @@ public class FontRenderer {
 	}
 
 	public void drawTextArea(GuiRenderState rs, String s, int x, int y, Rect2D area) {
-		if(y > area.getMaxY()) {
+		// TODO: Don't draw this text if the area is out of screen
+		if (y > area.getMaxY()) {
 			System.out.println("[FontRenderer::drawTextArea] Out of area!"); // TODO: Make debugger function
 			return;
 		}
@@ -55,15 +56,16 @@ public class FontRenderer {
 		int dx = x < area.getX() ? area.getX() : x; // Fit into left border
 		int dy = y < area.getY() ? area.getY() : y; // Fit into upper border
 		
-		for(int i = 0; i < s.length(); i++) {
-			if(dx + CHAR_WIDTH >= area.getMaxX()) {
+		for (int i = 0; i < s.length(); i++) {
+			if (dx + CHAR_WIDTH >= area.getMaxX()) {
 				dy += CHAR_HEIGHT;
 				dx = area.getX();
 			}
+
 			drawText(rs, "" + s.charAt(i), dx, dy); // TODO: Send part of string // FIXME: Bad practics?
 			dx += CHAR_WIDTH;
 
-			if(dy >= area.getMaxY()) break; // Out of area
+			if (dy >= area.getMaxY()) break; // Out of area
 		}
 	}
 }
