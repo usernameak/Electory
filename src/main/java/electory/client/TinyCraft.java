@@ -1,14 +1,22 @@
 package electory.client;
 
+import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.border.EmptyBorder;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -67,7 +75,7 @@ public class TinyCraft {
 	public int chunkUpdates = 0;
 	private long fpsNanoCounterLast = System.nanoTime();
 	private long fpsNanoCounter = System.nanoTime();
-	
+
 	private static String version = "version unknown";
 
 	private boolean shutdown = false;
@@ -94,9 +102,10 @@ public class TinyCraft {
 	public void shutdown() {
 		shutdown = true;
 	}
-	
+
 	static {
-		BufferedReader isr = new BufferedReader(new InputStreamReader(TinyCraft.class.getResourceAsStream("/version.def")));
+		BufferedReader isr = new BufferedReader(
+				new InputStreamReader(TinyCraft.class.getResourceAsStream("/version.def")));
 		try {
 			version = isr.readLine().trim();
 		} catch (IOException e) {
@@ -109,38 +118,82 @@ public class TinyCraft {
 			}
 		}
 	}
-	
+
 	public static String getVersion() {
 		return version;
 	}
 
 	public void start() {
-		initRenderer();
-		initGame();
+		try {
+			initRenderer();
+			initGame();
 
-		while (!Display.isCloseRequested() && !shutdown) {
-			update();
-			// if (Display.isActive() || Display.isDirty()) {
-			render();
-			// }
-			Display.update();
-			fpsc++;
-			fpsNanoCounter = System.nanoTime();
-			if (fpsNanoCounter >= fpsNanoCounterLast + 1000000000L) {
-				fpsNanoCounterLast += 1000000000L;
-				// Display.setTitle(fps + " FPS");
-				fps = fpsc;
-				chunkUpdates = chunkUpdCounter;
-				chunkUpdCounter = 0;
-				fpsc = 0;
+			while (!Display.isCloseRequested() && !shutdown) {
+				update();
+				// if (Display.isActive() || Display.isDirty()) {
+				render();
+				// }
+				Display.update();
+				fpsc++;
+				fpsNanoCounter = System.nanoTime();
+				if (fpsNanoCounter >= fpsNanoCounterLast + 1000000000L) {
+					fpsNanoCounterLast += 1000000000L;
+					// Display.setTitle(fps + " FPS");
+					fps = fpsc;
+					chunkUpdates = chunkUpdCounter;
+					chunkUpdCounter = 0;
+					fpsc = 0;
+				}
 			}
+
+			soundManager.destroy();
+
+			world.unload();
+
+			Display.destroy();
+		} catch (CrashException e) {
+			showCrashReport(e);
+		} catch (Exception e) {
+			showCrashReport(new CrashException(e));
+		}
+	}
+
+	public void showCrashReport(CrashException exception) {
+		System.err.println("\n\nCrash report:\n");
+		exception.printStackTrace();
+
+		try {
+			Mouse.setGrabbed(false);
+			Mouse.destroy();
+			Keyboard.destroy();
+			Display.destroy();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
-		soundManager.destroy();
-
-		world.unload();
-
-		Display.destroy();
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PrintStream ps = new PrintStream(baos, true, "UTF-8");
+			exception.printStackTrace(ps);
+			String s = baos.toString("UTF-8");
+			JFrame crashFrame = new JFrame("Electory crash");
+			crashFrame.setIconImage(ImageIO.read(getClass().getResource("/img/icon.png")));
+			JPanel contentPane = new JPanel();
+			contentPane.setLayout(new BorderLayout());
+			contentPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+			JTextPane textArea = new JTextPane();
+			textArea.setText(s);
+			textArea.setEditable(false);
+			contentPane.add(textArea, BorderLayout.CENTER);
+			crashFrame.setContentPane(contentPane);
+			crashFrame.setLocation(100, 100);
+			crashFrame.setSize(640, 480);
+			crashFrame.setVisible(true);
+			
+			System.out.println("Showing crash report window.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void initRenderer() {
@@ -267,6 +320,8 @@ public class TinyCraft {
 						e.printStackTrace();
 					}
 				}
+			} else if (Keyboard.getEventKey() == Keyboard.KEY_C && Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.getEventKeyState()) {
+				throw new CrashException("Debug crash.");
 			}
 		}
 
