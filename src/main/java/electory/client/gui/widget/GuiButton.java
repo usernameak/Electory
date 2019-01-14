@@ -20,7 +20,7 @@ public class GuiButton extends GuiWidget {
 
 	@Override
 	public int getHeight() {
-		return FontRenderer.FONT_HEIGHT;
+		return FontRenderer.CHAR_HEIGHT;
 	}
 
 	@Override
