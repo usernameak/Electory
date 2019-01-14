@@ -1,5 +1,8 @@
 package electory.client.gui.screen;
 
+import java.util.Iterator;
+import java.util.Stack;
+
 import org.lwjgl.input.Keyboard;
 
 import electory.client.TinyCraft;
@@ -19,10 +22,10 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	private static final int CONSOLE_WIDTH  = 800; // TODO: Get from the screen's width
 	private static final int CONSOLE_HEIGHT = CONSOLE_WIDTH / 4;
 
-	private   Rect2D	consoleArea = new Rect2D(0, 0, CONSOLE_WIDTH, CONSOLE_HEIGHT);
-	protected GuiRect	consoleRect;
-	protected String	consoleInputString = "";
-	// protected String[]	consoleInput; // TODO:
+	private   Rect2D		consoleArea = new Rect2D(0, 0, CONSOLE_WIDTH, CONSOLE_HEIGHT - FontRenderer.CHAR_HEIGHT);
+	protected GuiRect		consoleRect;
+	protected String		consoleInputString = "";
+	protected Stack<String> consoleInput;
 
 	public GuiConsole(TinyCraft tc) {
 		super(tc);
@@ -40,7 +43,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 					consoleInputString += "a";
 					break;
 				case Keyboard.KEY_RETURN:
-					// TODO: Send consoleInputString somewhere
+					consoleInput.push(consoleInputString);
 					consoleInputString = "";
 					break;
 			}
@@ -65,6 +68,8 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 		
 		rootContainer.position		= Position.TOP_LEFT;
 		rootContainer.verticalGap	= 0;
+
+		// consoleInput.add("Hello! I'm a console =)");
 		
 		return rootContainer;
 	}
@@ -73,9 +78,14 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	public void renderGui(GuiRenderState rs) {
 		super.renderGui(rs);
 
-		tc.fontRenderer.drawTextArea(rs, "I'm a console =)", 0, 0, consoleArea);
+		int tmpy = 0;
 
-		tc.fontRenderer.drawTextArea(rs, "> " + consoleInputString, 0, consoleArea.getMaxY() - FontRenderer.CHAR_HEIGHT, consoleArea);
+		for(String console : consoleInput) {
+			tmpy = tc.fontRenderer.drawTextArea(rs, console, 0, tmpy, consoleArea);
+			if(tmpy > consoleArea.getMaxY()) break;
+		}
+
+		tc.fontRenderer.drawText(rs, "> " + consoleInputString, 0, consoleArea.getMaxY() - FontRenderer.CHAR_HEIGHT);
 	}
 
 	@Override

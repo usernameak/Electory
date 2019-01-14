@@ -46,11 +46,14 @@ public class FontRenderer {
 		Tessellator.instance.draw();
 	}
 
-	public void drawTextArea(GuiRenderState rs, String s, int x, int y, Rect2D area) {
+	/**
+	 * Returns last y coordinate
+	 */
+	public int drawTextArea(GuiRenderState rs, String s, int x, int y, Rect2D area) {
 		// TODO: Don't draw this text if the area is out of screen
 		if (y > area.getMaxY()) {
 			System.out.println("[FontRenderer::drawTextArea] Out of area!"); // TODO: Make debugger function
-			return;
+			return y;
 		}
 
 		int dx = x < area.getX() ? area.getX() : x; // Fit into left border
@@ -67,5 +70,7 @@ public class FontRenderer {
 
 			if (dy >= area.getMaxY()) break; // Out of area
 		}
+
+		return dy;
 	}
 }
