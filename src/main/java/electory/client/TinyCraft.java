@@ -124,7 +124,7 @@ public class TinyCraft {
 		try {
 			Display.setDisplayMode(windowedDisplayMode);
 			Display.setResizable(true);
-			Display.setTitle("Electory");
+			Display.setTitle("Electorate");
 			PixelFormat pf = new PixelFormat();
 			ContextAttribs attribs = new ContextAttribs(2, 1);
 			Display.setIcon(loadIcon("/img/icon.png"));

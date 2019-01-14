@@ -39,7 +39,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				tc.openGui(null);
 				return;
 			case Keyboard.KEY_RETURN:
-				consoleInput.push(consoleInputString);
+				consoleInput.push(consoleInputString); // TODO: Handle command exec
 				consoleInputString = "";
 				break;
 			case Keyboard.KEY_BACK:
@@ -81,15 +81,20 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	public void renderGui(GuiRenderState rs) {
 		super.renderGui(rs);
 
-		int tmpy = 0;
+		int tmpY = 0;
+		int lines = -1;
 
 		for (String console : consoleInput) {
-			tmpy = tc.fontRenderer.drawTextArea(rs, console, 0, tmpy, consoleArea);
-			if (tmpy > consoleArea.getMaxY())
+			lines = tc.fontRenderer.getTextLinesArea(console, consoleArea);
+			tc.fontRenderer.drawTextArea(rs, console, 0, consoleArea.getMaxY() - FontRenderer.CHAR_HEIGHT - tmpY,
+					consoleArea);
+			tmpY += lines * FontRenderer.CHAR_HEIGHT;
+
+			if (tmpY < consoleArea.getY())
 				break;
 		}
 
-		tc.fontRenderer.drawText(rs, "> " + consoleInputString, 0, consoleArea.getMaxY() - FontRenderer.CHAR_HEIGHT);
+		tc.fontRenderer.drawText(rs, "> " + consoleInputString, 0, consoleArea.getMaxY() + FontRenderer.CHAR_HEIGHT);
 	}
 
 	@Override

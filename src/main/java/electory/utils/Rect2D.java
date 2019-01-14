@@ -36,6 +36,14 @@ public class Rect2D { // TODO: Move out of here to the separated file
 		return y + (height / 2);
 	}
 
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
 	// Setters
 
 	public void setX(int x) {

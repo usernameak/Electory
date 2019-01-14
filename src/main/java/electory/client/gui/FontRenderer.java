@@ -50,27 +50,36 @@ public class FontRenderer {
 	 * Returns last y coordinate
 	 */
 	public int drawTextArea(GuiRenderState rs, String s, int x, int y, Rect2D area) {
-		// TODO: Don't draw this text if the area is out of screen
+		// TODO: Don't draw this text if the area is out of screen on X coordinate
 		if (y > area.getMaxY()) {
-			System.out.println("[FontRenderer::drawTextArea] Out of area!"); // TODO: Make debugger function
+			System.out.println("[FontRenderer::drawTextArea] Out of area!"); // TODO: Replace to debugger function
+
 			return y;
 		}
 
 		int dx = x < area.getX() ? area.getX() : x; // Fit into left border
-		int dy = y < area.getY() ? area.getY() : y; // Fit into upper border
+		int dy = y;
 		
 		for (int i = 0; i < s.length(); i++) {
-			if (dx + CHAR_WIDTH >= area.getMaxX()) {
+			if (s.charAt(i) == '\n' || dx + CHAR_WIDTH >= area.getMaxX()) {
 				dy += CHAR_HEIGHT;
 				dx = area.getX();
 			}
 
-			drawText(rs, "" + s.charAt(i), dx, dy); // TODO: Send part of string // FIXME: Bad practics?
+			if(dy >= area.getY()) drawText(rs, "" + s.charAt(i), dx, dy); // TODO: Send part of string // FIXME: Bad practics?
 			dx += CHAR_WIDTH;
 
 			if (dy >= area.getMaxY()) break; // Out of area
 		}
 
 		return dy;
+	}
+
+	public int getTextLines(String s) {
+		return s.split("\r\n|\r|\n", -1).length;
+	}
+
+	public int getTextLinesArea(String s, Rect2D area) {
+		return getTextLines(s) + (getTextWidth(s) / area.getWidth());
 	}
 }
