@@ -3,12 +3,15 @@ package electory.client.gui.screen;
 import org.lwjgl.input.Keyboard;
 
 import electory.client.TinyCraft;
+import electory.client.gui.FontRenderer;
+import electory.client.gui.GuiRenderState;
 import electory.client.gui.IActionListener;
 import electory.client.gui.widget.GuiColumnLayout;
 import electory.client.gui.widget.GuiRect;
 import electory.client.gui.widget.GuiRootContainer;
 import electory.client.gui.widget.GuiRootContainer.Position;
 import electory.client.gui.widget.GuiWidget;
+import electory.utils.Rect2D;
 
 public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	
@@ -16,7 +19,10 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	private static final int CONSOLE_WIDTH  = 800; // TODO: Get from the screen's width
 	private static final int CONSOLE_HEIGHT = CONSOLE_WIDTH / 4;
 
-	protected GuiRect consoleRect;
+	private   Rect2D	consoleArea = new Rect2D(0, 0, CONSOLE_WIDTH, CONSOLE_HEIGHT);
+	protected GuiRect	consoleRect;
+	protected String	consoleInputString = "";
+	// protected String[]	consoleInput; // TODO:
 
 	public GuiConsole(TinyCraft tc) {
 		super(tc);
@@ -30,6 +36,13 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				case Keyboard.KEY_ESCAPE:
 					tc.openGui(null);
 					return;
+				case Keyboard.KEY_A:
+					consoleInputString += "a";
+					break;
+				case Keyboard.KEY_RETURN:
+					// TODO: Send consoleInputString somewhere
+					consoleInputString = "";
+					break;
 			}
 		}
 
@@ -54,6 +67,15 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 		rootContainer.verticalGap	= 0;
 		
 		return rootContainer;
+	}
+
+	@Override
+	public void renderGui(GuiRenderState rs) {
+		super.renderGui(rs);
+
+		tc.fontRenderer.drawTextArea(rs, "I'm a console =)", 0, 0, consoleArea);
+
+		tc.fontRenderer.drawTextArea(rs, "> " + consoleInputString, 0, consoleArea.getMaxY() - FontRenderer.CHAR_HEIGHT, consoleArea);
 	}
 
 	@Override
