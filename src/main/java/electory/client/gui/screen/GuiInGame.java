@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -81,7 +82,7 @@ public class GuiInGame extends GuiScreen {
 		tc.fontRenderer.drawText(rs, tc.fps + " FPS, " + tc.chunkUpdates + " chunk updates", 2, 10);
 		if (tc.world != null) {
 			tc.fontRenderer.drawText(rs, "seed: " + tc.world.seed, 2, 18);
-			tc.fontRenderer.drawText(rs, tc.world.chunkProvider.getAllLoadedChunks().size() + " chunks loaded", 2, 52);
+			tc.fontRenderer.drawText(rs, tc.world.chunkProvider.getAllLoadedChunks().size() + " chunks loaded", 2, 50);
 		}
 		if (tc.player != null) {
 			Vector3d pos = tc.player.getInterpolatedPosition(0f);
@@ -103,6 +104,21 @@ public class GuiInGame extends GuiScreen {
 									2,
 									34);
 			}
+
+			Vector3f vel = new Vector3f(tc.player.getVelocity());
+			Vector3f svel = new Vector3f();
+			tc.player.playerController.doMovement(tc.player, svel);
+			vel.add(svel);
+
+			tc.fontRenderer.drawText(	rs,
+										"vel x: "
+												+ String.format("%.3f", vel.x)
+												+ ", y: "
+												+ String.format("%.3f", vel.y)
+												+ ", z: "
+												+ String.format("%.3f", vel.z),
+										2,
+										42);
 		}
 	}
 
