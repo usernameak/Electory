@@ -25,11 +25,14 @@ public class CCHelp extends ConsoleCommand {
 		} else {
 			for (ConsoleCommand command : commands) {
 				if (command.getName().equals(arguments[0])) {
-					console.println("Command \"" + command.getName() + "\":" + command.getUsage());
-					console.println("Arguments:");
+					console.println("Command \"" + command.getName() + "\": " + command.getUsage());
+					
+					if(command.hasArguments()) {	
+						console.println("Arguments:");
 
-					for (String[] arg : command.getArguments()) {
-						console.println("    " + arg[0] + ": " + arg[1]);
+						for (String[] arg : command.getArguments()) {
+							console.println("    " + arg[0] + ": " + arg[1]);
+						}
 					}
 
 					return;

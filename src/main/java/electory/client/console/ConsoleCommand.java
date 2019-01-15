@@ -34,5 +34,13 @@ public abstract class ConsoleCommand {
 		return arguments;
 	}
 
+	public int getArgumentNumber() {
+		return arguments.length;
+	}
+
+	public boolean hasArguments() {
+		return getArgumentNumber() != 0;
+	}
+
 	public abstract void run(String[] arguments);
 }
