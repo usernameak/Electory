@@ -25,6 +25,8 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	protected GuiRect consoleRect;
 	protected String consoleInputString = "";
 	protected LinkedList<String> consoleInput = new LinkedList<>();
+	protected LinkedList<String> consoleHistory = new LinkedList<>();
+	protected int consoleHistoryIndex = -1; // -1 = ""
 
 	public GuiConsole(TinyCraft tc) {
 		super(tc);
@@ -40,20 +42,51 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				return;
 			case Keyboard.KEY_RETURN:
 				println("> " + consoleInputString);
+
+				// If the history isn't empty and the command isn't doublicate of previous
+				if(consoleHistory.size() == 0 || !consoleHistory.get(consoleHistory.size() - 1).equals(consoleInputString))
+					consoleHistory.push(consoleInputString);
+				
+				consoleHistoryIndex = consoleHistory.size() - 1;
 				tc.console.execCommand(consoleInputString);
 				consoleInputString = "";
+
 				break;
 			case Keyboard.KEY_BACK:
-				consoleInputString = consoleInputString.substring(0, consoleInputString.length() - 1);
+				if(consoleInputString.length() > 0)
+					consoleInputString = consoleInputString.substring(0, consoleInputString.length() - 1);
+				break;
+			case Keyboard.KEY_UP:
+			case Keyboard.KEY_DOWN:
+				if(consoleHistory.size() > 0) {
+					if(eventKey == Keyboard.KEY_UP)
+						consoleHistoryIndex++;
+					else if(eventKey == Keyboard.KEY_DOWN)
+						consoleHistoryIndex--;
+
+					if(consoleHistoryIndex < 0) { // Latest change
+						consoleHistoryIndex = -1;
+						consoleInputString = "";
+					} else if(consoleHistoryIndex >= consoleHistory.size()) {
+						consoleHistoryIndex = 0;
+						consoleInputString = consoleHistory.get(consoleHistoryIndex);
+					} else {
+						consoleInputString = consoleHistory.get(consoleHistoryIndex);
+					}
+				}
 				break;
 			default:
 				if (keyChar != '\0') {
 					consoleInputString += keyChar;
 				}
 			}
+
+			// if(consoleHistoryIndex < 0) consoleHistoryIndex = consoleHistory.size() - 1;
+			// if(consoleHistoryIndex >= consoleHistory.size()) consoleHistoryIndex = 0;
 		}
 
-		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
+	super.handleKeyEvent(eventKey,eventKeyState,keyChar);
+
 	}
 
 	@Override
