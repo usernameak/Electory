@@ -39,7 +39,8 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				tc.openGui(null);
 				return;
 			case Keyboard.KEY_RETURN:
-				consoleInput.push(consoleInputString); // TODO: Handle command exec
+				consoleInput.push(consoleInputString);
+				tc.console.execCommand(consoleInputString);
 				consoleInputString = "";
 				break;
 			case Keyboard.KEY_BACK:
@@ -99,5 +100,13 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 
 	@Override
 	public void actionPerformed(GuiWidget widget) {
+	}
+
+	public void println(String ln) {
+		consoleInput.push(ln);
+	}
+
+	public void clear() {
+		consoleInput.clear();
 	}
 }

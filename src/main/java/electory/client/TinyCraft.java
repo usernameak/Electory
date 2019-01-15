@@ -34,9 +34,11 @@ import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
 
 import electory.client.audio.SoundManager;
+import electory.client.console.Console;
 import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;
+import electory.client.gui.screen.GuiConsole;
 import electory.client.gui.screen.GuiInGame;
 import electory.client.gui.screen.GuiPause;
 import electory.client.gui.screen.GuiScreen;
@@ -66,6 +68,7 @@ public class TinyCraft {
 	public FontRenderer fontRenderer = new FontRenderer();
 	public SoundManager soundManager = new SoundManager();
 	public GuiScreen currentGui = null;
+	public Console console = null;
 	// public ChunkLoadThread chunkLoadThread = new ChunkLoadThread();
 	private int width = 0, height = 0;
 
@@ -127,6 +130,7 @@ public class TinyCraft {
 		try {
 			initRenderer();
 			initGame();
+			initConsole();
 
 			while (!Display.isCloseRequested() && !shutdown) {
 				update();
@@ -262,6 +266,11 @@ public class TinyCraft {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void initConsole() {
+		console = new Console(this, new GuiConsole(this));
+		console.init(); // FIXME: Fix this to autoload commands if it's possible
 	}
 
 	public void update() {

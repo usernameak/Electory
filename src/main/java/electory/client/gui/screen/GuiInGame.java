@@ -126,7 +126,7 @@ public class GuiInGame extends GuiScreen {
 			} else if (eventKey == Keyboard.KEY_ESCAPE) {
 				tc.openGui(new GuiPause(tc));
 			} else if (eventKey == GuiConsole.KEY_TILDE) {
-				tc.openGui(new GuiConsole(tc));
+				tc.openGui(tc.console.gui);
 			}
 		}
 	}
