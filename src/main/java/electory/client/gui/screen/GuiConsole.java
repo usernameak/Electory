@@ -39,7 +39,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				tc.openGui(null);
 				return;
 			case Keyboard.KEY_RETURN:
-				consoleInput.push(consoleInputString);
+				println("> " + consoleInputString);
 				tc.console.execCommand(consoleInputString);
 				consoleInputString = "";
 				break;
@@ -72,8 +72,6 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 
 		rootContainer.position = Position.TOP_LEFT;
 		rootContainer.verticalGap = 0;
-
-		// consoleInput.add("Hello! I'm a console =)");
 
 		return rootContainer;
 	}

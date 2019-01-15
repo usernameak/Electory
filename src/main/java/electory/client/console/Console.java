@@ -41,7 +41,11 @@ public class Console {
 		for (ConsoleCommand command : consoleCommands) {
 			if(command.getName().equals(cmd)) {
 				command.run(args);
+
+				return;
 			}
 		}
+
+		gui.println("Command \"" + cmd + "\" doesn't exist!");
 	}
 }
