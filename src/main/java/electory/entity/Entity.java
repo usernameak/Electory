@@ -98,8 +98,12 @@ public abstract class Entity {
 	}
 
 	public void moveClipped(double xofs, double yofs, double zofs) {
+		if (!world.chunkProvider.isChunkLoaded(((int) newX) >> 4, ((int) newZ) >> 4)) {
+			return;
+		}
+
 		double origYOfs = yofs;
-		
+
 		AABB taabb = getAABB().expand(xofs, yofs, zofs);
 		AABB paabb = getAABB();
 
@@ -123,16 +127,14 @@ public abstract class Entity {
 		}
 
 		paabb.move(0, 0, zofs);
-		
-		
 
 		/**/
-		
-		if(origYOfs < -0.05f) {
+
+		if (origYOfs < -0.05f) {
 			// Passive ground collision check
 			onGround = yofs > origYOfs;
 			onCeiling = false;
-		} else if(origYOfs > 0.05f) {
+		} else if (origYOfs > 0.05f) {
 			// Passive ceiling collision check
 			onGround = false;
 			onCeiling = yofs < origYOfs;
@@ -151,23 +153,18 @@ public abstract class Entity {
 					onGround = true;
 				}
 			}
-		
+
 		}
-		
-		/*{
-			AABB gaabb = paabb.expand(0f, 0.01f, 0f);
-			float gofs = 0.005f;
-			Set<AABB> gAABBs = world.getBlockAABBsWithinAABB(gaabb, true);
 
-			onCeiling = false;
-
-			for (AABB aabb : gAABBs) {
-				gofs = aabb.clipYCollide(paabb, gofs);
-				if (gofs >= 0.0025f) {
-					onCeiling = true;
-				}
-			}
-		}*/
+		/*
+		 * { AABB gaabb = paabb.expand(0f, 0.01f, 0f); float gofs = 0.005f; Set<AABB>
+		 * gAABBs = world.getBlockAABBsWithinAABB(gaabb, true);
+		 * 
+		 * onCeiling = false;
+		 * 
+		 * for (AABB aabb : gAABBs) { gofs = aabb.clipYCollide(paabb, gofs); if (gofs >=
+		 * 0.0025f) { onCeiling = true; } } }
+		 */
 
 		newX += xofs;
 		newY += yofs;
