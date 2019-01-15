@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import electory.client.TinyCraft;
 import electory.client.console.commands.CCClear;
+import electory.client.console.commands.CCHelp;
 import electory.client.gui.screen.GuiConsole;
 
 public class Console {
@@ -20,6 +21,7 @@ public class Console {
 
 	public void init() { // FIXME: Bad practics
 		addCommand(new CCClear(tc, gui));
+		addCommand(new CCHelp(tc, gui, consoleCommands));
 	}
 
 	public void addCommand(ConsoleCommand command) {
