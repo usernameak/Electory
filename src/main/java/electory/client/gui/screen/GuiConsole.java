@@ -44,30 +44,31 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				println("> " + consoleInputString);
 
 				// If the history isn't empty and the command isn't doublicate of previous
-				if(consoleHistory.size() == 0 || !consoleHistory.get(consoleHistory.size() - 1).equals(consoleInputString))
+				if (consoleHistory.size() == 0
+						|| !consoleHistory.get(consoleHistory.size() - 1).equals(consoleInputString))
 					consoleHistory.push(consoleInputString);
-				
+
 				consoleHistoryIndex = consoleHistory.size() - 1;
 				tc.console.execCommand(consoleInputString);
 				consoleInputString = "";
 
 				break;
 			case Keyboard.KEY_BACK:
-				if(consoleInputString.length() > 0)
+				if (consoleInputString.length() > 0)
 					consoleInputString = consoleInputString.substring(0, consoleInputString.length() - 1);
 				break;
 			case Keyboard.KEY_UP:
 			case Keyboard.KEY_DOWN:
-				if(consoleHistory.size() > 0) {
-					if(eventKey == Keyboard.KEY_UP)
+				if (consoleHistory.size() > 0) {
+					if (eventKey == Keyboard.KEY_UP)
 						consoleHistoryIndex++;
-					else if(eventKey == Keyboard.KEY_DOWN)
+					else if (eventKey == Keyboard.KEY_DOWN)
 						consoleHistoryIndex--;
 
-					if(consoleHistoryIndex < 0) { // Latest change
+					if (consoleHistoryIndex < 0) { // Latest change
 						consoleHistoryIndex = -1;
 						consoleInputString = "";
-					} else if(consoleHistoryIndex >= consoleHistory.size()) {
+					} else if (consoleHistoryIndex >= consoleHistory.size()) {
 						consoleHistoryIndex = 0;
 						consoleInputString = consoleHistory.get(consoleHistoryIndex);
 					} else {
@@ -80,12 +81,9 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 					consoleInputString += keyChar;
 				}
 			}
-
-			// if(consoleHistoryIndex < 0) consoleHistoryIndex = consoleHistory.size() - 1;
-			// if(consoleHistoryIndex >= consoleHistory.size()) consoleHistoryIndex = 0;
 		}
 
-	super.handleKeyEvent(eventKey,eventKeyState,keyChar);
+		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
 
 	}
 
