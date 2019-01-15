@@ -456,9 +456,13 @@ public class TinyCraft {
 	}
 
 	public void openGui(GuiScreen gui) {
+		if(currentGui != null) {
+			currentGui.closeGuiScreen();
+		}
 		currentGui = gui;
 		if (gui != null) {
 			gui.setupGuiElementsForScreenSize(resolutionScaler);
+			gui.openGuiScreen();
 		}
 	}
 }

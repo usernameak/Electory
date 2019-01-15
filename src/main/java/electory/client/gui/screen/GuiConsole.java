@@ -112,14 +112,16 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	public void renderGui(GuiRenderState rs) {
 		super.renderGui(rs);
 
-		int tmpY = 0;
 		int lines = -1;
+		
+		int count = consoleInput.size();
+		int tmpY = count * FontRenderer.CHAR_HEIGHT;
 
 		for (String console : consoleInput) {
 			lines = tc.fontRenderer.getTextLinesArea(console, consoleArea);
 			tc.fontRenderer.drawTextArea(rs, console, 0, consoleArea.getMaxY() - FontRenderer.CHAR_HEIGHT - tmpY,
 					consoleArea);
-			tmpY += lines * FontRenderer.CHAR_HEIGHT;
+			tmpY -= lines * FontRenderer.CHAR_HEIGHT;
 
 			if (tmpY < consoleArea.getY())
 				break;
@@ -138,5 +140,17 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 
 	public void clear() {
 		consoleInput.clear();
+	}
+	
+	@Override
+	public void closeGuiScreen() {
+		super.closeGuiScreen();
+		Keyboard.enableRepeatEvents(false);
+	}
+	
+	@Override
+	public void openGuiScreen() {
+		super.openGuiScreen();
+		Keyboard.enableRepeatEvents(true);
 	}
 }

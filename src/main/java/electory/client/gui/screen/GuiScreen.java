@@ -28,5 +28,11 @@ public abstract class GuiScreen extends Gui {
 	public void handleMouseEvent(MouseEvent event) {
 		
 	}
+
+	public void closeGuiScreen() {
+	}
+
+	public void openGuiScreen() {
+	}
 	
 }
