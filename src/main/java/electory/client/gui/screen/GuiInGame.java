@@ -111,12 +111,15 @@ public class GuiInGame extends GuiScreen {
 			vel.add(svel);
 
 			tc.fontRenderer.drawText(	rs,
-										"vel x: "
+										"vel: "
+												+ String.format("%.3f", vel.length())
+												+ " (x: "
 												+ String.format("%.3f", vel.x)
 												+ ", y: "
 												+ String.format("%.3f", vel.y)
 												+ ", z: "
-												+ String.format("%.3f", vel.z),
+												+ String.format("%.3f", vel.z)
+												+ ")",
 										2,
 										42);
 		}
