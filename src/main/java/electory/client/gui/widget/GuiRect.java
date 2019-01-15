@@ -8,17 +8,13 @@ import electory.client.gui.IActionListener;
 import electory.client.render.Tessellator;
 import electory.client.render.shader.ShaderManager;
 
-public class GuiRect extends GuiButton implements IActionListener {
+public class GuiRect extends GuiWidget {
 
 	private int width;
 	private int height;
-	
-	private boolean hovered = false;
-	
-	private IActionListener actionListener;
 
 	public GuiRect(TinyCraft tc, int width, int height) {
-		super(tc, ""); // FIXME: This is a very bad idea
+		super(tc);
 		this.width  = width;
 		this.height = height;
 	}
@@ -39,22 +35,14 @@ public class GuiRect extends GuiButton implements IActionListener {
 		ShaderManager.solidProgram.loadRenderState(rs);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		Tessellator.instance.getBuffer().setColor(hovered ? 0x30FFFFFF : 0x10FFFFFF);
+		Tessellator.instance.getBuffer().setColor(0x10FFFFFF);
 		Tessellator.instance.getBuffer().addQuadVertex(0, 0, 0);
 		Tessellator.instance.getBuffer().addQuadVertex(0, getHeight(), 0);
-		Tessellator.instance.getBuffer().addQuadVertex(getWidth() - (hovered ? 0 : 5), getHeight(), 0);
-		Tessellator.instance.getBuffer().addQuadVertex(getWidth() - (hovered ? 0 : 5), 0, 0);
+		Tessellator.instance.getBuffer().addQuadVertex(getWidth(), getHeight(), 0);
+		Tessellator.instance.getBuffer().addQuadVertex(getWidth(), 0, 0);
 		Tessellator.instance.draw();
 		Tessellator.instance.getBuffer().setColor(0xFFFFFFFF);
 		GL11.glDisable(GL11.GL_BLEND);
-		tc.fontRenderer.drawText(rs, title, (hovered ? 10 : 5), 5);
 		
 	}
-
-	@Override
-	public void actionPerformed(GuiWidget widget) {
-		if(actionListener != null) {
-			actionListener.actionPerformed(widget);
-		}
-	}	
 }
