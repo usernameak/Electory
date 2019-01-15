@@ -5,12 +5,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import com.koloboke.collect.map.LongObjMap;
+import com.koloboke.collect.map.hash.HashLongObjMaps;
 
 import electory.utils.CrashException;
 import electory.utils.io.BufferedDataInputStream;
@@ -20,7 +22,7 @@ public class ChunkProviderSP implements IChunkProvider {
 
 	private World world;
 	private Map<ChunkPosition, Thread> savingChunks = new ConcurrentHashMap<>();
-	private Map<ChunkPosition, Chunk> loadedChunks = new HashMap<>();
+	private LongObjMap<Chunk> loadedChunks = HashLongObjMaps.newMutableMap();
 
 	public ChunkProviderSP(World world) {
 		this.world = world;
@@ -46,8 +48,7 @@ public class ChunkProviderSP implements IChunkProvider {
 			chunk = world.generationChunkProvider.loadChunk(cx, cy);
 		}
 
-		ChunkPosition cpos = new ChunkPosition(chunk.getChunkX(), chunk.getChunkZ());
-		loadedChunks.put(cpos, chunk);
+		loadedChunks.put(ChunkPosition.createLong(chunk.getChunkX(), chunk.getChunkZ()), chunk);
 
 		chunk.notifyNeighbourChunks();
 		
@@ -114,7 +115,7 @@ public class ChunkProviderSP implements IChunkProvider {
 
 	@Override
 	public boolean isChunkLoaded(int x, int z) {
-		return loadedChunks.containsKey(new ChunkPosition(x, z));
+		return loadedChunks.containsKey(ChunkPosition.createLong(x, z));
 	}
 
 	@Override
@@ -126,12 +127,11 @@ public class ChunkProviderSP implements IChunkProvider {
 	public void unloadChunk(Chunk chunk, Iterator<Chunk> it, boolean doSave) {
 		if (chunk != null) { // for the sake of god
 			chunk.unload();
-			ChunkPosition cpos = new ChunkPosition(chunk.getChunkX(), chunk.getChunkZ());
 
 			if (it != null) {
 				it.remove();
 			} else {
-				loadedChunks.remove(cpos);
+				loadedChunks.remove(ChunkPosition.createLong(chunk.getChunkX(), chunk.getChunkZ()));
 			}
 
 			save(world, chunk);
@@ -140,7 +140,7 @@ public class ChunkProviderSP implements IChunkProvider {
 
 	@Override
 	public Chunk provideChunk(int cx, int cy) {
-		return loadedChunks.get(new ChunkPosition(cx, cy));
+		return loadedChunks.get(ChunkPosition.createLong(cx, cy));
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public class ChunkProviderSP implements IChunkProvider {
 	}
 
 	@Override
-	public Map<ChunkPosition, Chunk> getLoadedChunkMap() {
+	public LongObjMap<Chunk> getLoadedChunkMap() {
 		return loadedChunks;
 	}
 }

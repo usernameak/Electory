@@ -11,6 +11,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.joml.Vector3d;
 
+import com.koloboke.collect.LongCursor;
+import com.koloboke.collect.set.hash.HashLongSet;
+import com.koloboke.collect.set.hash.HashLongSets;
+
 import electory.block.Block;
 import electory.client.TinyCraft;
 import electory.entity.Entity;
@@ -38,7 +42,7 @@ public class World implements IChunkSaveStatusHandler {
 	public static final int FLAG_SKIP_RENDER_UPDATE = 1;
 	public static final int FLAG_SKIP_LIGHT_UPDATE = 2;
 	public static final int FLAG_SKIP_UPDATE = FLAG_SKIP_LIGHT_UPDATE | FLAG_SKIP_RENDER_UPDATE;
-	
+
 	public static final int CHUNKLOAD_DISTANCE = 8;
 	public static final int CHUNKLOAD_DISTANCE2 = CHUNKLOAD_DISTANCE * 2;
 
@@ -89,7 +93,7 @@ public class World implements IChunkSaveStatusHandler {
 			}
 		}
 		oldBlock.getSound().play(this, x, y, z);
-		
+
 	}
 
 	public void interactWithBlock(EntityPlayer player, int x, int y, int z, EnumSide side) {
@@ -150,34 +154,35 @@ public class World implements IChunkSaveStatusHandler {
 		chunkLoadingTick();
 	}
 
-	private void chunkLoadingTick() {		
+	private void chunkLoadingTick() {
 		EntityPlayer player = TinyCraft.getInstance().player;
-		Set<ChunkPosition> chunksToLoad = new HashSet<>();
+		HashLongSet chunksToLoad = HashLongSets.newMutableSet();
 		Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f)
 				: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
 		int startX = (((int) ppos.x) >> 4) - CHUNKLOAD_DISTANCE;
 		int startZ = (((int) ppos.z) >> 4) - CHUNKLOAD_DISTANCE;
 		for (int x = startX; x < startX + CHUNKLOAD_DISTANCE2; x++) {
 			for (int z = startZ; z < startZ + CHUNKLOAD_DISTANCE2; z++) {
-				chunksToLoad.add(new ChunkPosition(x, z));
+				chunksToLoad.add(ChunkPosition.createLong(x, z));
 			}
 		}
-		Set<ChunkPosition> chunksToUnload = new HashSet<>(chunkProvider.getLoadedChunkMap().keySet());
+		HashLongSet chunksToUnload = HashLongSets.newMutableSet(chunkProvider.getLoadedChunkMap().keySet());
 		chunksToUnload.removeAll(chunksToLoad);
 
 		chunksToLoad.removeAll(chunkProvider.getLoadedChunkMap().keySet());
 		{
-			Iterator<ChunkPosition> it = chunksToLoad.iterator();
+			LongCursor it = chunksToLoad.cursor();
 			boolean needsLoadNext = false;
 			do {
 				needsLoadNext = false;
-				if (it.hasNext()) {
-					ChunkPosition cpos = it.next();
-					if (chunkProvider.canLoadChunk(cpos.x, cpos.z)) {
-						chunkProvider.loadChunk(cpos.x, cpos.z);
-						/*if (!chunk.isPopulated) {
-							generationChunkProvider.populate(null, chunk.getChunkX(), chunk.getChunkZ());
-						}*/
+				if (it.moveNext()) {
+					long cpos = it.elem();
+					if (chunkProvider.canLoadChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L))) {
+						chunkProvider.loadChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L));
+						/*
+						 * if (!chunk.isPopulated) { generationChunkProvider.populate(null,
+						 * chunk.getChunkX(), chunk.getChunkZ()); }
+						 */
 					} else {
 						needsLoadNext = true;
 					}
@@ -187,10 +192,10 @@ public class World implements IChunkSaveStatusHandler {
 			} while (!checkSpawnAreaLoaded() || needsLoadNext);
 		}
 		{
-			Iterator<ChunkPosition> it = chunksToUnload.iterator();
-			if (it.hasNext()) {
-				ChunkPosition cpos = it.next();
-				chunkProvider.unloadChunk(chunkProvider.provideChunk(cpos.x, cpos.z), null, true);
+			LongCursor it = chunksToUnload.cursor();
+			if (it.moveNext()) {
+				long cpos = it.elem();
+				chunkProvider.unloadChunk(chunkProvider.provideChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L)), null, true);
 			}
 		}
 	}
@@ -346,4 +351,3 @@ public class World implements IChunkSaveStatusHandler {
 		TinyCraft.getInstance().soundManager.playSFX(path, "world;" + path, x, y, z, radius);
 	}
 }
-

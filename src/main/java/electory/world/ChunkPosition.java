@@ -3,7 +3,7 @@ package electory.world;
 public class ChunkPosition {
 	public int x;
 	public int z;
-	
+
 	public ChunkPosition(int x, int z) {
 		super();
 		this.x = x;
@@ -38,5 +38,9 @@ public class ChunkPosition {
 	@Override
 	public String toString() {
 		return "ChunkPosition [x=" + x + ", z=" + z + "]";
+	}
+
+	public static long createLong(int x, int z) {
+		return (long) x & 4294967295L | ((long) z & 4294967295L) << 32;
 	}
 }

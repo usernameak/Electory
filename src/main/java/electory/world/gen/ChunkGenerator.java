@@ -2,14 +2,14 @@ package electory.world.gen;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Random;
+
+import com.koloboke.collect.map.LongObjMap;
 
 import electory.block.Block;
 import electory.math.MathUtils;
 import electory.world.BiomeGenBase;
 import electory.world.Chunk;
-import electory.world.ChunkPosition;
 import electory.world.IChunkProvider;
 import electory.world.IChunkSaveStatusHandler;
 import electory.world.World;
@@ -25,7 +25,6 @@ import electory.world.gen.heightmap.Lerp4HeightMapGenerator;
 import electory.world.gen.heightmap.OverScanHeightMapGenerator;
 import electory.world.gen.heightmap.postprocessor.Lerp4HeightMapPostProcessor;
 import electory.world.gen.heightmap.postprocessor.RangeRemapPostProcessor;
-import electory.world.gen.noise.DSNoise;
 import electory.world.gen.noise.FBM;
 import electory.world.gen.noise.ScaledNoise;
 
@@ -233,7 +232,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public Map<ChunkPosition, Chunk> getLoadedChunkMap() {
+	public LongObjMap<Chunk> getLoadedChunkMap() {
 		return null;
 	}
 }

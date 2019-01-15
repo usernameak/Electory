@@ -2,7 +2,8 @@ package electory.world;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
+
+import com.koloboke.collect.map.LongObjMap;
 
 public interface IChunkProvider {
 	Chunk loadChunk(int cx, int cy);
@@ -21,7 +22,7 @@ public interface IChunkProvider {
 
 	Collection<Chunk> getAllLoadedChunks();
 
-	Map<ChunkPosition, Chunk> getLoadedChunkMap();
+	LongObjMap<Chunk> getLoadedChunkMap();
 
 	boolean isChunkLoaded(int x, int z);
 

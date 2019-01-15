@@ -118,7 +118,7 @@ public class Block {
 	}
 	
 	public boolean doesBlockAffectAO() {
-		return isSolid();
+		return false;//isSolid();
 	}
 
 	public BlockSound getSound() {
