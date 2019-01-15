@@ -18,7 +18,7 @@ import electory.world.Chunk;
 public class ChunkRenderer {
 	private int[] vbos = new int[WorldRenderer.VBO_COUNT];
 	private TriangleBuffer qb = new TriangleBuffer();
-	private final Chunk chunk;
+	final Chunk chunk;
 	private int[] triangleCounts = new int[vbos.length];
 	private int query = 0;
 
@@ -27,7 +27,7 @@ public class ChunkRenderer {
 			0xffefefef, 0xffffffff };
 
 	public boolean needsUpdate = true;
-	
+
 	private boolean isInitialized = false;
 
 	public ChunkRenderer(Chunk chunk) {
@@ -39,7 +39,8 @@ public class ChunkRenderer {
 	}
 
 	private void init() {
-		if(isInitialized) return;
+		if (isInitialized)
+			return;
 		for (int i = 0; i < vbos.length; i++) {
 			vbos[i] = GL15.glGenBuffers();
 		}
@@ -56,35 +57,64 @@ public class ChunkRenderer {
 		ShaderManager.solidProgram.loadRenderState(rs);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		TriangleBuffer buf = Tessellator.instance.getBuffer();
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, getChunk().getChunkBlockCoordZ() + 16.0f);
+		/*buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
 
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, getChunk().getChunkBlockCoordZ() + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
 
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, getChunk().getChunkBlockCoordZ());
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
 
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, getChunk().getChunkBlockCoordZ() + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
 
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, getChunk().getChunkBlockCoordZ());
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
 
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, getChunk().getChunkBlockCoordZ());
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, getChunk().getChunkBlockCoordZ() + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, getChunk().getChunkBlockCoordZ());
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
+		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);*/
+		buf.addQuadVertex(0, 0f, 0);
+		buf.addQuadVertex(0 + 16.0f, 0f, 0);
+		buf.addQuadVertex(0 + 16.0f, 0f, 0 + 16.0f);
+		buf.addQuadVertex(0, 0f, 0 + 16.0f);
+
+		buf.addQuadVertex(0, 256f, 0);
+		buf.addQuadVertex(0 + 16.0f, 256f, 0);
+		buf.addQuadVertex(0 + 16.0f, 256f, 0 + 16.0f);
+		buf.addQuadVertex(0, 256f, 0 + 16.0f);
+
+		buf.addQuadVertex(0, 256f, 0);
+		buf.addQuadVertex(0 + 16.0f, 256f, 0);
+		buf.addQuadVertex(0 + 16.0f, 0f, 0);
+		buf.addQuadVertex(0, 0f, 0);
+
+		buf.addQuadVertex(0, 256f, 0 + 16.0f);
+		buf.addQuadVertex(0 + 16.0f, 256f, 0 + 16.0f);
+		buf.addQuadVertex(0 + 16.0f, 0f, 0 + 16.0f);
+		buf.addQuadVertex(0, 0f, 0 + 16.0f);
+
+		buf.addQuadVertex(0 + 16.0f, 256f, 0);
+		buf.addQuadVertex(0 + 16.0f, 256f, 0 + 16.0f);
+		buf.addQuadVertex(0 + 16.0f, 0f, 0 + 16.0f);
+		buf.addQuadVertex(0 + 16.0f, 0f, 0);
+
+		buf.addQuadVertex(0, 256f, 0);
+		buf.addQuadVertex(0, 256f, 0 + 16.0f);
+		buf.addQuadVertex(0, 0f, 0 + 16.0f);
+		buf.addQuadVertex(0, 0f, 0);
 		Tessellator.instance.draw();
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		ARBOcclusionQuery.glEndQueryARB(ARBOcclusionQuery.GL_SAMPLES_PASSED_ARB);
@@ -118,7 +148,9 @@ public class ChunkRenderer {
 														this,
 														chunk.getChunkBlockCoordX() + x,
 														y,
-														chunk.getChunkBlockCoordZ() + z);
+														chunk.getChunkBlockCoordZ() + z,
+														x,
+														z);
 						}
 					}
 				}
@@ -138,6 +170,8 @@ public class ChunkRenderer {
 													chunk.getChunkBlockCoordX() + x,
 													y,
 													chunk.getChunkBlockCoordZ() + z,
+													x,
+													z,
 													qb);
 						}
 					}
@@ -152,7 +186,7 @@ public class ChunkRenderer {
 
 	public void render(WorldRenderState rs, DefaultProgram shader, int pass, int vbo) {
 		init();
-		
+
 		if (needsUpdate) {
 			update();
 		}

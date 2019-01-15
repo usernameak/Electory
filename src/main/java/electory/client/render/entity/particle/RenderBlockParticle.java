@@ -18,16 +18,16 @@ public class RenderBlockParticle extends EntityRenderer<EntityBlockParticle> {
 		Tessellator tess = Tessellator.instance;
 		TriangleBuffer buffer = tess.getBuffer();
 		IAtlasSprite sprite = entity.sprite;
-		Vector3d pos = entity.getInterpolatedPosition(renderPartialTicks);
-		double x = pos.x;
+		// Vector3d pos = entity.getInterpolatedPosition(renderPartialTicks);
+		/*double x = pos.x;
 		double y = pos.y;
-		double z = pos.z;
+		double z = pos.z;*/
 		
 		ShaderManager.defaultProgram.use();
 		ShaderManager.defaultProgram.bindTexture(TextureManager.TERRAIN_TEXTURE);
 		
 		WorldRenderState rs2 = new WorldRenderState(rs);
-		rs2.modelMatrix.translate(x - 0.0625f, y, z - 0.0625f);
+		rs2.modelMatrix.translate(-0.0625f, 0f, -0.0625f);
 		rs2.modelMatrix.scale(0.125f, 0.125f, 0.125f);
 		
 		ShaderManager.defaultProgram.loadRenderState(rs2);

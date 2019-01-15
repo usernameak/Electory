@@ -116,13 +116,13 @@ public class WorldRenderer {
 			ShaderManager.waterProgram.use();
 			ShaderManager.waterProgram.setTimer(TinyCraft.getInstance().tickTimer.totalTicks
 					+ TinyCraft.getInstance().tickTimer.renderPartialTicks);
-		}/* else if (pass == RENDERPASS_BASE_SHADOW) {
-			EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebuffer3);
-			GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-			GL11.glViewport(0, 0, LIGHTMAP_SIZE, LIGHTMAP_SIZE);
-			/*
-			 * IntBuffer drawbuffers = BufferUtils.createIntBuffer(2);
+		} /*
+			 * else if (pass == RENDERPASS_BASE_SHADOW) {
+			 * EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.
+			 * GL_FRAMEBUFFER_EXT, framebuffer3); GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			 * GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+			 * GL11.glViewport(0, 0, LIGHTMAP_SIZE, LIGHTMAP_SIZE); /* IntBuffer drawbuffers
+			 * = BufferUtils.createIntBuffer(2);
 			 * drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 			 * drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT);
 			 * drawbuffers.flip(); ARBDrawBuffers.glDrawBuffersARB(drawbuffers); Matrix4d
@@ -130,14 +130,16 @@ public class WorldRenderer {
 			 * lightMatrix.lookAt(128f, 128f, 128f, 0f, 0f, 0f, 0f, 1f, 0f);
 			 * ShaderManager.terrainProgram.setLightMatrix(lightMatrix);
 			 */
-		/*} */else if (pass == RENDERPASS_BASE) {
-			/*ShaderManager.terrainProgram.bindTextureDepthShadow("/dynamic/framebuffer_world_sunspace_depth.png");
-			Matrix4d lightMatrix = new Matrix4d();
-			lightMatrix.ortho(-25, 25, -25, 25, 1.0f, 512.0f);
-			Vector3f pos = TinyCraft.getInstance().player
-					.getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks);
-			lightMatrix.lookAt(pos.x + (256f - pos.y), 256f, pos.z, pos.x, pos.y, pos.z, 0f, 1f, 0f);
-			ShaderManager.terrainProgram.setLightMatrix(lightMatrix);*/
+		/* } */else if (pass == RENDERPASS_BASE) {
+			/*
+			 * ShaderManager.terrainProgram.bindTextureDepthShadow(
+			 * "/dynamic/framebuffer_world_sunspace_depth.png"); Matrix4d lightMatrix = new
+			 * Matrix4d(); lightMatrix.ortho(-25, 25, -25, 25, 1.0f, 512.0f); Vector3f pos =
+			 * TinyCraft.getInstance().player
+			 * .getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks
+			 * ); lightMatrix.lookAt(pos.x + (256f - pos.y), 256f, pos.z, pos.x, pos.y,
+			 * pos.z, 0f, 1f, 0f); ShaderManager.terrainProgram.setLightMatrix(lightMatrix);
+			 */
 		}
 	}
 
@@ -146,19 +148,21 @@ public class WorldRenderer {
 			GL11.glDrawBuffer(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glCullFace(GL11.GL_BACK);
-		} /*else if (pass == RENDERPASS_BASE_SHADOW) {
-			EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebuffer);
-			GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-			GL11.glDepthRange(0.01f, 1000f);
-		}*/
+		} /*
+			 * else if (pass == RENDERPASS_BASE_SHADOW) {
+			 * EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.
+			 * GL_FRAMEBUFFER_EXT, framebuffer); GL11.glViewport(0, 0, Display.getWidth(),
+			 * Display.getHeight()); GL11.glDepthRange(0.01f, 1000f); }
+			 */
 	}
 
 	public DefaultProgram getRenderPassShader(int pass) {
 		if (pass == WorldRenderer.RENDERPASS_LIQUID1) {
 			return ShaderManager.waterProgram;
-		}/* else if (pass == RENDERPASS_BASE_SHADOW) {
-			return ShaderManager.shadowTerrainProgram;
-		}*/
+		} /*
+			 * else if (pass == RENDERPASS_BASE_SHADOW) { return
+			 * ShaderManager.shadowTerrainProgram; }
+			 */
 		return ShaderManager.terrainProgram;
 	}
 
@@ -170,20 +174,19 @@ public class WorldRenderer {
 	}
 
 	public boolean doesPassAllowConditionalRendering(int pass) {
-		return true;//pass != RENDERPASS_BASE_SHADOW;
+		return true;// pass != RENDERPASS_BASE_SHADOW;
 	}
 
 	public WorldRenderState processRenderStateForPass(int pass, WorldRenderState stateIn) {
-		/*if (pass == RENDERPASS_BASE_SHADOW) {
-			WorldRenderState state = new WorldRenderState();
-			state.projectionMatrix.ortho(-25, 25, -25, 25, 1.0f, 512.0f);
-			GL11.glDepthRange(1.0f, 512.0f);
-			Vector3f pos = TinyCraft.getInstance().player
-					.getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks);
-			state.viewMatrix.lookAt(pos.x + (256f - pos.y), 256f, pos.z, pos.x, pos.y, pos.z, 0f, 1f, 0f);
-			state.modelMatrix = stateIn.modelMatrix;
-			return state;
-		}*/
+		/*
+		 * if (pass == RENDERPASS_BASE_SHADOW) { WorldRenderState state = new
+		 * WorldRenderState(); state.projectionMatrix.ortho(-25, 25, -25, 25, 1.0f,
+		 * 512.0f); GL11.glDepthRange(1.0f, 512.0f); Vector3f pos =
+		 * TinyCraft.getInstance().player
+		 * .getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks
+		 * ); state.viewMatrix.lookAt(pos.x + (256f - pos.y), 256f, pos.z, pos.x, pos.y,
+		 * pos.z, 0f, 1f, 0f); state.modelMatrix = stateIn.modelMatrix; return state; }
+		 */
 		return stateIn;
 	}
 
@@ -215,16 +218,23 @@ public class WorldRenderer {
 		renderState.viewMatrix.rotate((float) deg2rad(TinyCraft.getInstance().player.yaw), 0.0f, 1.0f, 0.0f);
 		Vector3d pos = TinyCraft.getInstance().player.getInterpolatedPosition(renderPartialTicks);
 		pos.add(0f, TinyCraft.getInstance().player.getEyeHeight(), 0f);
-		renderState.viewMatrix.translate(-pos.x, -pos.y, -pos.z);
+		renderState.viewMatrix.translate(0f, -pos.y, 0f);
 		GL11.glDepthRange(0.01f, 1000f);
 
 		world.chunkProvider.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(cr -> {
-			cr.doChunkQuery(renderState);
+			WorldRenderState rs2 = new WorldRenderState(renderState);
+			rs2.modelMatrix
+					.translate(cr.chunk.getChunkBlockCoordX() - pos.x, 0f, cr.chunk.getChunkBlockCoordZ() - pos.z);
+			cr.doChunkQuery(rs2);
 		});
 
-		world.getEntities()
-				.stream()
-				.forEach(e -> EntityRenderer.getRendererFromEntity(e).renderEntity(e, renderPartialTicks, renderState));
+		world.getEntities().stream().forEach(e -> {
+			WorldRenderState rs2 = new WorldRenderState(renderState);
+			Vector3d epos = e.getInterpolatedPosition(renderPartialTicks);
+			rs2.modelMatrix
+					.translate(epos.x - pos.x, epos.y, epos.z - pos.z);
+			EntityRenderer.getRendererFromEntity(e).renderEntity(e, renderPartialTicks, rs2);
+		});
 
 		for (int i = 0; i < RENDERPASS_LAST; i++) {
 			preRenderPass(i);
@@ -234,10 +244,10 @@ public class WorldRenderer {
 			world.chunkProvider.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(cr -> {
 				if (c)
 					cr.beginConditionalRender();
-				cr.render(	processRenderStateForPass(pass, renderState),
-							getRenderPassShader(pass),
-							pass,
-							getVBOForPass(pass));
+				WorldRenderState rs2 = new WorldRenderState(renderState);
+				rs2.modelMatrix
+						.translate(cr.chunk.getChunkBlockCoordX() - pos.x, 0f, cr.chunk.getChunkBlockCoordZ() - pos.z);
+				cr.render(processRenderStateForPass(pass, rs2), getRenderPassShader(pass), pass, getVBOForPass(pass));
 				if (c)
 					cr.endConditionalRender();
 			});
@@ -263,9 +273,11 @@ public class WorldRenderer {
 			ShaderManager.worldCompositeProgram.setTimer(TinyCraft.getInstance().tickTimer.totalTicks
 					+ TinyCraft.getInstance().tickTimer.renderPartialTicks);
 		} else {
-			/*ShaderManager.defaultProgram.use();
-			ShaderManager.defaultProgram.bindTexture("/dynamic/framebuffer_world_sunspace_depth.png");
-			ShaderManager.worldCompositeProgram.loadRenderState(grs);*/
+			/*
+			 * ShaderManager.defaultProgram.use(); ShaderManager.defaultProgram.bindTexture(
+			 * "/dynamic/framebuffer_world_sunspace_depth.png");
+			 * ShaderManager.worldCompositeProgram.loadRenderState(grs);
+			 */
 		}
 		Tessellator tess = Tessellator.instance;
 		tess.getBuffer().addQuadVertexWithUV(0, 0, 0, 0, 1);
@@ -378,14 +390,14 @@ public class WorldRenderer {
 			}
 		}
 
-		/*// Shadow buffer
-
-		if (framebuffer3 != 0) {
-			EXTFramebufferObject.glDeleteFramebuffersEXT(framebuffer3);
-		}
-		framebuffer3 = EXTFramebufferObject.glGenFramebuffersEXT();
-		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebuffer3);
 		/*
+		 * // Shadow buffer
+		 * 
+		 * if (framebuffer3 != 0) {
+		 * EXTFramebufferObject.glDeleteFramebuffersEXT(framebuffer3); } framebuffer3 =
+		 * EXTFramebufferObject.glGenFramebuffersEXT();
+		 * EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.
+		 * GL_FRAMEBUFFER_EXT, framebuffer3); /*
 		 * TinyCraft.getInstance().textureManager.disposeTexture(
 		 * "/dynamic/framebuffer_world_sunspace_debug.png");
 		 * TinyCraft.getInstance().textureManager.createVirtualTexture(
@@ -400,26 +412,27 @@ public class WorldRenderer {
 		 * TinyCraft.getInstance().textureManager
 		 * .getTextureUnit("/dynamic/framebuffer_world_sunspace_debug.png"), 0);
 		 */
-		/*TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_sunspace_depth.png");
-		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_sunspace_depth.png",
-																	LIGHTMAP_SIZE,
-																	LIGHTMAP_SIZE,
-																	EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT,
-																	EXTPackedDepthStencil.GL_DEPTH_STENCIL_EXT,
-																	EXTPackedDepthStencil.GL_UNSIGNED_INT_24_8_EXT);
-		TinyCraft.getInstance().textureManager.setTextureFilter(GL11.GL_LINEAR, GL11.GL_LINEAR);
-		TinyCraft.getInstance().textureManager.setTextureWrap(GL12.GL_CLAMP_TO_EDGE, GL12.GL_CLAMP_TO_EDGE);
-		EXTFramebufferObject
-				.glFramebufferTexture2DEXT(	EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
-											EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT,
-											GL11.GL_TEXTURE_2D,
-											TinyCraft.getInstance().textureManager
-													.getTextureUnit("/dynamic/framebuffer_world_sunspace_depth.png"),
-											0);
-		status = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT);
-		if (status != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT) {
-			throw new IllegalArgumentException("Framebuffer incomplete, error " + status);
-		}*/
+		/*
+		 * TinyCraft.getInstance().textureManager.disposeTexture(
+		 * "/dynamic/framebuffer_world_sunspace_depth.png");
+		 * TinyCraft.getInstance().textureManager.createVirtualTexture(
+		 * "/dynamic/framebuffer_world_sunspace_depth.png", LIGHTMAP_SIZE,
+		 * LIGHTMAP_SIZE, EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT,
+		 * EXTPackedDepthStencil.GL_DEPTH_STENCIL_EXT,
+		 * EXTPackedDepthStencil.GL_UNSIGNED_INT_24_8_EXT);
+		 * TinyCraft.getInstance().textureManager.setTextureFilter(GL11.GL_LINEAR,
+		 * GL11.GL_LINEAR);
+		 * TinyCraft.getInstance().textureManager.setTextureWrap(GL12.GL_CLAMP_TO_EDGE,
+		 * GL12.GL_CLAMP_TO_EDGE); EXTFramebufferObject .glFramebufferTexture2DEXT(
+		 * EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
+		 * EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, GL11.GL_TEXTURE_2D,
+		 * TinyCraft.getInstance().textureManager
+		 * .getTextureUnit("/dynamic/framebuffer_world_sunspace_depth.png"), 0); status
+		 * = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.
+		 * GL_FRAMEBUFFER_EXT); if (status !=
+		 * EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT) { throw new
+		 * IllegalArgumentException("Framebuffer incomplete, error " + status); }
+		 */
 
 		// Unbind
 

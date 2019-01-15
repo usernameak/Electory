@@ -13,31 +13,36 @@ import electory.world.World;
 
 public class BlockRendererCube implements IBlockRenderer {
 
-	public int getTriangleCount(World world, Block block, ChunkRenderer renderer, int x, int y, int z) {
+	public int getTriangleCount(World world, Block block, ChunkRenderer renderer, int x, int y, int z, int cx, int cz) {
 		int count = 0;
 		for (EnumSide dir : EnumSide.VALID_DIRECTIONS) {
 			Block adjBlock = renderer.getChunk().getWorldBlockFast(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
-			if (adjBlock == null || (!adjBlock.isSolidOnSide(EnumSide.getOrientation(EnumSide.OPPOSITES[dir.ordinal()]))
-					&& !(adjBlock == block))) {
+			if (adjBlock == null
+					|| (!adjBlock.isSolidOnSide(EnumSide.getOrientation(EnumSide.OPPOSITES[dir.ordinal()]))
+							&& !(adjBlock == block))) {
 				count += 2;
 			}
 		}
 		return count;
 	}
 
-	public void getTriangles(World world, Block block, ChunkRenderer renderer, int x, int y, int z, TriangleBuffer buffer) {
+	public void getTriangles(World world, Block block, ChunkRenderer renderer, int x, int y, int z, int cx, int cz,
+			TriangleBuffer buffer) {
 		for (EnumSide dir : EnumSide.VALID_DIRECTIONS) {
 			Block adjBlock = renderer.getChunk().getWorldBlockFast(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
-			if (adjBlock == null || (!adjBlock.isSolidOnSide(EnumSide.getOrientation(EnumSide.OPPOSITES[dir.ordinal()]))
-					&& !(adjBlock == block))) {
-				int skyLightLevel = renderer.getChunk().getWorldSunLightLevelFast(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+			if (adjBlock == null
+					|| (!adjBlock.isSolidOnSide(EnumSide.getOrientation(EnumSide.OPPOSITES[dir.ordinal()]))
+							&& !(adjBlock == block))) {
+				int skyLightLevel = renderer.getChunk()
+						.getWorldSunLightLevelFast(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
 				buffer.setColor(ChunkRenderer.lightColors[skyLightLevel]);
-				bakeBlockSide(world, block, renderer, dir, x, y, z, buffer, skyLightLevel);
+				bakeBlockSide(world, block, renderer, dir, cx, y, cz, x, z, buffer, skyLightLevel);
 			}
 		}
 	}
 
-	public void bakeBlockSide(World world, Block block, ChunkRenderer renderer, EnumSide dir, int x, int y, int z, TriangleBuffer buffer, int lightLevel) {
+	public void bakeBlockSide(World world, Block block, ChunkRenderer renderer, EnumSide dir, int x, int y, int z, int wx, int wz,
+			TriangleBuffer buffer, int lightLevel) {
 		if (dir == EnumSide.UP) {
 			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.UP);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMinU(), sprite.getMinV());
