@@ -1,6 +1,6 @@
 package electory.client.gui.screen;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
 
@@ -24,9 +24,10 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	private Rect2D consoleArea = new Rect2D(0, 0, CONSOLE_WIDTH, CONSOLE_HEIGHT - FontRenderer.CHAR_HEIGHT);
 	protected GuiRect consoleRect;
 	protected String consoleInputString = "";
-	protected LinkedList<String> consoleInput = new LinkedList<>();
-	protected LinkedList<String> consoleHistory = new LinkedList<>();
+	protected ArrayList<String> consoleInput = new ArrayList<>();
+	protected ArrayList<String> consoleHistory = new ArrayList<>();
 	protected int consoleHistoryIndex = -1; // -1 = ""
+	
 
 	public GuiConsole(TinyCraft tc) {
 		super(tc);
@@ -46,7 +47,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				// If the history isn't empty and the command isn't doublicate of previous
 				if (consoleHistory.size() == 0
 						|| !consoleHistory.get(consoleHistory.size() - 1).equals(consoleInputString))
-					consoleHistory.push(consoleInputString);
+					consoleHistory.add(consoleInputString);
 
 				consoleHistoryIndex = consoleHistory.size() - 1;
 				tc.console.execCommand(consoleInputString);
@@ -59,7 +60,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				break;
 			case Keyboard.KEY_UP:
 			case Keyboard.KEY_DOWN:
-				if (consoleHistory.size() > 0) {
+				if (!consoleHistory.isEmpty()) {
 					if (eventKey == Keyboard.KEY_UP)
 						consoleHistoryIndex++;
 					else if (eventKey == Keyboard.KEY_DOWN)
@@ -132,7 +133,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	}
 
 	public void println(String ln) {
-		consoleInput.push(ln);
+		consoleInput.add(ln);
 	}
 
 	public void clear() {
