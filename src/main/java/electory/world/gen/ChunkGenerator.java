@@ -26,6 +26,8 @@ import electory.world.gen.heightmap.OverScanHeightMapGenerator;
 import electory.world.gen.heightmap.postprocessor.Lerp4HeightMapPostProcessor;
 import electory.world.gen.heightmap.postprocessor.RangeRemapPostProcessor;
 import electory.world.gen.noise.DSNoise;
+import electory.world.gen.noise.FBM;
+import electory.world.gen.noise.ScaledNoise;
 
 public class ChunkGenerator implements IChunkProvider {
 
@@ -37,14 +39,24 @@ public class ChunkGenerator implements IChunkProvider {
 
 	public ChunkGenerator(World world, long seed) {
 		this.world = world;
+		/*
+		 * this.heightMapGen = new ConditionalAddHeightMapGenerator( new
+		 * OverScanHeightMapGenerator(new DSNoise(60000000, 60000000 / 100.f, seed), 64,
+		 * 72, 64, 72, 17, 1), new Lerp4HeightMapGenerator(new DSNoise(60000000,
+		 * 60000000 / 400.f, seed ^ 0xFADEC0FFEE101F00l), 0, 1024, 0, 1024),
+		 * IntegerCondition.GREATER, 512, new RangeRemapPostProcessor(512.f, 1024.f,
+		 * 0.f, 183.f), BiomeGenBase.plains, BiomeGenBase.extremeHills, new
+		 * Lerp4HeightMapPostProcessor());
+		 */
 		this.heightMapGen = new ConditionalAddHeightMapGenerator(
-				new OverScanHeightMapGenerator(new DSNoise(60000000, 60000000 / 100.f, seed), 64, 72, 64, 72, 17, 1),
-				new Lerp4HeightMapGenerator(new DSNoise(60000000, 60000000 / 400.f, seed ^ 0xFADEC0FFEE101F00l), 0,
+				new OverScanHeightMapGenerator(new ScaledNoise(new FBM(8, seed), 1f / 32, 1f / 32), 64, 72, 64, 72, 17, 1),
+				new Lerp4HeightMapGenerator(new ScaledNoise(new FBM(8, seed ^ 0xFADEC0FFEE101F00l), 1f / 128, 1f / 128), 0,
 						1024, 0, 1024),
 				IntegerCondition.GREATER, 512, new RangeRemapPostProcessor(512.f, 1024.f, 0.f, 183.f),
 				BiomeGenBase.plains, BiomeGenBase.extremeHills, new Lerp4HeightMapPostProcessor());
+		/*new DSNoise(60000000, 60000000 / 200.f, seed ^ 0x793379EE79E3793El)*/
 		this.forestnessGen = new BiomeConditionHeightMapFilter(
-				new BasicHeightMapGenerator(new DSNoise(60000000, 60000000 / 200.f, seed ^ 0x793379EE79E3793El), -100,
+				new BasicHeightMapGenerator(new ScaledNoise(new FBM(8, seed ^ 0x793379EE79E3793El), 1f / 64, 1f / 64), -100,
 						100, -100, 100),
 				IntegerCondition.GREATER_OR_EQUAL, 0, new IBiomeMutator() {
 					@Override
