@@ -7,6 +7,7 @@ import electory.client.TinyCraft;
 import electory.client.console.commands.CCClear;
 import electory.client.console.commands.CCExit;
 import electory.client.console.commands.CCHelp;
+import electory.client.console.commands.CCTp;
 import electory.client.gui.screen.GuiConsole;
 
 public class Console {
@@ -24,6 +25,7 @@ public class Console {
 		addCommand(new CCClear(tc, gui));
 		addCommand(new CCExit(tc, gui));
 		addCommand(new CCHelp(tc, gui, consoleCommands));
+		addCommand(new CCTp(tc, gui));
 	}
 
 	public void addCommand(ConsoleCommand command) {

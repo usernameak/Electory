@@ -11,5 +11,5 @@ public class CCExit extends ConsoleCommand {
 
 	public void run(String[] arguments) {
         tc.shutdown();
-    };
+    }
 }
