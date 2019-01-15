@@ -273,7 +273,7 @@ public class TinyCraft {
 	}
 
 	public void update() {
-		if (!Display.isActive() && world != null && player != null) {
+		if (!Display.isActive() && world != null && player != null && currentGui == null) {
 			openGui(new GuiPause(this));
 		}
 
