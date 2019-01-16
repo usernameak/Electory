@@ -42,11 +42,24 @@ public class FBM implements IWorldNoiseGeneratord {
 		}
 	}
 	
+	private long xorshift64star(long x) {
+		x ^= x >> 12; // a
+		x ^= x << 25; // b
+		x ^= x >> 27; // c
+		return x * 0x2545F4914F6CDD1DL;
+	}
+	
 	private double random(double x, double y) {
-		random.setSeed(seed);
+		/*random.setSeed(seed);
 		random.setSeed(random.nextLong() ^ Double.doubleToLongBits(x));
 		random.setSeed(random.nextLong() ^ Double.doubleToLongBits(y));
-		return random.nextDouble();
+		return random.nextDouble();*/
+		// TODO: make it less predictable
+		long a = xorshift64star(xorshift64star(seed) ^ Double.doubleToLongBits(x)) ^ Double.doubleToLongBits(y);
+		long s = xorshift64star(a);
+		long t = s & 0x001FFFFFFFFFFFFFL;
+		double u = t / 9007199254740992.0;
+		return u;
 	}
 
 	private double lerp(double a, double b, double f) {
