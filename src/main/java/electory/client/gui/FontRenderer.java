@@ -52,7 +52,7 @@ public class FontRenderer {
 	public int drawTextArea(GuiRenderState rs, String s, int x, int y, Rect2D area) {
 		// TODO: Don't draw this text if the area is out of screen on X coordinate
 		if (y > area.getMaxY()) {
-			System.out.println("[FontRenderer::drawTextArea] Out of area!"); // TODO: Replace to debugger function
+			System.out.println("[FontRenderer::drawTextArea] Out of area!"); // TODO: Replace with debugger function
 
 			return y;
 		}

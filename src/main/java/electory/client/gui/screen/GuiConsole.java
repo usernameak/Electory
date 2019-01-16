@@ -21,7 +21,8 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	private static final int CONSOLE_WIDTH = 800; // TODO: Get from the screen's width
 	private static final int CONSOLE_HEIGHT = CONSOLE_WIDTH / 4;
 
-	private Rect2D consoleArea = new Rect2D(0, 0, CONSOLE_WIDTH, CONSOLE_HEIGHT - FontRenderer.CHAR_HEIGHT);
+	protected final Rect2D consoleArea = new Rect2D(0, 0, CONSOLE_WIDTH, CONSOLE_HEIGHT - FontRenderer.CHAR_HEIGHT);
+	protected final Rect2D consoleInputArea = new Rect2D(0, CONSOLE_HEIGHT, CONSOLE_WIDTH, 600 /* TODO: Screen Height */);
 	protected GuiRect consoleRect;
 	protected String consoleInputString = "";
 	protected ArrayList<String> consoleInput = new ArrayList<>();
@@ -113,9 +114,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 		super.renderGui(rs);
 
 		int lines = -1;
-		
-		int count = consoleInput.size();
-		int tmpY = count * FontRenderer.CHAR_HEIGHT;
+		int tmpY = consoleInput.size() * FontRenderer.CHAR_HEIGHT;
 
 		for (String console : consoleInput) {
 			lines = tc.fontRenderer.getTextLinesArea(console, consoleArea);
@@ -127,7 +126,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				break;
 		}
 
-		tc.fontRenderer.drawText(rs, "> " + consoleInputString, 0, consoleArea.getMaxY() + FontRenderer.CHAR_HEIGHT);
+		tc.fontRenderer.drawTextArea(rs, "> " + consoleInputString, 0, consoleArea.getMaxY() + FontRenderer.CHAR_HEIGHT, consoleInputArea);
 	}
 
 	@Override
