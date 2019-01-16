@@ -4,7 +4,6 @@ import org.lwjgl.opengl.GL11;
 
 import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
-import electory.client.gui.IActionListener;
 import electory.client.render.Tessellator;
 import electory.client.render.shader.ShaderManager;
 

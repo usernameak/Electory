@@ -1,7 +1,5 @@
 package electory.client.render.entity.particle;
 
-import org.joml.Vector3d;
-
 import electory.client.render.IAtlasSprite;
 import electory.client.render.Tessellator;
 import electory.client.render.TriangleBuffer;
