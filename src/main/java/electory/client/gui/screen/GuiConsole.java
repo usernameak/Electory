@@ -146,6 +146,7 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	public void closeGuiScreen() {
 		super.closeGuiScreen();
 		Keyboard.enableRepeatEvents(false);
+		consoleInputString = "";
 	}
 	
 	@Override
