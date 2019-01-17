@@ -102,7 +102,7 @@ public class ChunkGenerator implements IChunkProvider {
 					if (block == Block.blockDirt || block == Block.blockGrass) {
 						for (int by = y + 1; by < y + 7; by++) {
 							if (by >= y + 3) {
-								int radius = by >= y + 6 ? 1 : 2;
+								int radius = by >= y + 5 ? 1 : 2;
 								for (int bx = wx - radius; bx <= wx + radius; bx++) {
 									for (int bz = wz - radius; bz <= wz + radius; bz++) {
 										if (radius == 1 || !(bx == wx && bz == wz)) {
@@ -111,7 +111,7 @@ public class ChunkGenerator implements IChunkProvider {
 									}
 								}
 							}
-							if (by < y + 6) {
+							if (by < y + 5) {
 								world.setBlockAt(wx, by, wz, Block.blockLog);
 							}
 						}

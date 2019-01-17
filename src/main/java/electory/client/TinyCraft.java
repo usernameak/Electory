@@ -51,11 +51,12 @@ import electory.nbt.ShortArrayTag;
 import electory.utils.CrashException;
 import electory.utils.TickTimer;
 import electory.world.World;
+import electory.world.WorldSP;
 
 public class TinyCraft {
-	private static TinyCraft instance = new TinyCraft();
+	private static TinyCraft instance;
 
-	public World world = new World();
+	public World world = new WorldSP();
 	public EntityPlayer player = null;// new EntityPlayer(world);
 	public TextureManager textureManager = new TextureManager();
 	public TickTimer tickTimer = new TickTimer(20.0f);
@@ -91,7 +92,7 @@ public class TinyCraft {
 	}
 
 	public static TinyCraft getInstance() {
-		return instance;
+		return instance == null ? (instance = new TinyCraft()) : instance;
 	}
 
 	public TinyCraft() {

@@ -24,5 +24,6 @@ public class EntityMap {
 	static {
 		registerEntity(Entity.class, 0);
 		registerEntity(EntityPlayer.class, 1);
+		entityToIDMap.put(EntityPlayerClient.class, 1);
 	}
 }

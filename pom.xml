@@ -67,7 +67,6 @@
 			<version>1.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>

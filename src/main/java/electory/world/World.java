@@ -3,6 +3,7 @@ package electory.world;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
@@ -29,14 +30,14 @@ import electory.utils.CrashException;
 import electory.utils.EnumSide;
 import electory.world.gen.ChunkGenerator;
 
-public class World implements IChunkSaveStatusHandler {
+public abstract class World implements IChunkSaveStatusHandler {
 	private Set<Entity> entities = new HashSet<>();
 
 	public long seed = ThreadLocalRandom.current().nextLong();
 
 	public Random random = new Random(seed);
 
-	private Vector3d spawnPoint = new Vector3d(/* random.nextInt(2048) - 1024 */ 0f, 256f,
+	protected Vector3d spawnPoint = new Vector3d(/* random.nextInt(2048) - 1024 */ 0f, 256f,
 			/* random.nextInt(2048) - 1024 */ 0f);
 
 	public static final int FLAG_SKIP_RENDER_UPDATE = 1;
@@ -49,7 +50,7 @@ public class World implements IChunkSaveStatusHandler {
 	public IChunkProvider generationChunkProvider = new ChunkGenerator(this, seed);
 	public IChunkProvider chunkProvider = new ChunkProviderSP(this);
 
-	private EntityPlayer playerToSpawn = null;
+	protected EntityPlayer playerToSpawn = null;
 
 	public Set<Entity> getEntities() {
 		return entities;
@@ -154,16 +155,19 @@ public class World implements IChunkSaveStatusHandler {
 		chunkLoadingTick();
 	}
 
+	protected abstract Collection<EntityPlayer> getPlayers();
+
 	private void chunkLoadingTick() {
-		EntityPlayer player = TinyCraft.getInstance().player;
 		HashLongSet chunksToLoad = HashLongSets.newMutableSet();
-		Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f)
-				: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
-		int startX = (((int) ppos.x) >> 4) - CHUNKLOAD_DISTANCE;
-		int startZ = (((int) ppos.z) >> 4) - CHUNKLOAD_DISTANCE;
-		for (int x = startX; x < startX + CHUNKLOAD_DISTANCE2; x++) {
-			for (int z = startZ; z < startZ + CHUNKLOAD_DISTANCE2; z++) {
-				chunksToLoad.add(ChunkPosition.createLong(x, z));
+		for (EntityPlayer player : getPlayers()) {
+			Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f)
+					: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
+			int startX = (((int) ppos.x) >> 4) - CHUNKLOAD_DISTANCE;
+			int startZ = (((int) ppos.z) >> 4) - CHUNKLOAD_DISTANCE;
+			for (int x = startX; x < startX + CHUNKLOAD_DISTANCE2; x++) {
+				for (int z = startZ; z < startZ + CHUNKLOAD_DISTANCE2; z++) {
+					chunksToLoad.add(ChunkPosition.createLong(x, z));
+				}
 			}
 		}
 		HashLongSet chunksToUnload = HashLongSets.newMutableSet(chunkProvider.getLoadedChunkMap().keySet());
@@ -195,38 +199,13 @@ public class World implements IChunkSaveStatusHandler {
 			LongCursor it = chunksToUnload.cursor();
 			if (it.moveNext()) {
 				long cpos = it.elem();
-				chunkProvider.unloadChunk(chunkProvider.provideChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L)), null, true);
+				chunkProvider.unloadChunk(chunkProvider
+						.provideChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L)), null, true);
 			}
 		}
 	}
 
-	private boolean checkSpawnAreaLoaded() {
-		if (TinyCraft.getInstance().player == null) {
-			if (playerToSpawn == null) {
-				if (chunkProvider.isChunkLoaded((int) Math.floor(spawnPoint.x) >> 4,
-												(int) Math.floor(spawnPoint.z) >> 4)) {
-					EntityPlayer player = new EntityPlayer(this);
-					player.setPosition(	spawnPoint.x + 0.5f,
-										getHeightAt((int) Math.floor(spawnPoint.x), (int) Math.floor(spawnPoint.z))
-												+ 1.0f,
-										spawnPoint.z + 0.5f,
-										false);
-					addEntity(player);
-					TinyCraft.getInstance().setPlayer(player);
-					return true;
-				}
-			} else {
-				Vector3d spawnPos = playerToSpawn.getInterpolatedPosition(1.0f);
-				if (chunkProvider.isChunkLoaded((int) Math.floor(spawnPos.x) >> 4, (int) Math.floor(spawnPos.z) >> 4)) {
-					TinyCraft.getInstance().setPlayer(playerToSpawn);
-					addEntity(playerToSpawn);
-					playerToSpawn = null;
-					return true;
-				}
-			}
-		}
-		return TinyCraft.getInstance().player != null;
-	}
+	protected abstract boolean checkSpawnAreaLoaded();
 
 	public File getWorldSaveDir() {
 		File worldDir = new File(TinyCraft.getInstance().getUserDataDir(), "world");
@@ -289,7 +268,8 @@ public class World implements IChunkSaveStatusHandler {
 					int type = entityTag.getInt("type");
 					Class<? extends Entity> clazz = EntityMap.getEntityById(type);
 					try {
-						Entity entity = clazz.getConstructor(World.class).newInstance(this);
+						Entity entity = EntityPlayer.class.isAssignableFrom(clazz) ? constructPlayer()
+								: clazz.getConstructor(World.class).newInstance(this);
 						entity.readEntityData(entityTag);
 						if (entity instanceof EntityPlayer) {
 							playerToSpawn = (EntityPlayer) entity;
@@ -304,6 +284,8 @@ public class World implements IChunkSaveStatusHandler {
 			}
 		}
 	}
+
+	protected abstract EntityPlayer constructPlayer();
 
 	public int getSunLightLevelAt(int x, int y, int z) {
 		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);

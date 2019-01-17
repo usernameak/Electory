@@ -3,13 +3,12 @@ package electory.entity;
 import java.io.IOException;
 
 import org.joml.Vector3f;
-import org.lwjgl.input.Keyboard;
 
 import electory.block.Block;
 import electory.nbt.CompoundTag;
 import electory.world.World;
 
-public class EntityPlayer extends EntityLiving {
+public abstract class EntityPlayer extends EntityLiving {
 
 	public EntityPlayer(World world) {
 		super(world);
@@ -55,11 +54,6 @@ public class EntityPlayer extends EntityLiving {
 	public void readEntityData(CompoundTag tag) throws IOException {
 		super.readEntityData(tag);
 		selectedBlock = Block.blockList[tag.getInt("selectedBlock")];
-	}
-
-	@Override
-	public Vector3f getAcceleration() {
-		return super.getAcceleration().add(0f, Keyboard.isKeyDown(Keyboard.KEY_SPACE) && (onGround || isUnderwater) ? (isUnderwater ? 0.006f : 0.512f) : 0f, 0f);
 	}
 
 }
