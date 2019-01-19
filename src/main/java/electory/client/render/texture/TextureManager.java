@@ -10,17 +10,23 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.ARBTextureMultisample;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import electory.utils.CrashException;
 
 public class TextureManager {
 	public static final String TERRAIN_TEXTURE = "/img/items/terrain.png";
-	
+
 	private Map<String, Integer> loadedTextures = new HashMap<>();
 
 	public void bindTexture(String texture) {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getTextureUnit(texture));
+	}
+
+	public void bindTextureMS(String texture) {
+		GL11.glBindTexture(ARBTextureMultisample.GL_TEXTURE_2D_MULTISAMPLE, getTextureUnit(texture));
 	}
 
 	public void createVirtualTexture(String texture, int width, int height, int internalformat, int format, int type) {
@@ -37,17 +43,42 @@ public class TextureManager {
 
 		loadedTextures.put(texture, textureUnit);
 	}
-	
+
+	public void createVirtualTextureMS(String texture, int width, int height, int internalformat, 
+			int samples) {
+		int textureUnit = GL11.glGenTextures();
+
+		GL11.glBindTexture(ARBTextureMultisample.GL_TEXTURE_2D_MULTISAMPLE, textureUnit);
+
+		GL11.glTexParameteri(	ARBTextureMultisample.GL_TEXTURE_2D_MULTISAMPLE,
+								GL11.GL_TEXTURE_MAG_FILTER,
+								GL11.GL_NEAREST);
+		GL11.glTexParameteri(	ARBTextureMultisample.GL_TEXTURE_2D_MULTISAMPLE,
+								GL11.GL_TEXTURE_MIN_FILTER,
+								GL11.GL_NEAREST);
+		GL11.glTexParameteri(ARBTextureMultisample.GL_TEXTURE_2D_MULTISAMPLE, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+		GL11.glTexParameteri(ARBTextureMultisample.GL_TEXTURE_2D_MULTISAMPLE, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+
+		ARBTextureMultisample.glTexImage2DMultisample(	ARBTextureMultisample.GL_TEXTURE_2D_MULTISAMPLE,
+														samples,
+														internalformat,
+														width,
+														height,
+														false);
+
+		loadedTextures.put(texture, textureUnit);
+	}
+
 	public void setTextureFilter(int minFilter, int magFilter) {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, minFilter);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, magFilter);
 	}
-	
+
 	public void setTextureWrap(int s, int t) {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, s);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, t);
 	}
-	
+
 	public int getTextureUnit(String texture) {
 		if (loadedTextures.containsKey(texture)) {
 			return loadedTextures.get(texture);
@@ -80,9 +111,16 @@ public class TextureManager {
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-			
-			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, image.getWidth(), image
-					.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+
+			GL11.glTexImage2D(	GL11.GL_TEXTURE_2D,
+								0,
+								GL11.GL_RGBA,
+								image.getWidth(),
+								image.getHeight(),
+								0,
+								GL11.GL_RGBA,
+								GL11.GL_UNSIGNED_BYTE,
+								buffer);
 
 			loadedTextures.put(texture, textureUnit);
 			return textureUnit;
@@ -90,7 +128,7 @@ public class TextureManager {
 			throw new CrashException(e);
 		}
 	}
-	
+
 	public void disposeTexture(String texture) {
 		if (loadedTextures.containsKey(texture)) {
 			GL11.glDeleteTextures(loadedTextures.get(texture));

@@ -7,16 +7,12 @@ import java.util.Random;
 import com.koloboke.collect.map.LongObjMap;
 
 import electory.block.Block;
-import electory.math.MathUtils;
 import electory.world.BiomeGenBase;
 import electory.world.Chunk;
 import electory.world.IChunkProvider;
 import electory.world.IChunkSaveStatusHandler;
 import electory.world.World;
-import electory.world.gen.biome.BiomeConditionHeightMapFilter;
-import electory.world.gen.biome.DummyBiomeAccessor;
 import electory.world.gen.biome.IBiomeAccessor;
-import electory.world.gen.biome.IBiomeMutator;
 import electory.world.gen.condition.IntegerCondition;
 import electory.world.gen.heightmap.BasicHeightMapGenerator;
 import electory.world.gen.heightmap.ConditionalAddHeightMapGenerator;
@@ -25,14 +21,20 @@ import electory.world.gen.heightmap.Lerp4HeightMapGenerator;
 import electory.world.gen.heightmap.OverScanHeightMapGenerator;
 import electory.world.gen.heightmap.postprocessor.Lerp4HeightMapPostProcessor;
 import electory.world.gen.heightmap.postprocessor.RangeRemapPostProcessor;
+import electory.world.gen.noise.DSNoise;
 import electory.world.gen.noise.FBM;
+import electory.world.gen.noise.PoweredNoise;
 import electory.world.gen.noise.ScaledNoise;
 
 public class ChunkGenerator implements IChunkProvider {
 
 	private World world;
+	/*
+	 * private IHeightMapGenerator heightMapGens[]; private IBiomeMapGenerator
+	 * biomeMapGen;
+	 */
 	private IHeightMapGenerator heightMapGen;
-	private IHeightMapGenerator forestnessGen;
+	// private IHeightMapGenerator forestnessGen;
 	private MapGenCaves caveGenerator;
 	private Random rand = new Random();
 
@@ -47,29 +49,52 @@ public class ChunkGenerator implements IChunkProvider {
 		 * 0.f, 183.f), BiomeGenBase.plains, BiomeGenBase.extremeHills, new
 		 * Lerp4HeightMapPostProcessor());
 		 */
-		this.heightMapGen = new ConditionalAddHeightMapGenerator(
-				new OverScanHeightMapGenerator(new ScaledNoise(new FBM(8, seed), 1f / 32, 1f / 32), 64, 72, 64, 72, 17, 1),
-				new Lerp4HeightMapGenerator(new ScaledNoise(new FBM(8, seed ^ 0xFADEC0FFEE101F00l), 1f / 128, 1f / 128), 0,
-						1024, 0, 1024),
+		/*
+		 * this.heightMapGen = new ConditionalAddHeightMapGenerator( new
+		 * OverScanHeightMapGenerator(new ScaledNoise(new FBM(8, seed), 1f / 32, 1f /
+		 * 32), 64, 72, 64, 72, 17, 1), new Lerp4HeightMapGenerator(new ScaledNoise(new
+		 * FBM(8, seed ^ 0xFADEC0FFEE101F00l), 1f / 128, 1f / 128), 0, 1024, 0, 1024),
+		 * IntegerCondition.GREATER, 512, new RangeRemapPostProcessor(512.f, 1024.f,
+		 * 0.f, 183.f), BiomeGenBase.plains, BiomeGenBase.extremeHills, new
+		 * Lerp4HeightMapPostProcessor());
+		 */
+		/*
+		 * this.heightMapGens = new IHeightMapGenerator[BiomeGenBase.biomeList.length];
+		 * for (int i = 0; i < BiomeGenBase.biomeList.length; i++) { if
+		 * (BiomeGenBase.biomeList[i] != null) { heightMapGens[i] =
+		 * BiomeGenBase.biomeList[i].createHeightMapGenerator(seed); } }
+		 */
+
+		heightMapGen = new ConditionalAddHeightMapGenerator(
+				new OverScanHeightMapGenerator(
+						new PoweredNoise(new ScaledNoise(new FBM(8, seed), 1f / 256, 1f / 256), 0.66666f), 32, 72, 32,
+						72, 17, 1),
+				new Lerp4HeightMapGenerator(new PoweredNoise(new ScaledNoise(new FBM(8, seed ^ 0xDEADBEEFCAFEBABEl), 1f / 256, 1f / 256), 1.66f), 0, 1024, 0, 1024),
 				IntegerCondition.GREATER, 512, new RangeRemapPostProcessor(512.f, 1024.f, 0.f, 183.f),
-				BiomeGenBase.plains, BiomeGenBase.extremeHills, new Lerp4HeightMapPostProcessor());
-		/*new DSNoise(60000000, 60000000 / 200.f, seed ^ 0x793379EE79E3793El)*/
-		this.forestnessGen = new BiomeConditionHeightMapFilter(
-				new BasicHeightMapGenerator(new ScaledNoise(new FBM(8, seed ^ 0x793379EE79E3793El), 1f / 64, 1f / 64), -100,
-						100, -100, 100),
-				IntegerCondition.GREATER_OR_EQUAL, 0, new IBiomeMutator() {
-					@Override
-					public BiomeGenBase mutate(BiomeGenBase oldBiome, int chunkX, int chunkZ, int x, int z) {
-						if (oldBiome.equals(BiomeGenBase.plains)) {
-							return BiomeGenBase.forest;
-						} else if (oldBiome.equals(BiomeGenBase.extremeHills)
-								|| oldBiome.equals(BiomeGenBase.extremeHillsEdge)) {
-							return BiomeGenBase.forestHills;
-						} else {
-							return oldBiome;
-						}
-					}
-				}, null);
+				null, BiomeGenBase.extremeHills, new Lerp4HeightMapPostProcessor());
+
+		/*heightMapGen = new BasicHeightMapGenerator(
+				new PoweredNoise(new ScaledNoise(new FBM(8, seed), 1f / 256, 1f / 256), 0.66666f), 32, 72, 32, 72);*/
+		// = new BasicHeightMapGenerator(new ScaledNoise(new FBM(8, seed), 1f / 32, 1f /
+		// 32), 64, 72, 64, 72);
+		/*
+		 * this.biomeMapGen = new FuzzyChunkBlurBiomeMapGenerator(new
+		 * VoronoiBiomeMapGenerator(seed ^ 0xDEADBEEFCAFEBABEL, BiomeGenBase.plains,
+		 * BiomeGenBase.ocean));
+		 */
+		/* new DSNoise(60000000, 60000000 / 200.f, seed ^ 0x793379EE79E3793El) */
+		/*
+		 * this.forestnessGen = new BiomeConditionHeightMapFilter( new
+		 * BasicHeightMapGenerator(new ScaledNoise(new FBM(8, seed ^
+		 * 0x793379EE79E3793El), 1f / 64, 1f / 64), -100, 100, -100, 100),
+		 * IntegerCondition.GREATER_OR_EQUAL, 0, new IBiomeMutator() {
+		 * 
+		 * @Override public BiomeGenBase mutate(BiomeGenBase oldBiome, int chunkX, int
+		 * chunkZ, int x, int z) { if (oldBiome.equals(BiomeGenBase.plains)) { return
+		 * BiomeGenBase.forest; } else if (oldBiome.equals(BiomeGenBase.extremeHills) ||
+		 * oldBiome.equals(BiomeGenBase.extremeHillsEdge)) { return
+		 * BiomeGenBase.forestHills; } else { return oldBiome; } } }, null);
+		 */
 		this.caveGenerator = new MapGenCaves(new Random(seed ^ 0xA773F00CCA8E9E10l));
 	}
 
@@ -88,40 +113,28 @@ public class ChunkGenerator implements IChunkProvider {
 
 		rand.setSeed(x ^ (z << 16) ^ world.seed ^ 0x36l);
 
-		int forestness = forestnessGen.generateHeightmap(new DummyBiomeAccessor(), x, z)[0][0];
-		float forestnessF = MathUtils.rangeRemap(forestness, -100.f, 100.f, 0.0f, 10.0f);
-		if (forestnessF >= 1 || this.rand.nextFloat() <= forestnessF) {
-			int forestnessI = (int) (forestnessF >= 1 ? forestnessF : 1);
+		/*
+		 * int forestness = forestnessGen.generateHeightmap(new DummyBiomeAccessor(), x,
+		 * z)[0][0]; float forestnessF = MathUtils.rangeRemap(forestness, -100.f, 100.f,
+		 * 0.0f, 10.0f); if (forestnessF >= 1 || this.rand.nextFloat() <= forestnessF) {
+		 * int forestnessI = (int) (forestnessF >= 1 ? forestnessF : 1);
+		 * 
+		 * for (int i = 0; i < forestnessI; i++) { int wx = (x << 4) + 8 +
+		 * rand.nextInt(16); int wz = (z << 4) + 8 + rand.nextInt(16);
+		 * 
+		 * for (int y = 255; y >= 0; y--) { Block block = world.getBlockAt(wx, y, wz);
+		 * if (block == Block.blockDirt || block == Block.blockGrass) { for (int by = y
+		 * + 1; by < y + 7; by++) { if (by >= y + 3) { int radius = by >= y + 5 ? 1 : 2;
+		 * for (int bx = wx - radius; bx <= wx + radius; bx++) { for (int bz = wz -
+		 * radius; bz <= wz + radius; bz++) { if (radius == 1 || !(bx == wx && bz ==
+		 * wz)) { world.setBlockAt(bx, by, bz, Block.blockLeaves); } } } } if (by < y +
+		 * 5) { world.setBlockAt(wx, by, wz, Block.blockLog); } } break; } else if
+		 * (block != null && !block.canBeReplaced()) { break; } } } }
+		 */
+	}
 
-			for (int i = 0; i < forestnessI; i++) {
-				int wx = (x << 4) + 8 + rand.nextInt(16);
-				int wz = (z << 4) + 8 + rand.nextInt(16);
-
-				for (int y = 255; y >= 0; y--) {
-					Block block = world.getBlockAt(wx, y, wz);
-					if (block == Block.blockDirt || block == Block.blockGrass) {
-						for (int by = y + 1; by < y + 7; by++) {
-							if (by >= y + 3) {
-								int radius = by >= y + 5 ? 1 : 2;
-								for (int bx = wx - radius; bx <= wx + radius; bx++) {
-									for (int bz = wz - radius; bz <= wz + radius; bz++) {
-										if (radius == 1 || !(bx == wx && bz == wz)) {
-											world.setBlockAt(bx, by, bz, Block.blockLeaves);
-										}
-									}
-								}
-							}
-							if (by < y + 5) {
-								world.setBlockAt(wx, by, wz, Block.blockLog);
-							}
-						}
-						break;
-					} else if (block != null && !block.canBeReplaced()) {
-						break;
-					}
-				}
-			}
-		}
+	private int lerp(int a, int b, float i) {
+		return (int) (a + i * (b - a));
 	}
 
 	@Override
@@ -143,12 +156,37 @@ public class ChunkGenerator implements IChunkProvider {
 			}
 		};
 
+		/*
+		 * int[][] biomeMap = biomeMapGen.generateBiomeMap(cx, cy);
+		 * 
+		 * IBiomeMapGenerator.applyBiomes(biomeMap, biomeAccessor);
+		 */
+
 		int[][] heightData = heightMapGen.generateHeightmap(biomeAccessor, cx, cy);
-		forestnessGen.generateHeightmap(biomeAccessor, cx, cy);
+		/*
+		 * int[][][] heightDatas = new int[heightMapGens.length][][]; //
+		 * forestnessGen.generateHeightmap(biomeAccessor, cx, cy);
+		 */
 
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
+				/*
+				 * int bid1 = IBiomeMapGenerator.getBiomeA(biomeMap[i][j]).biomeID; int bid2 =
+				 * IBiomeMapGenerator.getBiomeB(biomeMap[i][j]).biomeID; // int bid =
+				 * biomeAccessor.getBiome(i, j).biomeID; if (heightDatas[bid1] == null) {
+				 * heightDatas[bid1] = heightMapGens[bid1].generateHeightmap(biomeAccessor, cx,
+				 * cy); } if (heightDatas[bid2] == null) { heightDatas[bid2] =
+				 * heightMapGens[bid2].generateHeightmap(biomeAccessor, cx, cy); }
+				 * 
+				 * int ih = lerp(heightDatas[bid1][i][j], heightDatas[bid2][i][j],
+				 * IBiomeMapGenerator.getBiomeInterpolationValue(biomeMap[i][j]) / 255.0f);
+				 */
+
 				int ih = heightData[i][j];
+
+				if (ih < 64) {
+					biomeData[j << 4 | i] = (byte) BiomeGenBase.ocean.biomeID;
+				}
 
 				BiomeGenBase biome = BiomeGenBase.biomeList[biomeData[j << 4 | i]];
 
@@ -162,6 +200,12 @@ public class ChunkGenerator implements IChunkProvider {
 						block = biome.fillerBlock;
 					}
 					(z >= 128 ? chunkDataExt : chunkData)[i << 11 | j << 7 | (z & 0x7F)] = (byte) block.blockID;
+				}
+
+				for (int z = ih; z < 64; z++) {
+					(z >= 128 ? chunkDataExt : chunkData)[i << 11
+							| j << 7
+							| (z & 0x7F)] = (byte) Block.blockWater.blockID;
 				}
 			}
 		}

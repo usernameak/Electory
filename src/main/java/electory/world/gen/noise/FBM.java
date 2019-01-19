@@ -46,7 +46,7 @@ public class FBM implements IWorldNoiseGeneratord {
 		x ^= x >> 12; // a
 		x ^= x << 25; // b
 		x ^= x >> 27; // c
-		return x * 0x2545F4914F6CDD1DL;
+		return (x * 0x2545F4914F6CDD1DL) ^ 0x132485746548574EL;
 	}
 	
 	private double random(double x, double y) {
@@ -80,7 +80,7 @@ public class FBM implements IWorldNoiseGeneratord {
 		double xu = xf * xf * (3.0 - 2.0 * xf);
 		double yu = yf * yf * (3.0 - 2.0 * yf);
 
-		return lerp(a, b, xu) + (c - a) * yu * (1.0 - xu) + (d - b) * yu * xu;
+		return ((lerp(a, b, xu) + (c - a) * yu * (1.0 - xu) + (d - b) * yu * xu) - 0.5f) * 2.0f;
 	}
 
 	public double val(double x, double y) {
@@ -93,7 +93,7 @@ public class FBM implements IWorldNoiseGeneratord {
 			x *= 2.;
 			y *= 2.;
 		}
-		return value;
+		return value * 0.5f + 0.5f;
 	}
 
 }

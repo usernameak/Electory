@@ -134,9 +134,9 @@ public class TinyCraft {
 
 			while (!Display.isCloseRequested() && !shutdown) {
 				update();
-				// if (Display.isActive() || Display.isDirty()) {
-				render();
-				// }
+				if (Display.isActive() || Display.isDirty()) {
+					render();
+				}
 				Display.update();
 				fpsc++;
 				fpsNanoCounter = System.nanoTime();
@@ -194,7 +194,7 @@ public class TinyCraft {
 			crashFrame.setSize(640, 480);
 			crashFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			crashFrame.setVisible(true);
-			
+
 			System.out.println("Showing crash report window.");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -273,9 +273,15 @@ public class TinyCraft {
 		console.init(); // FIXME: Fix this to autoload commands if it's possible
 	}
 
+	private long lastMillis = System.currentTimeMillis();
+
 	public void update() {
 		if (!Display.isActive() && world != null && player != null && currentGui == null) {
-			openGui(new GuiPause(this));
+			if (lastMillis + 500L < System.currentTimeMillis()) {
+				openGui(new GuiPause(this));
+			}
+		} else {
+			lastMillis = System.currentTimeMillis();
 		}
 
 		tickTimer.updateTimer();
@@ -301,10 +307,14 @@ public class TinyCraft {
 		while (Keyboard.next()) {
 			if (currentGui == null) {
 				if (player != null && !isPaused()) {
-					theHUD.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState(), Keyboard.getEventCharacter());
+					theHUD.handleKeyEvent(	Keyboard.getEventKey(),
+											Keyboard.getEventKeyState(),
+											Keyboard.getEventCharacter());
 				}
 			} else {
-				currentGui.handleKeyEvent(Keyboard.getEventKey(), Keyboard.getEventKeyState(), Keyboard.getEventCharacter());
+				currentGui.handleKeyEvent(	Keyboard.getEventKey(),
+											Keyboard.getEventKeyState(),
+											Keyboard.getEventCharacter());
 			}
 			if (Keyboard.getEventKey() == Keyboard.KEY_F11 && Keyboard.getEventKeyState()) {
 				if (Display.isFullscreen()) {
@@ -330,7 +340,9 @@ public class TinyCraft {
 						e.printStackTrace();
 					}
 				}
-			} else if (Keyboard.getEventKey() == Keyboard.KEY_C && Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.getEventKeyState()) {
+			} else if (Keyboard.getEventKey() == Keyboard.KEY_C
+					&& Keyboard.isKeyDown(Keyboard.KEY_F3)
+					&& Keyboard.getEventKeyState()) {
 				throw new CrashException("Debug crash.");
 			}
 		}
@@ -457,7 +469,7 @@ public class TinyCraft {
 	}
 
 	public void openGui(GuiScreen gui) {
-		if(currentGui != null) {
+		if (currentGui != null) {
 			currentGui.closeGuiScreen();
 		}
 		currentGui = gui;
