@@ -44,37 +44,37 @@ public class BlockRendererCube implements IBlockRenderer {
 	public void bakeBlockSide(World world, Block block, ChunkRenderer renderer, EnumSide dir, int x, int y, int z, int wx, int wz,
 			TriangleBuffer buffer, int lightLevel) {
 		if (dir == EnumSide.UP) {
-			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.UP);
+			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.UP);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMinU(), sprite.getMinV());
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMinU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMaxU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMaxU(), sprite.getMinV());
 		} else if (dir == EnumSide.DOWN) {
-			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.DOWN);
+			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.DOWN);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMinU(), sprite.getMinV());
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMinU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMinV());
 		} else if (dir == EnumSide.SOUTH) {
-			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.SOUTH);
+			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.SOUTH);
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMinU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMaxU(), sprite.getMinV());
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMinU(), sprite.getMinV());
 		} else if (dir == EnumSide.NORTH) {
-			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.NORTH);
+			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.NORTH);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMaxU(), sprite.getMinV());
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMinU(), sprite.getMinV());
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMinU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.EAST) {
-			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.EAST);
+			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.EAST);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMaxU(), sprite.getMinV());
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMinU(), sprite.getMinV());
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMinU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.WEST) {
-			IAtlasSprite sprite = block.getAtlasSprite(EnumSide.WEST);
+			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.WEST);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMinU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMaxU(), sprite.getMinV());

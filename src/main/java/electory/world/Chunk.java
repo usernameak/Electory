@@ -1,7 +1,9 @@
 package electory.world;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 import electory.block.Block;
@@ -11,12 +13,14 @@ import electory.nbt.CompoundTag;
 import electory.nbt.ShortArrayTag;
 import electory.nbt.Tag;
 import electory.utils.EnumSide;
+import electory.utils.MetaSerializer;
 import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
 
 public class Chunk {
 	private short blockArray[] = new short[16 * 256 * 16];
 	private short lightArray[] = new short[16 * 256 * 16];
+	private Object metaArray[] = new Object[16 * 256 * 16];
 	private byte biomeArray[] = new byte[16 * 16];
 	private short heightMap[] = new short[16 * 16];
 
@@ -153,11 +157,27 @@ public class Chunk {
 		lightArray[cx + y * 16 + cz * 16 * 256] = (short) ((lightArray[cx + y * 16 + cz * 16 * 256] & 0xFFF0) | val);
 	}
 
-	public void setBlockAt(int x, int y, int z, Block block, int flags) {
+	@SuppressWarnings("unchecked")
+	public <T> T getBlockMetadataAt(int x, int y, int z) {
+		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
+			return null;
+		}
+		return (T) metaArray[x + y * 16 + z * 16 * 256];
+	}
+
+	public void setBlockMetadataAt(int x, int y, int z, Object meta) {
+		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
+			return;
+		}
+		metaArray[x + y * 16 + z * 16 * 256] = meta;
+	}
+
+	public void setBlockWithMetadataAt(int x, int y, int z, Block block, Object meta, int flags) {
 		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
 			return;
 		}
 		blockArray[x + y * 16 + z * 16 * 256] = (block == null ? 0 : (short) block.blockID);
+		metaArray[x + y * 16 + z * 16 * 256] = meta;
 		if ((flags & World.FLAG_SKIP_LIGHT_UPDATE) == 0) {
 			recalculateSkyLightForBlock(x, y, z);
 		}
@@ -186,6 +206,10 @@ public class Chunk {
 				}
 			}
 		}
+	}
+
+	public void setBlockAt(int x, int y, int z, Block block, int flags) {
+		setBlockWithMetadataAt(x, y, z, block, null, flags);
 	}
 
 	public void setBlockAt(int x, int y, int z, Block block) {
@@ -313,12 +337,30 @@ public class Chunk {
 		recalculateSkyLight(bfsSkyQueue);
 	}
 
+	private CompoundTag writeMetaArray() {
+		CompoundTag tag = new CompoundTag();
+		for (int i = 0; i < metaArray.length; i++) {
+			if (metaArray[i] != null) {
+				tag.put(String.valueOf(i), MetaSerializer.serializeObject(metaArray[i]));
+			}
+		}
+		return tag;
+	}
+
+	private void readMetaArray(CompoundTag tag) {
+		Arrays.fill(metaArray, null);
+		for(Map.Entry<String, Tag<?>> entry : tag) {
+			metaArray[Integer.parseInt(entry.getKey())] = MetaSerializer.deserializeObject((CompoundTag) entry.getValue());
+		}
+	}
+
 	public void writeChunkData(ArrayDataOutput dos) throws IOException {
 		CompoundTag tag = new CompoundTag();
 		tag.put("blockArray", new ShortArrayTag(blockArray));
 		tag.put("lightArray", new ShortArrayTag(lightArray));
 		tag.put("biomeArray", new ByteArrayTag(biomeArray));
 		tag.put("heightMap", new ShortArrayTag(heightMap));
+		tag.put("metaArray", writeMetaArray());
 		tag.putBoolean("isPopulated", isPopulated);
 		tag.serialize(dos, 0);
 	}
@@ -329,6 +371,7 @@ public class Chunk {
 		lightArray = ((ShortArrayTag) tag.get("lightArray")).getValue();
 		biomeArray = ((ByteArrayTag) tag.get("biomeArray")).getValue();
 		heightMap = ((ShortArrayTag) tag.get("heightMap")).getValue();
+		readMetaArray(tag.getCompoundTag("metaArray"));
 		isPopulated = tag.getBoolean("isPopulated");
 		scheduleChunkUpdate();
 	}

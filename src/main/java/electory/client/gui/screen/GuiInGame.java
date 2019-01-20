@@ -22,7 +22,7 @@ public class GuiInGame extends GuiScreen {
 	}
 
 	private final Block[] pickableBlocks = new Block[] { Block.blockCobblestone, Block.blockGrass, Block.blockPlanks,
-			Block.blockDirt, Block.blockGlass, Block.blockLog, Block.blockLeaves, Block.blockStone, Block.blockSand };
+			Block.blockDirt, Block.blockGlass, Block.blockLog, Block.blockSapling, Block.blockStone, Block.blockSand };
 
 	@Override
 	public void renderGui(GuiRenderState rs) {

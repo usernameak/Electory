@@ -98,10 +98,20 @@ public abstract class World implements IChunkSaveStatusHandler {
 	}
 
 	public void interactWithBlock(EntityPlayer player, int x, int y, int z, EnumSide side) {
-		AABB blockAABB = player.selectedBlock.getAABB(this, x + side.offsetX, y + side.offsetY, z + side.offsetZ, true);
-		if (entities.stream()
-				.noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
-			setBlockAt(x + side.offsetX, y + side.offsetY, z + side.offsetZ, player.selectedBlock);
+		if (!this.getBlockAt(x, y, z).interactWithBlock(player, this, x, y, z, side)) {
+			AABB blockAABB = player.selectedBlock
+					.getAABB(this, x + side.offsetX, y + side.offsetY, z + side.offsetZ, true);
+			if (entities.stream()
+					.noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
+				setBlockAt(x + side.offsetX, y + side.offsetY, z + side.offsetZ, player.selectedBlock);
+				player.selectedBlock
+						.blockPlacedByPlayer(	player,
+												this,
+												x + side.offsetX,
+												y + side.offsetY,
+												z + side.offsetZ,
+												EnumSide.getOrientation(EnumSide.OPPOSITES[side.ordinal()]));
+			}
 		}
 	}
 
@@ -331,5 +341,24 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public void playSFX(String path, float x, float y, float z, float radius) {
 		TinyCraft.getInstance().soundManager.playSFX(path, "world;" + path, x, y, z, radius);
+	}
+
+	public <T> T getBlockMetadataAt(int x, int y, int z) {
+		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
+		return chunk == null ? null : chunk.getBlockMetadataAt(x & 0xF, y, z & 0xF);
+	}
+
+	public void setBlockMetadataAt(int x, int y, int z, Object meta) {
+		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
+		if (chunk != null) {
+			chunk.setBlockMetadataAt(x & 0xF, y, z & 0xF, meta);
+		}
+	}
+
+	public void setBlockWithMetadataAt(int x, int y, int z, Block block, Object meta, int flags) {
+		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
+		if (chunk != null) {
+			chunk.setBlockWithMetadataAt(x & 0xF, y, z & 0xF, block, meta, flags);
+		}
 	}
 }

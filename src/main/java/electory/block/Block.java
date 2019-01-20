@@ -4,6 +4,7 @@ import electory.client.render.IAtlasSprite;
 import electory.client.render.IAtlasSpriteManager;
 import electory.client.render.block.IBlockRenderer;
 import electory.client.render.world.WorldRenderer;
+import electory.entity.EntityPlayer;
 import electory.math.AABB;
 import electory.utils.EnumSide;
 import electory.world.World;
@@ -24,6 +25,7 @@ public class Block {
 	public static Block blockStone;
 	public static Block blockGravel;
 	public static Block blockTallGrass;
+	public static Block blockSapling;
 
 	public int blockID;
 
@@ -54,6 +56,10 @@ public class Block {
 
 	public IAtlasSprite getAtlasSprite(EnumSide side) {
 		return getAtlasSprite();
+	}
+	
+	public IAtlasSprite getAtlasSprite(World world, int x, int y, int z, EnumSide side) {
+		return getAtlasSprite(side);
 	}
 
 	public void registerAtlasSprites(IAtlasSpriteManager manager) {
@@ -129,6 +135,14 @@ public class Block {
 		this.sound = sound;
 		return this;
 	}
+	
+	public boolean interactWithBlock(EntityPlayer player, World world, int x, int y, int z, EnumSide side) {
+		return false;
+	}
+	
+	public void blockPlacedByPlayer(EntityPlayer player, World world, int x, int y, int z, EnumSide side) {
+		
+	}
 
 	static {
 		blockCobblestone = new Block(1).setSpriteNumber(1);
@@ -144,6 +158,7 @@ public class Block {
 		blockStone = new Block(11).setSpriteNumber(18);
 		blockGravel = new Block(12).setSpriteNumber(9);
 		blockTallGrass = new BlockTallGrass(13).setSpriteNumber(20).setSolid(false).setImpassable(false);
+		blockSapling = new BlockSapling(14).setSpriteNumber(21).setSolid(false).setImpassable(false);
 	}
 
 	public boolean canBeReplaced() {

@@ -2,31 +2,32 @@ package electory.utils;
 
 public enum EnumSide {
 	/** -Y */
-	DOWN(0, -1, 0),
+	DOWN(0, -1, 0, EnumAxis.Y),
 
 	/** +Y */
-	UP(0, 1, 0),
+	UP(0, 1, 0, EnumAxis.Y),
 
 	/** -Z */
-	NORTH(0, 0, -1),
+	NORTH(0, 0, -1, EnumAxis.Z),
 
 	/** +Z */
-	SOUTH(0, 0, 1),
+	SOUTH(0, 0, 1, EnumAxis.Z),
 
 	/** -X */
-	WEST(-1, 0, 0),
+	WEST(-1, 0, 0, EnumAxis.X),
 
 	/** +X */
-	EAST(1, 0, 0),
+	EAST(1, 0, 0, EnumAxis.X),
 
 	/**
 	 * Used only by getOrientation, for invalid inputs
 	 */
-	UNKNOWN(0, 0, 0);
+	UNKNOWN(0, 0, 0, EnumAxis.X);
 
 	public final int offsetX;
 	public final int offsetY;
 	public final int offsetZ;
+	public final EnumAxis axis;
 	public final int flag;
 	public static final EnumSide[] VALID_DIRECTIONS = { DOWN, UP, NORTH, SOUTH, WEST, EAST };
 	public static final int[] OPPOSITES = { 1, 0, 3, 2, 5, 4, 6 };
@@ -35,10 +36,11 @@ public enum EnumSide {
 			{ 5, 4, 2, 3, 0, 1, 6 }, { 4, 5, 2, 3, 1, 0, 6 }, { 2, 3, 1, 0, 4, 5, 6 }, { 3, 2, 0, 1, 4, 5, 6 },
 			{ 0, 1, 2, 3, 4, 5, 6 }, };
 
-	private EnumSide(int x, int y, int z) {
+	private EnumSide(int x, int y, int z, EnumAxis axis) {
 		offsetX = x;
 		offsetY = y;
 		offsetZ = z;
+		this.axis = axis; 
 		flag = 1 << ordinal();
 	}
 
