@@ -14,6 +14,7 @@ import electory.world.IChunkSaveStatusHandler;
 import electory.world.World;
 import electory.world.gen.biome.IBiomeAccessor;
 import electory.world.gen.condition.IntegerCondition;
+import electory.world.gen.feature.WorldGenFeatureTree;
 import electory.world.gen.heightmap.BasicHeightMapGenerator;
 import electory.world.gen.heightmap.ConditionalAddHeightMapGenerator;
 import electory.world.gen.heightmap.IHeightMapGenerator;
@@ -37,6 +38,7 @@ public class ChunkGenerator implements IChunkProvider {
 	// private IHeightMapGenerator forestnessGen;
 	private MapGenCaves caveGenerator;
 	private Random rand = new Random();
+	private WorldGenFeatureTree treeGenerator = new WorldGenFeatureTree();
 
 	public ChunkGenerator(World world, long seed) {
 		this.world = world;
@@ -69,12 +71,17 @@ public class ChunkGenerator implements IChunkProvider {
 				new OverScanHeightMapGenerator(
 						new PoweredNoise(new ScaledNoise(new FBM(8, seed), 1f / 256, 1f / 256), 0.66666f), 32, 72, 32,
 						72, 17, 1),
-				new Lerp4HeightMapGenerator(new PoweredNoise(new ScaledNoise(new FBM(8, seed ^ 0xDEADBEEFCAFEBABEl), 1f / 256, 1f / 256), 1.66f), 0, 1024, 0, 1024),
-				IntegerCondition.GREATER, 512, new RangeRemapPostProcessor(512.f, 1024.f, 0.f, 183.f),
-				null, BiomeGenBase.extremeHills, new Lerp4HeightMapPostProcessor());
+				new Lerp4HeightMapGenerator(new PoweredNoise(
+						new ScaledNoise(new FBM(8, seed ^ 0xDEADBEEFCAFEBABEl), 1f / 256, 1f / 256), 1.66f), 0, 1024, 0,
+						1024),
+				IntegerCondition.GREATER, 512, new RangeRemapPostProcessor(512.f, 1024.f, 0.f, 183.f), null,
+				BiomeGenBase.extremeHills, new Lerp4HeightMapPostProcessor());
 
-		/*heightMapGen = new BasicHeightMapGenerator(
-				new PoweredNoise(new ScaledNoise(new FBM(8, seed), 1f / 256, 1f / 256), 0.66666f), 32, 72, 32, 72);*/
+		/*
+		 * heightMapGen = new BasicHeightMapGenerator( new PoweredNoise(new
+		 * ScaledNoise(new FBM(8, seed), 1f / 256, 1f / 256), 0.66666f), 32, 72, 32,
+		 * 72);
+		 */
 		// = new BasicHeightMapGenerator(new ScaledNoise(new FBM(8, seed), 1f / 32, 1f /
 		// 32), 64, 72, 64, 72);
 		/*
@@ -118,19 +125,30 @@ public class ChunkGenerator implements IChunkProvider {
 		 * z)[0][0]; float forestnessF = MathUtils.rangeRemap(forestness, -100.f, 100.f,
 		 * 0.0f, 10.0f); if (forestnessF >= 1 || this.rand.nextFloat() <= forestnessF) {
 		 * int forestnessI = (int) (forestnessF >= 1 ? forestnessF : 1);
-		 * 
-		 * for (int i = 0; i < forestnessI; i++) { int wx = (x << 4) + 8 +
-		 * rand.nextInt(16); int wz = (z << 4) + 8 + rand.nextInt(16);
-		 * 
-		 * for (int y = 255; y >= 0; y--) { Block block = world.getBlockAt(wx, y, wz);
-		 * if (block == Block.blockDirt || block == Block.blockGrass) { for (int by = y
-		 * + 1; by < y + 7; by++) { if (by >= y + 3) { int radius = by >= y + 5 ? 1 : 2;
-		 * for (int bx = wx - radius; bx <= wx + radius; bx++) { for (int bz = wz -
-		 * radius; bz <= wz + radius; bz++) { if (radius == 1 || !(bx == wx && bz ==
-		 * wz)) { world.setBlockAt(bx, by, bz, Block.blockLeaves); } } } } if (by < y +
-		 * 5) { world.setBlockAt(wx, by, wz, Block.blockLog); } } break; } else if
-		 * (block != null && !block.canBeReplaced()) { break; } } } }
-		 */
+		 **/
+		for (int i = 0; i < 4; i++) {
+			int wx = (x << 4) + 8 + rand.nextInt(16);
+			int wz = (z << 4) + 8 + rand.nextInt(16);
+
+			for (int y = 255; y >= 0; y--) {
+				Block block = world.getBlockAt(wx, y, wz);
+				if (block == Block.blockDirt || block == Block.blockGrass) {
+					/*
+					 * for (int by = y + 1; by < y + 7; by++) { if (by >= y + 3) { int radius = by
+					 * >= y + 5 ? 1 : 2; for (int bx = wx - radius; bx <= wx + radius; bx++) { for
+					 * (int bz = wz - radius; bz <= wz + radius; bz++) { if (radius == 1 || !(bx ==
+					 * wx && bz == wz)) { world.setBlockAt(bx, by, bz, Block.blockLeaves); } } } }
+					 * if (by < y + 5) { world.setBlockAt(wx, by, wz, Block.blockLog); } }
+					 */
+
+					world.setBlockAt(wx, y + 1, wz, null);
+					treeGenerator.generate(world, wx, y + 1, wz);
+					break;
+				} else if (block != null && !block.canBeReplaced()) {
+					break;
+				}
+			}
+		}
 	}
 
 	private int lerp(int a, int b, float i) {
