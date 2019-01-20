@@ -142,7 +142,7 @@ public class ChunkGenerator implements IChunkProvider {
 					 */
 
 					world.setBlockAt(wx, y + 1, wz, null);
-					treeGenerator.generate(world, wx, y + 1, wz);
+					treeGenerator.generate(world, wx, y + 1, wz, rand);
 					break;
 				} else if (block != null && !block.canBeReplaced()) {
 					break;

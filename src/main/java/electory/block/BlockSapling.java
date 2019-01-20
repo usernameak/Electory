@@ -23,7 +23,7 @@ public class BlockSapling extends Block {
 
 		world.setBlockAt(x, y, z, null);
 
-		feature.generate(world, x, y, z);
+		feature.generate(world, x, y, z, world.random);
 
 		return true;
 	}
