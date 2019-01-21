@@ -9,7 +9,6 @@ import com.koloboke.collect.map.hash.HashObjIntMaps;
 
 import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
-import electory.utils.io.BufferedDataInputStream;
 
 public abstract class Packet {
 	private static IntObjMap<Class<? extends Packet>> registeredPackets = HashIntObjMaps.newMutableMap();

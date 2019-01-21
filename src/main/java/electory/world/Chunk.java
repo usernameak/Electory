@@ -23,6 +23,8 @@ public class Chunk {
 	private Object metaArray[] = new Object[16 * 256 * 16];
 	private byte biomeArray[] = new byte[16 * 16];
 	private short heightMap[] = new short[16 * 16];
+	
+	// private SortedMap<Integer, ChunkPosition> scheduledBlockUpdates = new TreeMap<>(); // TODO: 
 
 	public final ChunkRenderer chunkRenderer = new ChunkRenderer(this);
 

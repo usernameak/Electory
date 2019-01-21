@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBTextureMultisample;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import electory.utils.CrashException;
 

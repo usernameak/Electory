@@ -4,11 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
-import java.awt.Point;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
