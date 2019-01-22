@@ -23,8 +23,9 @@ public class Chunk {
 	private Object metaArray[] = new Object[16 * 256 * 16];
 	private byte biomeArray[] = new byte[16 * 16];
 	private short heightMap[] = new short[16 * 16];
-	
-	// private SortedMap<Integer, ChunkPosition> scheduledBlockUpdates = new TreeMap<>(); // TODO: 
+
+	// private SortedMap<Integer, ChunkPosition> scheduledBlockUpdates = new
+	// TreeMap<>(); // TODO:
 
 	public final ChunkRenderer chunkRenderer = new ChunkRenderer(this);
 
@@ -180,6 +181,25 @@ public class Chunk {
 		}
 		blockArray[x + y * 16 + z * 16 * 256] = (block == null ? 0 : (short) block.blockID);
 		metaArray[x + y * 16 + z * 16 * 256] = meta;
+		if (block != null && block.isSolid()) {
+			if (heightMap[x * 16 + z] < y) {
+				heightMap[x * 16 + z] = (short) y;
+			}
+		} else {
+			if (heightMap[x * 16 + z] == y) {
+				int h = y - 1;
+				for (; h >= 0; h--) {
+					Block b = getBlockAt(x, h, z);
+					if (b != null) {
+						break;
+					}
+				}
+				if (h < 0) {
+					h = 0;
+				}
+				heightMap[x * 16 + z] = (short) h;
+			}
+		}
 		if ((flags & World.FLAG_SKIP_LIGHT_UPDATE) == 0) {
 			recalculateSkyLightForBlock(x, y, z);
 		}
@@ -351,8 +371,9 @@ public class Chunk {
 
 	private void readMetaArray(CompoundTag tag) {
 		Arrays.fill(metaArray, null);
-		for(Map.Entry<String, Tag<?>> entry : tag) {
-			metaArray[Integer.parseInt(entry.getKey())] = MetaSerializer.deserializeObject((CompoundTag) entry.getValue());
+		for (Map.Entry<String, Tag<?>> entry : tag) {
+			metaArray[Integer.parseInt(entry.getKey())] = MetaSerializer
+					.deserializeObject((CompoundTag) entry.getValue());
 		}
 	}
 
