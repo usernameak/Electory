@@ -1,6 +1,5 @@
 package electory.utils;
 
-import electory.block.IBlockMetaSerializable;
 import electory.nbt.CompoundTag;
 
 public abstract class MetaSerializer {
@@ -13,8 +12,8 @@ public abstract class MetaSerializer {
 		String type = object.getClass().getName();
 		CompoundTag tag = new CompoundTag();
 		tag.putString("_Class", type);
-		if (object instanceof IBlockMetaSerializable) {
-			IBlockMetaSerializable serializable = (IBlockMetaSerializable) object;
+		if (object instanceof IMetaSerializable) {
+			IMetaSerializable serializable = (IMetaSerializable) object;
 			serializable.writeToNBT(tag);
 		} else if (object instanceof Enum) {
 			tag.putString("EnumValue", ((Enum<?>) object).name());
@@ -42,10 +41,10 @@ public abstract class MetaSerializer {
 
 		if (Enum.class.isAssignableFrom(clazz)) {
 			return Enum.valueOf((Class<? extends Enum>) clazz, tag.getString("EnumValue"));
-		} else if (IBlockMetaSerializable.class.isAssignableFrom(clazz)) {
-			IBlockMetaSerializable meta;
+		} else if (IMetaSerializable.class.isAssignableFrom(clazz)) {
+			IMetaSerializable meta;
 			try {
-				meta = ((IBlockMetaSerializable)clazz.newInstance());
+				meta = ((IMetaSerializable)clazz.newInstance());
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();
 				return null;

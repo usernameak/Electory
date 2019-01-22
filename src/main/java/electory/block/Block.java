@@ -10,7 +10,7 @@ import electory.utils.EnumSide;
 import electory.world.World;
 
 public class Block {
-	public static Block blockList[] = new Block[256];
+	public static Block blockList[] = new Block[32768];
 
 	public static Block blockCobblestone;
 	public static Block blockGrass;
