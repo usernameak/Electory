@@ -18,7 +18,7 @@ public class BlockRenderAOCube extends BlockRendererCube {
 
 	@Override
 	public void bakeBlockSide(World world, Block block, ChunkRenderer renderer, EnumSide dir, int x, int y, int z,
-			int wx, int wz, TriangleBuffer buffer, int lightLevel) {
+			int wx, int wz, TriangleBuffer buffer, int lightLevel, IAtlasSprite sprite) {
 		// AO coefficients: upper case is positive, lower is negative
 
 		int sunLightAvg_xyz = renderer.getChunk().getWorldSunLightLevelFast(wx - 1, y - 1, wz - 1);
@@ -45,7 +45,6 @@ public class BlockRenderAOCube extends BlockRendererCube {
 		buffer.setColor(ChunkRenderer.lightColors[lightLevel]);
 
 		if (dir == EnumSide.UP) {
-			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.UP);
 			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_xY,
 																			sunLightAvg_Yz,
 																			sunLightAvg_xYz,
@@ -67,7 +66,6 @@ public class BlockRenderAOCube extends BlockRendererCube {
 																			lightLevel)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMaxU(), sprite.getMinV());
 		} else if (dir == EnumSide.DOWN) {
-			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.DOWN);
 			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Xy,
 																			sunLightAvg_yz,
 																			sunLightAvg_Xyz,
@@ -89,7 +87,6 @@ public class BlockRenderAOCube extends BlockRendererCube {
 																			lightLevel)]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMinV());
 		} else if (dir == EnumSide.SOUTH) {
-			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.SOUTH);
 			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Zx,
 																			sunLightAvg_yZ,
 																			sunLightAvg_xyZ,
@@ -111,7 +108,6 @@ public class BlockRenderAOCube extends BlockRendererCube {
 																			lightLevel)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMinU(), sprite.getMinV());
 		} else if (dir == EnumSide.NORTH) {
-			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.NORTH);
 			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zx,
 																			sunLightAvg_Yz,
 																			sunLightAvg_xYz,
@@ -133,7 +129,6 @@ public class BlockRenderAOCube extends BlockRendererCube {
 																			lightLevel)]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.EAST) {
-			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.EAST);
 			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zX,
 																			sunLightAvg_XY,
 																			sunLightAvg_XYz,
@@ -155,7 +150,6 @@ public class BlockRenderAOCube extends BlockRendererCube {
 																			lightLevel)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.WEST) {
-			IAtlasSprite sprite = block.getAtlasSprite(world, wx, y, wz, EnumSide.WEST);
 			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zx,
 																			sunLightAvg_xy,
 																			sunLightAvg_xyz,
