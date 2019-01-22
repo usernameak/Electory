@@ -217,7 +217,7 @@ public class TinyCraft {
 		try {
 			Keyboard.create();
 			Mouse.create();
-			Mouse.setGrabbed(true);
+			// Mouse.setGrabbed(true);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
