@@ -130,16 +130,11 @@ public class ChunkGenerator implements IChunkProvider {
 					break;
 				} else if (block != null && !block.canBeReplaced()) {
 					break;
-				} else {
 				}
 			}
 		}
 	}
-
-	/*private int lerp(int a, int b, float i) {
-		return (int) (a + i * (b - a));
-	}*/
-
+	
 	@Override
 	public Chunk loadChunk(int cx, int cy) {
 		byte[] chunkData = new byte[32768];
