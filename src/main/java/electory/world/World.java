@@ -22,6 +22,9 @@ import electory.entity.Entity;
 import electory.entity.EntityMap;
 import electory.entity.EntityPlayer;
 import electory.entity.particle.EntityBlockParticle;
+import electory.item.Item;
+import electory.item.ItemBlock;
+import electory.item.ItemStack;
 import electory.math.AABB;
 import electory.nbt.CompoundTag;
 import electory.nbt.ListTag;
@@ -99,18 +102,20 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public void interactWithBlock(EntityPlayer player, int x, int y, int z, EnumSide side) {
 		if (!this.getBlockAt(x, y, z).interactWithBlock(player, this, x, y, z, side)) {
-			AABB blockAABB = player.selectedBlock
-					.getAABB(this, x + side.offsetX, y + side.offsetY, z + side.offsetZ, true);
-			if (entities.stream()
-					.noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
-				setBlockAt(x + side.offsetX, y + side.offsetY, z + side.offsetZ, player.selectedBlock);
-				player.selectedBlock
-						.blockPlacedByPlayer(	player,
+			ItemStack stack = player.inventory.getStackInSlot(player.inventory.getSelectedSlot());
+			if (stack.item != null && stack.item instanceof ItemBlock && stack.remove(1)) {
+				Block block = ((ItemBlock) stack.item).getBlock();
+				AABB blockAABB = block.getAABB(this, x + side.offsetX, y + side.offsetY, z + side.offsetZ, true);
+				if (entities.stream()
+						.noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
+					setBlockAt(x + side.offsetX, y + side.offsetY, z + side.offsetZ, block);
+					block.blockPlacedByPlayer(	player,
 												this,
 												x + side.offsetX,
 												y + side.offsetY,
 												z + side.offsetZ,
 												EnumSide.getOrientation(EnumSide.OPPOSITES[side.ordinal()]));
+				}
 			}
 		}
 	}

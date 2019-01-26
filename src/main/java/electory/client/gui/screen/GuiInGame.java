@@ -14,6 +14,7 @@ import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
 import electory.client.render.Tessellator;
 import electory.client.render.shader.ShaderManager;
+import electory.item.ItemStack;
 
 public class GuiInGame extends GuiScreen {
 
@@ -21,8 +22,11 @@ public class GuiInGame extends GuiScreen {
 		super(tc);
 	}
 
-	private final Block[] pickableBlocks = new Block[] { Block.blockCobblestone, Block.blockGrass, Block.blockPlanks,
-			Block.blockDirt, Block.blockGlass, Block.blockLog, Block.blockSapling, Block.blockStone, Block.blockSand };
+	/*
+	 * private final Block[] pickableBlocks = new Block[] { Block.blockCobblestone,
+	 * Block.blockGrass, Block.blockPlanks, Block.blockDirt, Block.blockGlass,
+	 * Block.blockLog, Block.blockSapling, Block.blockStone, Block.blockSand };
+	 */
 
 	@Override
 	public void renderGui(GuiRenderState rs) {
@@ -57,24 +61,25 @@ public class GuiInGame extends GuiScreen {
 		Tessellator.instance.draw();
 
 		for (int i = 0; i < 9; i++) {
-			if (pickableBlocks[i] != null) {
-				Matrix4d m = new Matrix4d(rs.viewMatrix).translate(startX + 4 + i * 40, rs.scaler.getHeight() - 38, 0);
-				// GL11.glTranslatef(i * 18, rs.scaler.getHeight() - 18, 0);
+			ItemStack stack = tc.player.inventory.getStackInSlot(i);
+			Matrix4d m = new Matrix4d(rs.viewMatrix).translate(startX + 4 + i * 40, rs.scaler.getHeight() - 38, 0);
 
-				GuiRenderState rs2 = new GuiRenderState(rs.scaler, rs.projectionMatrix, m, rs.modelMatrix);
+			GuiRenderState rs2 = new GuiRenderState(rs.scaler, rs.projectionMatrix, m, rs.modelMatrix);
+			
+			if (stack.item != null && stack.count > 0) {
+				stack.item.getRenderer().render(stack, new GuiRenderState(rs2));
 
-				pickableBlocks[i].getRenderer().renderBlockInGUI(pickableBlocks[i], new GuiRenderState(rs2));
-				ShaderManager.defaultProgram.loadRenderState(rs2);
+			}
+			
+			ShaderManager.defaultProgram.loadRenderState(rs2);
 
-				if (tc.player.selectedBlock == pickableBlocks[i]) {
-					ShaderManager.defaultProgram.bindTexture("/img/hud/hot_bar_selection.png");
-					Tessellator.instance.getBuffer().addQuadVertexWithUV(-5f, -5f, 0f, 0f, 0f);
-					Tessellator.instance.getBuffer().addQuadVertexWithUV(-5f, 37f, 0f, 0f, 1f);
-					Tessellator.instance.getBuffer().addQuadVertexWithUV(37f, 37f, 0f, 1f, 1f);
-					Tessellator.instance.getBuffer().addQuadVertexWithUV(37f, -5f, 0f, 1f, 0f);
-					Tessellator.instance.draw();
-				}
-
+			if (tc.player.inventory.getSelectedSlot() == i) {
+				ShaderManager.defaultProgram.bindTexture("/img/hud/hot_bar_selection.png");
+				Tessellator.instance.getBuffer().addQuadVertexWithUV(-5f, -5f, 0f, 0f, 0f);
+				Tessellator.instance.getBuffer().addQuadVertexWithUV(-5f, 37f, 0f, 0f, 1f);
+				Tessellator.instance.getBuffer().addQuadVertexWithUV(37f, 37f, 0f, 1f, 1f);
+				Tessellator.instance.getBuffer().addQuadVertexWithUV(37f, -5f, 0f, 1f, 0f);
+				Tessellator.instance.draw();
 			}
 		}
 
@@ -130,9 +135,7 @@ public class GuiInGame extends GuiScreen {
 		if (eventKeyState) {
 			if (eventKey >= Keyboard.KEY_1 && eventKey <= Keyboard.KEY_9) {
 				int i = eventKey - Keyboard.KEY_1;
-				if (pickableBlocks[i] != null) {
-					tc.player.selectedBlock = pickableBlocks[i];
-				}
+				tc.player.inventory.setSelectedSlot(i);
 			} else if (eventKey == Keyboard.KEY_F12) {
 				TinyCraft
 						.getInstance().worldRenderer.debugShadows = !TinyCraft.getInstance().worldRenderer.debugShadows;
@@ -155,21 +158,14 @@ public class GuiInGame extends GuiScreen {
 		super.handleMouseEvent(event);
 
 		if (event.getDWheel() != 0) {
-			int i = 0;
-			for (; i < 9; i++) {
-				if (pickableBlocks[i] != null) {
-					if (pickableBlocks[i] == tc.player.selectedBlock) {
-						break;
-					}
-				}
-			}
+			int i = tc.player.inventory.getSelectedSlot();
 			i += -event.getDWheel() / 120;
 			if (i >= 9) {
 				i = 0;
 			} else if (i < 0) {
 				i = 8;
 			}
-			tc.player.selectedBlock = pickableBlocks[i];
+			tc.player.inventory.setSelectedSlot(i);
 		}
 	}
 

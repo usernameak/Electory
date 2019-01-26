@@ -37,6 +37,14 @@ public class ItemStack implements IMetaSerializable {
 		this.count = this.count - amount;
 		return true;
 	}
+	
+	public boolean remove(int amount) {
+		if(this.count < amount) {
+			return false;
+		}
+		this.count -= amount;
+		return true;
+	}
 
 	@Override
 	public void writeToNBT(CompoundTag tag) {

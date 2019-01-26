@@ -5,6 +5,7 @@ import electory.client.render.IAtlasSpriteManager;
 import electory.client.render.block.IBlockRenderer;
 import electory.client.render.world.WorldRenderer;
 import electory.entity.EntityPlayer;
+import electory.item.ItemBlock;
 import electory.math.AABB;
 import electory.utils.EnumSide;
 import electory.world.World;
@@ -109,6 +110,7 @@ public class Block {
 	public Block(int id) {
 		blockList[id] = this;
 		this.blockID = id;
+		new ItemBlock(id);
 	}
 
 	public AABB getAABB(World world, int x, int y, int z, boolean isSimulating) {

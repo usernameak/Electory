@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.joml.Vector3f;
 
 import electory.block.Block;
+import electory.inventory.IContainerProvider;
+import electory.inventory.InventoryPlayer;
 import electory.nbt.CompoundTag;
 import electory.world.World;
 
@@ -14,7 +16,11 @@ public abstract class EntityPlayer extends EntityLiving {
 		super(world);
 	}
 	
-	public Block selectedBlock = Block.blockCobblestone;
+	// public Block selectedBlock = Block.blockCobblestone;
+	
+	public InventoryPlayer inventory = new InventoryPlayer(this);
+	
+	public IContainerProvider inventoryContainer = inventory.createSPProvider();
 	
 	public transient IPlayerController playerController = null;
 
@@ -47,13 +53,15 @@ public abstract class EntityPlayer extends EntityLiving {
 	@Override
 	public void writeEntityData(CompoundTag tag) throws IOException {
 		super.writeEntityData(tag);
-		tag.putInt("selectedBlock", selectedBlock.blockID);
+		CompoundTag invTag = new CompoundTag();
+		inventory.writeToNBT(invTag);
+		tag.put("inventory", invTag);
 	}
 	
 	@Override
 	public void readEntityData(CompoundTag tag) throws IOException {
 		super.readEntityData(tag);
-		selectedBlock = Block.blockList[tag.getInt("selectedBlock")];
+		inventory.readFromNBT(tag.getCompoundTag("inventory"));
 	}
 
 }
