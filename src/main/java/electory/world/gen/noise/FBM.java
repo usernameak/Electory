@@ -19,7 +19,7 @@ public class FBM implements IWorldNoiseGeneratord {
 	
 	private long seed;
 
-	private Random random = new Random();
+	// private Random random = new Random();
 
 	public FBM(int octaves, long seed) {
 		this.octaves = octaves;

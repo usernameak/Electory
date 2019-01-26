@@ -94,7 +94,7 @@ public class BlockRendererCube implements IBlockRenderer {
 
 	@Override
 	public void renderBlockInGUI(Block block, GuiRenderState rs) {
-		IAtlasSprite sprite = block.getAtlasSprite();
+		// IAtlasSprite sprite = block.getAtlasSprite();
 		ShaderManager.defaultProgram.use();
 		ShaderManager.defaultProgram.bindTexture(TextureManager.TERRAIN_TEXTURE);
 

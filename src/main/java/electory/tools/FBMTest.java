@@ -36,6 +36,7 @@ public class FBMTest extends JFrame {
 		});
 	}
 
+	@SuppressWarnings("unused")
 	private long xorshift64star(long x) {
 		x ^= x >> 12; // a
 		x ^= x << 25; // b
@@ -43,6 +44,7 @@ public class FBMTest extends JFrame {
 		return (x * 0x2545F4914F6CDD1DL) ^ 0x132485746548574EL;
 	}
 
+	@SuppressWarnings("unused")
 	private long xorshift64star_(long x) {
 		x ^= x >> 12; // a
 		x ^= x << 25; // b
@@ -69,6 +71,7 @@ public class FBMTest extends JFrame {
 		
 		FBM fbm = new FBM(8, rand.nextLong());
 		
+		@SuppressWarnings("unused")
 		long seed1 = rand.nextLong();
 
 		/*for (int i = 0; i < 2048; i++) {

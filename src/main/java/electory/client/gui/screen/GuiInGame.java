@@ -8,7 +8,6 @@ import org.joml.Vector3f;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import electory.block.Block;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
