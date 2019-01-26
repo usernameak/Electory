@@ -27,6 +27,8 @@ public abstract class Entity {
 	public boolean onCeiling = false;
 	public boolean isUnderwater = false;
 
+	public boolean noclip = false;
+
 	public final World world;
 
 	@SuppressWarnings("unused") // TODO: use
@@ -104,28 +106,32 @@ public abstract class Entity {
 
 		double origYOfs = yofs;
 
-		AABB taabb = getAABB().expand(xofs, yofs, zofs);
 		AABB paabb = getAABB();
 
-		Set<AABB> blockAABBs = world.getBlockAABBsWithinAABB(taabb, true);
+		if (!noclip) {
+			AABB taabb = getAABB().expand(xofs, yofs, zofs);
+			Set<AABB> blockAABBs = world.getBlockAABBsWithinAABB(taabb, true);
 
-		for (AABB aabb : blockAABBs) {
-			yofs = aabb.clipYCollide(paabb, yofs);
+			for (AABB aabb : blockAABBs) {
+				yofs = aabb.clipYCollide(paabb, yofs);
+			}
+
+			paabb.move(0, yofs, 0);
+
+			for (AABB aabb : blockAABBs) {
+				xofs = aabb.clipXCollide(paabb, xofs);
+			}
+
+			paabb.move(xofs, 0, 0);
+
+			for (AABB aabb : blockAABBs) {
+				zofs = aabb.clipZCollide(paabb, zofs);
+			}
+
+			paabb.move(0, 0, zofs);
+		} else {
+			paabb.move(xofs, yofs, zofs);
 		}
-
-		paabb.move(0, yofs, 0);
-
-		for (AABB aabb : blockAABBs) {
-			xofs = aabb.clipXCollide(paabb, xofs);
-		}
-
-		paabb.move(xofs, 0, 0);
-
-		for (AABB aabb : blockAABBs) {
-			zofs = aabb.clipZCollide(paabb, zofs);
-		}
-
-		paabb.move(0, 0, zofs);
 
 		/**/
 
@@ -137,7 +143,6 @@ public abstract class Entity {
 			// Passive ceiling collision check
 			onGround = false;
 			onCeiling = yofs < origYOfs;
-			System.out.println(onCeiling);
 		} else {
 			// Active ground collision check
 			AABB gaabb = paabb.expand(0f, -0.01f, 0f);
@@ -204,6 +209,8 @@ public abstract class Entity {
 		tag.putFloat("vz", velocity.z);
 		tag.putBoolean("onGround", onGround);
 		tag.putBoolean("shouldDespawn", shouldDespawn);
+		tag.putBoolean("onCeiling", onCeiling);
+		tag.putBoolean("noclip", noclip);
 
 	}
 
@@ -224,5 +231,7 @@ public abstract class Entity {
 		velocity.z = tag.getFloat("vz");
 		onGround = tag.getBoolean("onGround");
 		shouldDespawn = tag.getBoolean("shouldDespawn");
+		onCeiling = tag.getBoolean("onCeiling");
+		noclip = tag.getBoolean("noclip");
 	}
 }
