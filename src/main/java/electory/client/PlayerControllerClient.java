@@ -97,7 +97,7 @@ public class PlayerControllerClient implements IPlayerController {
 
 				if (tres.hasHit && tres.distance <= 5.0f) {
 					if (Mouse.getEventButton() == 0 && player.world.getBlockAt(tx, ty, tz).isBreakable()) {
-						player.world.breakBlockWithParticles(tx, ty, tz);
+						player.world.breakBlockByPlayer(player, tx, ty, tz);
 					} else if (Mouse.getEventButton() == 1) {
 						player.world.interactWithBlock(player, tx, ty, tz, tres.side);
 					}

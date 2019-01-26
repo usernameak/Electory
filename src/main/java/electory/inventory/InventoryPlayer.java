@@ -57,8 +57,23 @@ public class InventoryPlayer implements IInventory, IMetaSerializable {
 
 	@Override
 	public void readFromNBT(CompoundTag tag) {
-		// TODO Auto-generated method stub
+		@SuppressWarnings("unchecked")
+		ListTag<CompoundTag> stacksList = (ListTag<CompoundTag>) tag.getListTag("stacks");
+		
+		for (int i = 0; i < stacks.length; i++) {
+			CompoundTag stackTag = stacksList.get(i);
+			stacks[i].readFromNBT(stackTag);
+		}
+		hotbarSlot = tag.getInt("hotbarSlot");
+	}
 
+	public boolean giveItem(ItemStack itemStack) {
+		for(int i = 0; i < stacks.length; i++) {
+			if(itemStack.transfer(stacks[i], 0)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

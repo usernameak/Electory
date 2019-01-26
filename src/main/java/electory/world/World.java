@@ -22,6 +22,7 @@ import electory.entity.Entity;
 import electory.entity.EntityMap;
 import electory.entity.EntityPlayer;
 import electory.entity.particle.EntityBlockParticle;
+import electory.item.Item;
 import electory.item.ItemBlock;
 import electory.item.ItemStack;
 import electory.math.AABB;
@@ -79,6 +80,14 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public void addEntity(Entity entity) {
 		this.entities.add(entity);
+	}
+
+	public void breakBlockByPlayer(EntityPlayer player, int x, int y, int z) {
+		Block block = getBlockAt(x, y, z);
+		
+		breakBlockWithParticles(x, y, z);
+		
+		player.inventory.giveItem(new ItemStack(Item.itemList[block.blockID]));
 	}
 
 	public void breakBlockWithParticles(int x, int y, int z) {

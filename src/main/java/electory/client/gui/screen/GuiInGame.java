@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
+import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 import electory.client.render.Tessellator;
 import electory.client.render.shader.ShaderManager;
@@ -64,12 +65,15 @@ public class GuiInGame extends GuiScreen {
 			Matrix4d m = new Matrix4d(rs.viewMatrix).translate(startX + 4 + i * 40, rs.scaler.getHeight() - 38, 0);
 
 			GuiRenderState rs2 = new GuiRenderState(rs.scaler, rs.projectionMatrix, m, rs.modelMatrix);
-			
+
 			if (stack.item != null && stack.count > 0) {
 				stack.item.getRenderer().render(stack, new GuiRenderState(rs2));
-
+				tc.fontRenderer.drawText(	rs2,
+				                         	String.valueOf(stack.count),
+											30 - tc.fontRenderer.getTextWidth(String.valueOf(stack.count)),
+											30 - FontRenderer.CHAR_HEIGHT);
 			}
-			
+
 			ShaderManager.defaultProgram.loadRenderState(rs2);
 
 			if (tc.player.inventory.getSelectedSlot() == i) {
