@@ -111,7 +111,6 @@ public abstract class Entity {
 
 		for (AABB aabb : blockAABBs) {
 			yofs = aabb.clipYCollide(paabb, yofs);
-
 		}
 
 		paabb.move(0, yofs, 0);
@@ -138,9 +137,9 @@ public abstract class Entity {
 			// Passive ceiling collision check
 			onGround = false;
 			onCeiling = yofs < origYOfs;
+			System.out.println(onCeiling);
 		} else {
 			// Active ground collision check
-			onCeiling = false;
 			AABB gaabb = paabb.expand(0f, -0.01f, 0f);
 			double gofs = -0.005;
 			Set<AABB> gAABBs = world.getBlockAABBsWithinAABB(gaabb, true);
@@ -151,6 +150,7 @@ public abstract class Entity {
 				gofs = aabb.clipYCollide(paabb, gofs);
 				if (gofs >= -0.0025f) {
 					onGround = true;
+					onCeiling = false;
 				}
 			}
 
