@@ -64,4 +64,10 @@ public class GuiColumnLayout extends GuiWidget {
 		return cachedHeight;
 	}
 
+	@Override
+	public void relayout() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

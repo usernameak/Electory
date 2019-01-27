@@ -30,7 +30,9 @@ public class GuiButton extends GuiWidget {
 
 	@Override
 	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public void relayout() {
 	}
 }

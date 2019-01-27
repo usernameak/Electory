@@ -44,4 +44,8 @@ public class GuiRect extends GuiWidget {
 		GL11.glDisable(GL11.GL_BLEND);
 		
 	}
+
+	@Override
+	public void relayout() {
+	}
 }

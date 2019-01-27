@@ -94,7 +94,6 @@ public class BlockRendererCube implements IBlockRenderer {
 
 	@Override
 	public void renderBlockInGUI(Block block, GuiRenderState rs) {
-		// IAtlasSprite sprite = block.getAtlasSprite();
 		ShaderManager.defaultProgram.use();
 		ShaderManager.defaultProgram.bindTexture(TextureManager.TERRAIN_TEXTURE);
 
@@ -103,12 +102,6 @@ public class BlockRendererCube implements IBlockRenderer {
 		rs2.viewMatrix.scale(16.0f, 16.0f, 1.0f);
 		rs2.viewMatrix.ortho(-0.8f, 0.8f, 0.8f, -0.8f, 0.01f, 20f);
 		rs2.viewMatrix.lookAt(1f, 1f, 1f, 0f, 0f, 0f, 0f, 1f, 0f);
-		/*
-		 * rs2.modelViewMatrix.perspective(70.0f, 1.0f, 0.1f, 1000.f);
-		 * rs2.modelViewMatrix.lookAt(5f, 5f, 5f, 0f, 0f, 0f, 0f, 1f, 0f);
-		 */
-
-		// GL11.glDepthRange(0.1f, 1000.f);
 
 		ShaderManager.defaultProgram.loadRenderState(rs2);
 		TriangleBuffer buffer = Tessellator.instance.getBuffer();
@@ -116,11 +109,6 @@ public class BlockRendererCube implements IBlockRenderer {
 		for (EnumSide dir : EnumSide.VALID_DIRECTIONS) {
 			bakeBlockSide2(null, block, null, dir, 0, 0, 0, 0, 0, buffer, 15, block.getAtlasSprite(dir));
 		}
-
-		/*
-		 * for(EnumSide dir : EnumSide.VALID_DIRECTIONS) { bakeBlockSide(block, dir,
-		 * -0.5f, -0.5f, -0.5f, buffer); }
-		 */
 
 		Tessellator.instance.draw();
 	}

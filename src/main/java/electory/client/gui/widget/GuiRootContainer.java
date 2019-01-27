@@ -12,7 +12,7 @@ import electory.client.render.Tessellator;
 import electory.client.render.TriangleBuffer;
 import electory.client.render.shader.ShaderManager;
 
-public class GuiRootContainer extends GuiWidget {
+public class GuiRootContainer extends GuiWidget implements IRelayoutable {
 
 	private GuiWidget child;
 
@@ -60,6 +60,21 @@ public class GuiRootContainer extends GuiWidget {
 				return new Point(scaler.getWidth() - container.child.getWidth() - container.horizontalGap,
 						scaler.getHeight() - container.child.getHeight() - container.verticalGap);
 			}
+		},
+		CENTER {
+			@Override
+			public void align(GuiRenderState rs, ResolutionScaler scaler, GuiRootContainer container) {
+				rs.modelMatrix.translate(	(scaler.getWidth() - container.child.getWidth()) / 2,
+											(scaler.getHeight() - container.child.getHeight()) / 2,
+											0);
+			}
+
+			@Override
+			public Point getPosition(ResolutionScaler scaler, GuiRootContainer container) {
+				return new Point((scaler.getWidth() - container.child.getWidth()) / 2,
+						(scaler.getHeight() - container.child.getHeight()) / 2);
+			}
+
 		};
 
 		public abstract void align(GuiRenderState rs, ResolutionScaler scaler, GuiRootContainer container);
@@ -118,5 +133,10 @@ public class GuiRootContainer extends GuiWidget {
 		super.handleMouseEvent(event);
 		Point point = position.getPosition(tc.resolutionScaler, this);
 		child.handleMouseEvent(event.clipEvent(point.x, point.y, child.getWidth(), child.getHeight()));
+	}
+
+	@Override
+	public void relayout() {
+		child.relayout();
 	}
 }

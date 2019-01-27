@@ -69,7 +69,7 @@ public class GuiInGame extends GuiScreen {
 			if (stack.item != null && stack.count > 0) {
 				stack.item.getRenderer().render(stack, new GuiRenderState(rs2));
 				tc.fontRenderer.drawText(	rs2,
-				                         	String.valueOf(stack.count),
+											String.valueOf(stack.count),
 											30 - tc.fontRenderer.getTextWidth(String.valueOf(stack.count)),
 											30 - FontRenderer.CHAR_HEIGHT);
 			}
@@ -152,6 +152,8 @@ public class GuiInGame extends GuiScreen {
 				tc.openGui(new GuiPause(tc));
 			} else if (eventKey == GuiConsole.KEY_TILDE) {
 				tc.openGui(tc.console.gui);
+			} else if(eventKey == Keyboard.KEY_E) {
+				tc.openGui(new GuiPlayerInventory(tc));
 			}
 		}
 	}

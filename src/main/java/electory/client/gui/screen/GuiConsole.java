@@ -17,7 +17,7 @@ import electory.utils.Rect2D;
 
 public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 
-	public static final int KEY_TILDE = 41;
+	public static final int KEY_TILDE = Keyboard.KEY_GRAVE;
 	private static final int CONSOLE_WIDTH = 800; // TODO: Get from the screen's width
 	private static final int CONSOLE_HEIGHT = CONSOLE_WIDTH / 4;
 

@@ -12,7 +12,7 @@ public class InventoryPlayer implements IInventory, IMetaSerializable {
 
 	}
 
-	private ItemStack stacks[] = new ItemStack[9];
+	private ItemStack stacks[] = new ItemStack[45];
 	private int hotbarSlot = 0;
 
 	{
@@ -59,17 +59,21 @@ public class InventoryPlayer implements IInventory, IMetaSerializable {
 	public void readFromNBT(CompoundTag tag) {
 		@SuppressWarnings("unchecked")
 		ListTag<CompoundTag> stacksList = (ListTag<CompoundTag>) tag.getListTag("stacks");
-		
-		for (int i = 0; i < stacks.length; i++) {
-			CompoundTag stackTag = stacksList.get(i);
-			stacks[i].readFromNBT(stackTag);
+
+		try {
+			for (int i = 0; i < stacks.length; i++) {
+				CompoundTag stackTag = stacksList.get(i);
+				stacks[i].readFromNBT(stackTag);
+			}
+		} catch (IndexOutOfBoundsException e) {
+			// nothing
 		}
 		hotbarSlot = tag.getInt("hotbarSlot");
 	}
 
 	public boolean giveItem(ItemStack itemStack) {
-		for(int i = 0; i < stacks.length; i++) {
-			if(itemStack.transfer(stacks[i], 0)) {
+		for (int i = 0; i < stacks.length; i++) {
+			if (itemStack.transfer(stacks[i], 0)) {
 				return true;
 			}
 		}

@@ -15,8 +15,11 @@ public class GuiRowLayout extends GuiWidget {
 
 	private int cachedHeight = 0;
 
-	public GuiRowLayout(TinyCraft tc) {
+	private int gap;
+
+	public GuiRowLayout(TinyCraft tc, int gap) {
 		super(tc);
+		this.gap = gap;
 	}
 
 	public void add(GuiWidget widget) {
@@ -43,8 +46,12 @@ public class GuiRowLayout extends GuiWidget {
 
 	@Override
 	public void handleMouseEvent(MouseEvent event) {
-		// TODO:
 		super.handleMouseEvent(event);
+		int x = 0;
+		for(GuiWidget child : children) {
+			child.handleMouseEvent(event.clipEvent(x, 0, child.getWidth(), child.getHeight()));
+			x += gap + child.getWidth();
+		}
 	}
 
 	@Override
@@ -55,6 +62,11 @@ public class GuiRowLayout extends GuiWidget {
 	@Override
 	public int getHeight() {
 		return cachedHeight;
+	}
+
+	@Override
+	public void relayout() {
+		// TODO
 	}
 
 }

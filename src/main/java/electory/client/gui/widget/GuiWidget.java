@@ -4,7 +4,7 @@ import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.Gui;
 
-public abstract class GuiWidget extends Gui {
+public abstract class GuiWidget extends Gui implements IRelayoutable {
 
 	protected Gui parent;
 
