@@ -12,20 +12,13 @@ public class ContainerProviderSP implements IContainerProvider {
 	}
 
 	@Override
-	public void pickupItemFromSlot(EntityPlayer player, int slot) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void putItemToSlot(EntityPlayer player, int slot) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public ItemStack getItemInSlot(int slot) {
 		return inv.getStackInSlot(slot);
+	}
+
+	@Override
+	public void slotClicked(EntityPlayer player, int slot, SlotClickAction action) {
+		action.execute(player, getItemInSlot(slot), this, slot);
 	}
 
 }

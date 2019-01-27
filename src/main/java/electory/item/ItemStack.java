@@ -32,8 +32,9 @@ public class ItemStack implements IMetaSerializable {
 
 	public boolean transfer(ItemStack other, int amount) {
 		if (this.count < amount
-				|| (other.item != null && other.item != this.item)
-				|| !Objects.equals(other.meta, this.meta)) {
+				|| (other.count > 0
+						&& ((other.item != null && other.item != this.item)
+								|| !Objects.equals(other.meta, this.meta)))) {
 			return false;
 		}
 		other.item = this.item;
@@ -55,6 +56,10 @@ public class ItemStack implements IMetaSerializable {
 		return true;
 	}
 
+	public boolean isEmpty() {
+		return item == null || count <= 0;
+	}
+
 	@Override
 	public void writeToNBT(CompoundTag tag) {
 		tag.putInt("item", item == null ? 0 : item.itemID);
@@ -62,6 +67,11 @@ public class ItemStack implements IMetaSerializable {
 		if (meta != null) {
 			tag.put("meta", MetaSerializer.serializeObject(meta));
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "ItemStack [item=" + item + ", count=" + count + ", meta=" + meta + "]";
 	}
 
 	@Override

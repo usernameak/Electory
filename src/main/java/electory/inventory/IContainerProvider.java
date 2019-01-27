@@ -4,9 +4,7 @@ import electory.entity.EntityPlayer;
 import electory.item.ItemStack;
 
 public interface IContainerProvider {
-	void pickupItemFromSlot(EntityPlayer player, int slot);
-	
-	void putItemToSlot(EntityPlayer player, int slot);
+	void slotClicked(EntityPlayer player, int slot, SlotClickAction action);
 	
 	ItemStack getItemInSlot(int slot);
 }

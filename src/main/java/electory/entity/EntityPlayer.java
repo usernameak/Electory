@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 import electory.block.Block;
 import electory.inventory.IContainerProvider;
 import electory.inventory.InventoryPlayer;
+import electory.item.ItemStack;
 import electory.nbt.CompoundTag;
 import electory.world.World;
 
@@ -24,6 +25,8 @@ public abstract class EntityPlayer extends EntityLiving {
 	
 	public transient IPlayerController playerController = null;
 
+	public ItemStack stackOnCursor = new ItemStack();
+	
 	@Override
 	public void update() {
 		Vector3f movementVector = new Vector3f(0.0f, 0.0f, 0.0f);
