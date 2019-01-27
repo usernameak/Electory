@@ -40,8 +40,8 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public Random random = new Random(seed);
 
-	protected Vector3d spawnPoint = new Vector3d(/* random.nextInt(2048) - 1024 */ 0f, 256f,
-			/* random.nextInt(2048) - 1024 */ 0f);
+	protected Vector3d spawnPoint = new Vector3d(random.nextInt(2048) - 1024, 256f,
+			random.nextInt(2048) - 1024);
 
 	public static final int FLAG_SKIP_RENDER_UPDATE = 1;
 	public static final int FLAG_SKIP_LIGHT_UPDATE = 2;
@@ -206,10 +206,6 @@ public abstract class World implements IChunkSaveStatusHandler {
 					long cpos = it.elem();
 					if (chunkProvider.canLoadChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L))) {
 						chunkProvider.loadChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L));
-						/*
-						 * if (!chunk.isPopulated) { generationChunkProvider.populate(null,
-						 * chunk.getChunkX(), chunk.getChunkZ()); }
-						 */
 					} else {
 						needsLoadNext = true;
 					}
