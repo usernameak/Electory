@@ -43,7 +43,11 @@ public class BufferPool {
 		} else {
 			int insertOfs = -(ofs + 1);
 			FloatBuffer fb = BufferUtils.createFloatBuffer(size);
-			floatBuffers[insertOfs - 1] = fb;
+			if (insertOfs == 0) {
+				floatBuffers[0] = fb;
+			} else {
+				floatBuffers[insertOfs - 1] = fb;
+			}
 			return fb;
 		}
 	}

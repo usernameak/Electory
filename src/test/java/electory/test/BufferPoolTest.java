@@ -1,6 +1,7 @@
 package electory.test;
 
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,11 +50,11 @@ public class BufferPoolTest {
 		BufferPool.TestAccessor accessor = pool.new TestAccessor();
 
 		int l = accessor.getFloatBuffers().length;
-		
-		for(int i = l - 1; i >= 0; i--) {
+
+		for (int i = l - 1; i >= 0; i--) {
 			pool.getFloatBuffer(i);
 		}
-		
+
 		FloatBuffer[] fbs = accessor.getFloatBuffers();
 
 		for (int i = 0; i < l; i++) {
@@ -69,7 +70,7 @@ public class BufferPoolTest {
 
 		pool.getFloatBuffer(16);
 		pool.getFloatBuffer(16);
-			
+
 		FloatBuffer[] fbs = accessor.getFloatBuffers();
 
 		for (int i = 0; i < fbs.length - 1; i++) {
@@ -78,6 +79,27 @@ public class BufferPoolTest {
 			} else {
 				Assert.assertNull(fbs[i]);
 			}
+		}
+	}
+
+	@Test
+	public void bufferPoolOverallocationCheck() {
+		BufferPool pool = BufferPool.get();
+		BufferPool.TestAccessor accessor = pool.new TestAccessor();
+
+		int l = accessor.getFloatBuffers().length;
+
+		for (int i = l - 1; i >= 0; i--) {
+			pool.getFloatBuffer(i + 1);
+		}
+
+		pool.getFloatBuffer(0);
+		
+		FloatBuffer[] fbs = accessor.getFloatBuffers();
+
+		for (int i = 0; i < l; i++) {
+			Assert.assertNotNull(fbs[i]);
+			Assert.assertEquals(i > 0 ? i + 1 : i, fbs[i].capacity());
 		}
 	}
 }
