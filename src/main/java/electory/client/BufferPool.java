@@ -19,32 +19,42 @@ public class BufferPool {
 	}
 
 	private FloatBuffer[] floatBuffers = new FloatBuffer[16];
-	
+
 	private int floatBufferSize = 0;
-	
+
 	private class FBComparator implements Comparator<FloatBuffer> {
 
 		@Override
 		public int compare(FloatBuffer buf, FloatBuffer unused) {
-			return buf == null ? -floatBufferSize :  buf.capacity() - floatBufferSize;
+			return buf == null ? -1 - floatBufferSize : buf.capacity() - floatBufferSize;
 		}
-		
+
 	}
-	
+
 	private FBComparator fbComparator = new FBComparator();
 
 	public FloatBuffer getFloatBuffer(final int size) {
 		floatBufferSize = size;
 		int ofs = Arrays.binarySearch(floatBuffers, null, fbComparator);
-		
-		if(ofs >= 0) {
+
+		if (ofs >= 0 && ofs < floatBuffers.length) {
 			floatBuffers[ofs].clear();
 			return floatBuffers[ofs];
 		} else {
 			int insertOfs = -(ofs + 1);
 			FloatBuffer fb = BufferUtils.createFloatBuffer(size);
-			floatBuffers[insertOfs >= floatBuffers.length ? floatBuffers.length - 1 : insertOfs] = fb;
+			floatBuffers[insertOfs - 1] = fb;
 			return fb;
+		}
+	}
+
+	public class TestAccessor {
+		public FloatBuffer[] getFloatBuffers() {
+			return floatBuffers;
+		}
+
+		public void cleanup() {
+			floatBuffers = new FloatBuffer[16];
 		}
 	}
 }
