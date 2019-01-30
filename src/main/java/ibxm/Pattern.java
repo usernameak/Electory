@@ -2,60 +2,43 @@
 package ibxm;
 
 public class Pattern {
-	public int num_rows;
-	
-	private int data_offset, note_index;
-	private byte[] pattern_data;
+	public int numRows;
+	public byte[] data;
 
-	public Pattern() {
-		num_rows = 1;
-		set_pattern_data( new byte[ 0 ] );
-	}
-	
-	public void set_pattern_data( byte[] data ) {
-		if( data != null ) {
-			pattern_data = data;
-		}
-		data_offset = 0;
-		note_index = 0;
+	public Pattern( int numChannels, int numRows ) {
+		this.numRows = numRows;
+		data = new byte[ numChannels * numRows * 5 ];
 	}
 
-	public void get_note( int[] note, int index ) {
-		if( index < note_index ) {
-			note_index = 0;
-			data_offset = 0;
-		}
-		while( note_index <= index ) {
-			data_offset = next_note( data_offset, note );
-			note_index += 1;
-		}
+	public Note getNote( int index, Note note ) {
+		int offset = index * 5;
+		note.key = data[ offset ] & 0xFF;
+		note.instrument = data[ offset + 1 ] & 0xFF;
+		note.volume = data[ offset + 2 ] & 0xFF;
+		note.effect = data[ offset + 3 ] & 0xFF;
+		note.param = data[ offset + 4 ] & 0xFF;
+		return note;
 	}
 
-	public int next_note( int data_offset, int[] note ) {
-		int bitmask, field;
-		if( data_offset < 0 ) {
-			data_offset = pattern_data.length;
-		}
-		bitmask = 0x80;
-		if( data_offset < pattern_data.length ) {
-			bitmask = pattern_data[ data_offset ] & 0xFF;
-		}
-		if( ( bitmask & 0x80 ) == 0x80 ) {
-			data_offset += 1;
-		} else {
-			bitmask = 0x1F;
-		}
-		for( field = 0; field < 5; field++ ) {
-			note[ field ] = 0;
-			if( ( bitmask & 0x01 ) == 0x01 ) {
-				if( data_offset < pattern_data.length ) {
-					note[ field ] = pattern_data[ data_offset ] & 0xFF;
-					data_offset += 1;
-				}
+	public void toStringBuffer( StringBuffer out ) {
+		Note note = new Note();
+		char[] chars = new char[ 10 ];
+		int numChannels = data.length / ( numRows * 5 );
+		for( int row = 0; row < numRows; row++ ) {
+			for( int channel = 0; channel < numChannels; channel++ ) {
+				getNote( numChannels * row + channel, note );
+				note.toChars( chars );
+				out.append( chars );
+				out.append( ' ' );
 			}
-			bitmask = bitmask >> 1;
+			out.append( '\n' );
 		}
-		return data_offset;
+	}
+
+	public String toString() {
+		int numChannels = data.length / ( numRows * 5 );
+		StringBuffer stringBuffer = new StringBuffer( numRows * numChannels * 11 + numRows );
+		toStringBuffer( stringBuffer );
+		return stringBuffer.toString();
 	}
 }
-

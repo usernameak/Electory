@@ -14,9 +14,9 @@ import electory.entity.EntityPlayer;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemException;
-import paulscode.sound.codecs.CodecIBXM;
 import paulscode.sound.codecs.CodecJOrbis;
 import paulscode.sound.codecs.CodecWav;
+import paulscode.sound.libraries.LibraryJavaSound;
 import paulscode.sound.libraries.LibraryLWJGLOpenAL;
 
 public class SoundManager {
@@ -94,6 +94,17 @@ public class SoundManager {
 		}
 		
 		return "/audio/" + path;
+	}
+	
+	public void playMusic(String path, String name, boolean loop) {
+		String realPath = getRealSoundPath(path);
+		System.out.println("playMusic " + realPath);
+		soundSystem.backgroundMusic(name, getClass().getResource(realPath), realPath, loop);
+	}
+	
+	public void stopMusic(String name) {
+		soundSystem.stop(name);
+		soundSystem.removeSource(name);
 	}
 
 	public void playSFX(String path, String name, float x, float y, float z, float radius) {

@@ -39,6 +39,19 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 
 	protected GuiMenuButton spButton;
 	protected GuiMenuButton quitButton;
+	
+	@Override
+	public void openGuiScreen() {
+		super.openGuiScreen();
+		tc.soundManager.playMusic("mus/main_menu_1.xm", "main_menu_music", true);
+	}
+	
+	@Override
+	public void closeGuiScreen() {
+		super.closeGuiScreen();
+		System.out.println("closeGUI");
+		tc.soundManager.stopMusic("main_menu_music");
+	}
 
 	@Override
 	public GuiWidget createRootWidget() {
@@ -56,14 +69,8 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 
 	@Override
 	public void actionPerformed(GuiWidget widget) {
-		/*
-		 * if (widget == resumeButton) { tc.openGui(null); return; } else if (widget ==
-		 * saveButton) { try { tc.world.save(); tc.openGui(null); } catch (IOException
-		 * e) { e.printStackTrace(); } return; } else if (widget == optionsButton) { //
-		 * TODO } else if (widget == saveAndQuitButton) { tc.shutdown(); }
-		 */
 		if (widget == spButton) {
-			tc.currentGui = null;
+			tc.openGui(null);
 			tc.setWorld(new WorldSP());
 			try {
 				tc.world.load();

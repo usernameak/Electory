@@ -67,7 +67,7 @@ public class TinyCraft {
 	private GuiRenderState renderState = new GuiRenderState();
 	public FontRenderer fontRenderer = new FontRenderer();
 	public SoundManager soundManager = new SoundManager();
-	public GuiScreen currentGui = new GuiMainMenu(this);
+	public GuiScreen currentGui;
 	public Console console = null;
 	// public ChunkLoadThread chunkLoadThread = new ChunkLoadThread();
 	private int width = 0, height = 0;
@@ -268,6 +268,7 @@ public class TinyCraft {
 	}
 
 	public void initGame() {
+		openGui(new GuiMainMenu(this));
 		/*
 		 * try { world.load(); } catch (IOException e) { e.printStackTrace(); }
 		 */
