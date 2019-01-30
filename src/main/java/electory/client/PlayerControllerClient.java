@@ -20,6 +20,10 @@ public class PlayerControllerClient implements IPlayerController {
 
 	@Override
 	public void doMovement(EntityPlayer player, Vector3f movementVector) {
+		if(TinyCraft.getInstance().currentGui != null) {
+			return;
+		}
+		
 		Matrix4x3f movementMatrix = new Matrix4x3f();
 
 		movementMatrix.rotate((float) deg2rad(-player.yaw), 0.0f, 1.0f, 0.0f);
