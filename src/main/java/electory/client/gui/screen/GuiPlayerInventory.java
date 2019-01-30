@@ -51,7 +51,7 @@ public class GuiPlayerInventory extends GuiWidgetScreen {
 		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
 
 		if (eventKeyState) {
-			if (eventKey == Keyboard.KEY_ESCAPE) {
+			if (eventKey == Keyboard.KEY_ESCAPE || eventKey == Keyboard.KEY_E) {
 				tc.openGui(null);
 			}
 		}
