@@ -17,7 +17,7 @@ public abstract class GuiWidgetScreen extends GuiScreen {
 	public abstract GuiWidget createRootWidget();
 
 	private GuiWidget rootContainer;
-	
+
 	protected int mouseX, mouseY;
 
 	@Override
@@ -57,8 +57,10 @@ public abstract class GuiWidgetScreen extends GuiScreen {
 	@Override
 	public void handleMouseEvent(MouseEvent event) {
 		super.handleMouseEvent(event);
-		rootContainer.handleMouseEvent(event);
-		mouseX = event.getX();
-		mouseY = event.getY();
+		if (rootContainer != null) {
+			rootContainer.handleMouseEvent(event);
+			mouseX = event.getX();
+			mouseY = event.getY();
+		}
 	}
 }

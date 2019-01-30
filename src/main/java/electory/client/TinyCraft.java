@@ -39,6 +39,7 @@ import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;
 import electory.client.gui.screen.GuiConsole;
 import electory.client.gui.screen.GuiInGame;
+import electory.client.gui.screen.GuiMainMenu;
 import electory.client.gui.screen.GuiPause;
 import electory.client.gui.screen.GuiScreen;
 import electory.client.render.AtlasManager;
@@ -51,23 +52,22 @@ import electory.nbt.ShortArrayTag;
 import electory.utils.CrashException;
 import electory.utils.TickTimer;
 import electory.world.World;
-import electory.world.WorldSP;
 
 public class TinyCraft {
 	private static TinyCraft instance;
 
-	public World world = new WorldSP();
+	public World world;// = new WorldSP();
 	public EntityPlayer player = null;// new EntityPlayer(world);
 	public TextureManager textureManager = new TextureManager();
 	public TickTimer tickTimer = new TickTimer(20.0f);
 	public ResolutionScaler resolutionScaler = new ResolutionScaler(1.0f);
 	public GuiInGame theHUD = new GuiInGame(this);
 	private DisplayMode windowedDisplayMode = new DisplayMode(800, 500);
-	public WorldRenderer worldRenderer = new WorldRenderer(world);
+	public WorldRenderer worldRenderer = new WorldRenderer();
 	private GuiRenderState renderState = new GuiRenderState();
 	public FontRenderer fontRenderer = new FontRenderer();
 	public SoundManager soundManager = new SoundManager();
-	public GuiScreen currentGui = null;
+	public GuiScreen currentGui = new GuiMainMenu(this);
 	public Console console = null;
 	// public ChunkLoadThread chunkLoadThread = new ChunkLoadThread();
 	private int width = 0, height = 0;
@@ -96,6 +96,11 @@ public class TinyCraft {
 	}
 
 	public TinyCraft() {
+	}
+
+	public void setWorld(World world) {
+		this.world = world;
+		worldRenderer.setWorld(world);
 	}
 
 	public boolean isPaused() {
@@ -152,7 +157,9 @@ public class TinyCraft {
 
 			soundManager.destroy();
 
-			world.unload();
+			if (world != null) {
+				world.unload();
+			}
 
 			Display.destroy();
 		} catch (CrashException e) {
@@ -261,11 +268,9 @@ public class TinyCraft {
 	}
 
 	public void initGame() {
-		try {
-			world.load();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		/*
+		 * try { world.load(); } catch (IOException e) { e.printStackTrace(); }
+		 */
 	}
 
 	public void initConsole() {
@@ -367,7 +372,11 @@ public class TinyCraft {
 	public void render() {
 		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
 
-		GL11.glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
+		if (player != null) {
+			GL11.glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
+		} else {
+			GL11.glClearColor(0f, 0f, 0f, 1.0f);
+		}
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 		if (width != Display.getWidth() || height != Display.getHeight()) {
@@ -396,7 +405,7 @@ public class TinyCraft {
 	}
 
 	public void tick(float renderPartialTicks) {
-		if (!isPaused()) {
+		if (!isPaused() && world != null) {
 			world.update();
 		}
 	}
@@ -465,7 +474,9 @@ public class TinyCraft {
 			this.player.playerController = null;
 		}
 		this.player = player;
-		this.player.playerController = new PlayerControllerClient();
+		if (this.player != null) {
+			this.player.playerController = new PlayerControllerClient();
+		}
 	}
 
 	public void openGui(GuiScreen gui) {

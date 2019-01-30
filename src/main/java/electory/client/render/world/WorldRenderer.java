@@ -45,7 +45,10 @@ public class WorldRenderer {
 
 	public static final int LIGHTMAP_SIZE = 1024;
 
-	public WorldRenderer(World world) {
+	public WorldRenderer() {
+	}
+
+	public void setWorld(World world) {
 		this.world = world;
 	}
 
@@ -231,8 +234,7 @@ public class WorldRenderer {
 		world.getEntities().stream().forEach(e -> {
 			WorldRenderState rs2 = new WorldRenderState(renderState);
 			Vector3d epos = e.getInterpolatedPosition(renderPartialTicks);
-			rs2.modelMatrix
-					.translate(epos.x - pos.x, epos.y, epos.z - pos.z);
+			rs2.modelMatrix.translate(epos.x - pos.x, epos.y, epos.z - pos.z);
 			EntityRenderer.getRendererFromEntity(e).renderEntity(e, renderPartialTicks, rs2);
 		});
 

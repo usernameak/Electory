@@ -1,5 +1,6 @@
 package electory.client.gui.screen;
 
+import java.awt.Color;
 import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
@@ -10,11 +11,13 @@ import electory.client.gui.widget.GuiColumnLayout;
 import electory.client.gui.widget.GuiMenuButton;
 import electory.client.gui.widget.GuiRootContainer;
 import electory.client.gui.widget.GuiRootContainer.Position;
+import electory.world.WorldSP;
 import electory.client.gui.widget.GuiWidget;
+import electory.utils.CrashException;
 
-public class GuiPause extends GuiWidgetScreen implements IActionListener {
+public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 
-	public GuiPause(TinyCraft tc) {
+	public GuiMainMenu(TinyCraft tc) {
 		super(tc);
 	}
 
@@ -34,48 +37,41 @@ public class GuiPause extends GuiWidgetScreen implements IActionListener {
 		return true;
 	}
 
-	protected GuiMenuButton resumeButton;
-	protected GuiMenuButton saveButton;
-	protected GuiMenuButton optionsButton;
-	protected GuiMenuButton saveAndQuitButton;
+	protected GuiMenuButton spButton;
+	protected GuiMenuButton quitButton;
 
 	@Override
 	public GuiWidget createRootWidget() {
 		GuiColumnLayout layout = new GuiColumnLayout(tc, 5);
-		resumeButton = new GuiMenuButton(tc, "Resume game", 200, this);
-		layout.add(resumeButton);
-		saveButton = new GuiMenuButton(tc, "Save game", 200, this);
-		layout.add(saveButton);
-		optionsButton = new GuiMenuButton(tc, "Options", 200, this);
-		layout.add(optionsButton);
-		saveAndQuitButton = new GuiMenuButton(tc, "Save and quit", 200, this);
-		layout.add(saveAndQuitButton);
+		spButton = new GuiMenuButton(tc, "Singleplayer", 200, this);
+		layout.add(spButton);
+		quitButton = new GuiMenuButton(tc, "Quit game", 200, this);
+		layout.add(quitButton);
 		GuiRootContainer rootContainer = new GuiRootContainer(tc, layout);
 		rootContainer.position = Position.BOTTOM_LEFT;
+		rootContainer.bgColor = new Color(0xFF404040);
 		rootContainer.verticalGap = 50;
 		return rootContainer;
 	}
 
 	@Override
 	public void actionPerformed(GuiWidget widget) {
-		if (widget == resumeButton) {
-			tc.openGui(null);
-			return;
-		} else if (widget == saveButton) {
+		/*
+		 * if (widget == resumeButton) { tc.openGui(null); return; } else if (widget ==
+		 * saveButton) { try { tc.world.save(); tc.openGui(null); } catch (IOException
+		 * e) { e.printStackTrace(); } return; } else if (widget == optionsButton) { //
+		 * TODO } else if (widget == saveAndQuitButton) { tc.shutdown(); }
+		 */
+		if (widget == spButton) {
+			tc.currentGui = null;
+			tc.setWorld(new WorldSP());
 			try {
-				tc.world.save();
-				tc.openGui(null);
+				tc.world.load();
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new CrashException(e);
 			}
-			return;
-		} else if (widget == optionsButton) {
-			// TODO
-		} else if (widget == saveAndQuitButton) {
-			tc.world.unload();
-			tc.setPlayer(null);
-			tc.setWorld(null);
-			tc.openGui(new GuiMainMenu(tc));
+		} else if (widget == quitButton) {
+			tc.shutdown();
 		}
 	}
 }

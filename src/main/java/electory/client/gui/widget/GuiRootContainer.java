@@ -1,5 +1,6 @@
 package electory.client.gui.widget;
 
+import java.awt.Color;
 import java.awt.Point;
 
 import org.lwjgl.opengl.GL11;
@@ -16,7 +17,7 @@ public class GuiRootContainer extends GuiWidget implements IRelayoutable {
 
 	private GuiWidget child;
 
-	public boolean doGlobalDarken = true;
+	public Color bgColor = new Color(0xC0000000, true);
 	public Position position = Position.TOP_LEFT;
 	public int horizontalGap = 0;
 	public int verticalGap = 0;
@@ -99,13 +100,13 @@ public class GuiRootContainer extends GuiWidget implements IRelayoutable {
 
 	@Override
 	public void renderGui(GuiRenderState rs) {
-		if (doGlobalDarken) {
+		if (bgColor != null) {
 			ShaderManager.solidProgram.use();
 			ShaderManager.solidProgram.loadRenderState(rs);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			GL11.glEnable(GL11.GL_BLEND);
 			TriangleBuffer tb = Tessellator.instance.getBuffer();
-			tb.setColor(0xC0000000);
+			tb.setColor(bgColor.getRGB());
 			tb.addQuadVertex(0, 0, 0);
 			tb.addQuadVertex(0, getHeight(), 0);
 			tb.addQuadVertex(getWidth(), getHeight(), 0);
