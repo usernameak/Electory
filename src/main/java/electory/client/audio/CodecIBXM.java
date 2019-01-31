@@ -9,14 +9,13 @@ import java.nio.ShortBuffer;
 
 import javax.sound.sampled.AudioFormat;
 
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-
 import ibxm.IBXM;
 import ibxm.Module;
 import paulscode.sound.ICodec;
 import paulscode.sound.SoundBuffer;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemLogger;
+import paulscode.sound.codecs.CodecJOrbis;
 
 /**
  * The CodecIBXM class provides an ICodec interface for reading from MOD/S3M/XM
@@ -218,11 +217,8 @@ public class CodecIBXM implements ICodec {
 		if (mixBuf == null) {
 			mixBuf = new int[ibxm.getMixBufferLength()];
 		}
-		if (outBuf == null) {
-			outBuf = new byte[mixBuf.length * 2];
-		}
-
-		songDuration = ibxm.calculateSongDuration() * 4;
+		
+		songDuration = ibxm.calculateSongDuration();
 
 		if (is != null) {
 			try {
@@ -246,7 +242,6 @@ public class CodecIBXM implements ICodec {
 	}
 
 	private int[] mixBuf;
-	private byte[] outBuf;
 
 	/**
 	 * Reads in one stream buffer worth of audio data. See
@@ -256,26 +251,65 @@ public class CodecIBXM implements ICodec {
 	 * @return The audio data wrapped into a SoundBuffer context.
 	 */
 	public SoundBuffer read() {
-		if (endOfStream(GET, XXX))
-			return null;
+		byte[] returnBuffer = null;
 
-		if (module == null) {
-			errorMessage("Module null in method 'read'");
-			return null;
+		while (!endOfStream(GET, XXX)
+				&& (returnBuffer == null || returnBuffer.length < SoundSystemConfig.getStreamingBufferSize())) {
+			if (returnBuffer == null)
+				returnBuffer = readBytes();
+			else
+				returnBuffer = appendByteArrays(returnBuffer, readBytes());
 		}
 
-		// Check to make sure there is an audio format:
-		if (myAudioFormat == null) {
-			errorMessage("Audio Format null in method 'read'");
+		if (returnBuffer == null)
 			return null;
-		}
-		
-		System.out.println("f");
 
+		if (reverseBytes) {
+			reverseBytes(returnBuffer);
+		}
+
+		return new SoundBuffer(returnBuffer, getAudioFormat());
+		/*
+		 * if (endOfStream(GET, XXX)) return null;
+		 * 
+		 * if (module == null) { errorMessage("Module null in method 'read'"); return
+		 * null; }
+		 * 
+		 * // Check to make sure there is an audio format: if (myAudioFormat == null) {
+		 * errorMessage("Audio Format null in method 'read'"); return null; }
+		 * 
+		 * System.out.println("f");
+		 * 
+		 * int count = SoundSystemConfig.getStreamingBufferSize() / 4;
+		 * ibxm.getAudio(mixBuf, count * 2);
+		 * 
+		 * int outIdx = 0; int mixIdx = 0; for (int mixEnd = count * 2; mixIdx < mixEnd;
+		 * mixIdx++) { int ampl = mixBuf[mixIdx]; if (ampl > 32767) ampl = 32767; if
+		 * (ampl < -32768) ampl = -32768; outBuf[outIdx++] = (byte) (ampl >> 8);
+		 * outBuf[outIdx++] = (byte) ampl; }
+		 * 
+		 * playPosition += mixIdx;
+		 * 
+		 * /*if (playPosition > songDuration) { endOfStream(SET, true); }
+		 */
+
+		/*
+		 * if (reverseBytes) reverseBytes(outBuf, 0, outIdx);
+		 * 
+		 * SoundBuffer sb = new SoundBuffer(trimArray(outBuf, outIdx),
+		 * getAudioFormat());
+		 * 
+		 * return sb;
+		 */
+	}
+
+	public byte[] readBytes() {
 		int count = ibxm.getAudio(mixBuf);
-
 		int outIdx = 0;
 		int mixIdx = 0;
+		
+		byte[] outBuf = new byte[count * 4];
+		
 		for (int mixEnd = count * 2; mixIdx < mixEnd; mixIdx++) {
 			int ampl = mixBuf[mixIdx];
 			if (ampl > 32767)
@@ -285,19 +319,14 @@ public class CodecIBXM implements ICodec {
 			outBuf[outIdx++] = (byte) (ampl >> 8);
 			outBuf[outIdx++] = (byte) ampl;
 		}
-
-		playPosition += outIdx;
-
-		if (playPosition > songDuration) {
+		
+		playPosition += mixIdx / 2;
+		
+		if (playPosition >= songDuration) {
 			endOfStream(SET, true);
+			return null;
 		}
-
-		if (reverseBytes)
-			reverseBytes(outBuf, 0, outIdx);
-
-		SoundBuffer sb = new SoundBuffer(trimArray(outBuf, outIdx), getAudioFormat());
-
-		return sb;
+		return outBuf;
 	}
 
 	/**
@@ -309,7 +338,7 @@ public class CodecIBXM implements ICodec {
 	 */
 	public SoundBuffer readAll() {
 
-		if (module == null) {
+		/*if (module == null) {
 			errorMessage("Module null in method 'read'");
 			return null;
 		}
@@ -319,7 +348,7 @@ public class CodecIBXM implements ICodec {
 			errorMessage("Audio Format null in method 'read'");
 			return null;
 		}
-		
+
 		byte[] fullBuffer = null;
 
 		while (!endOfStream(GET, XXX)) {
@@ -342,20 +371,22 @@ public class CodecIBXM implements ICodec {
 			/*
 			 * if (outIdx == 0) { endOfStream(SET, true); }
 			 */
-
+/*
 			if (playPosition > songDuration + 1) {
 				endOfStream(SET, true);
 			}
 
 			if (reverseBytes)
 				reverseBytes(outBuf, 0, outIdx);
-			
+
 			fullBuffer = appendByteArrays(fullBuffer, outBuf, outIdx);
 		}
 
 		SoundBuffer sb = new SoundBuffer(fullBuffer, getAudioFormat());
 
-		return sb;
+		return sb;*/
+		
+		return null;
 	}
 
 	/**
@@ -503,6 +534,44 @@ public class CodecIBXM implements ICodec {
 		}
 
 		return dest.array();
+	}
+
+	/**
+	 * Creates a new array with the second array appended to the end of the first
+	 * array.
+	 * 
+	 * @param arrayOne The first array.
+	 * @param arrayTwo The second array.
+	 * @return Byte array containing information from both arrays.
+	 */
+	private static byte[] appendByteArrays(byte[] arrayOne, byte[] arrayTwo) {
+		byte[] newArray;
+		if (arrayOne == null && arrayTwo == null) {
+			// no data, just return
+			return null;
+		} else if (arrayOne == null) {
+			// create the new array, same length as arrayTwo:
+			newArray = new byte[arrayTwo.length];
+			// fill the new array with the contents of arrayTwo:
+			System.arraycopy(arrayTwo, 0, newArray, 0, arrayTwo.length);
+			arrayTwo = null;
+		} else if (arrayTwo == null) {
+			// create the new array, same length as arrayOne:
+			newArray = new byte[arrayOne.length];
+			// fill the new array with the contents of arrayOne:
+			System.arraycopy(arrayOne, 0, newArray, 0, arrayOne.length);
+			arrayOne = null;
+		} else {
+			// create the new array large enough to hold both arrays:
+			newArray = new byte[arrayOne.length + arrayTwo.length];
+			System.arraycopy(arrayOne, 0, newArray, 0, arrayOne.length);
+			// fill the new array with the contents of both arrays:
+			System.arraycopy(arrayTwo, 0, newArray, arrayOne.length, arrayTwo.length);
+			arrayOne = null;
+			arrayTwo = null;
+		}
+
+		return newArray;
 	}
 
 	/**
