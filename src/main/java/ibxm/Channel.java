@@ -396,10 +396,10 @@ public class Channel {
 	private void tonePortamento() {
 		if( period > 0 ) {
 			if( period < portaPeriod ) {
-				period += tonePortaParam << 2;
+				period += tonePortaParam;
 				//if( period > portaPeriod ) period = portaPeriod;
 			} else {
-				period -= tonePortaParam << 2;
+				period -= tonePortaParam;// << 2;
 				//if( period < portaPeriod ) period = portaPeriod;
 			}
 		}
