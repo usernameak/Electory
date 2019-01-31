@@ -397,10 +397,10 @@ public class Channel {
 		if( period > 0 ) {
 			if( period < portaPeriod ) {
 				period += tonePortaParam << 2;
-				if( period > portaPeriod ) period = portaPeriod;
+				//if( period > portaPeriod ) period = portaPeriod;
 			} else {
 				period -= tonePortaParam << 2;
-				if( period < portaPeriod ) period = portaPeriod;
+				//if( period < portaPeriod ) period = portaPeriod;
 			}
 		}
 	}
