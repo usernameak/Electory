@@ -138,6 +138,6 @@ public class GuiRootContainer extends GuiWidget implements IRelayoutable {
 
 	@Override
 	public void relayout() {
-		child.relayout();
+		// child.relayout();
 	}
 }
