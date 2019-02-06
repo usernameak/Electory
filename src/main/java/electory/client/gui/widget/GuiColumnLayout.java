@@ -2,6 +2,7 @@ package electory.client.gui.widget;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
@@ -66,8 +67,15 @@ public class GuiColumnLayout extends GuiWidget {
 
 	@Override
 	public void relayout() {
-		// TODO Auto-generated method stub
-		
+		cachedWidth = cachedHeight = 0;
+		ListIterator<GuiWidget> it = children.listIterator();
+		while(it.hasNext()) {
+			int i = it.nextIndex();
+			GuiWidget widget = it.next();
+			cachedHeight += i == 0 ? widget.getHeight() : gap + widget.getHeight();
+			int w = widget.getWidth();
+			cachedWidth = w > cachedWidth ? w : cachedWidth;
+		}
 	}
 
 }

@@ -23,8 +23,11 @@ public abstract class GuiWidgetScreen extends GuiScreen {
 	@Override
 	public void setupGuiElementsForScreenSize(ResolutionScaler scaler) {
 		super.setupGuiElementsForScreenSize(scaler);
-		rootContainer = createRootWidget();
-		// TODO: change to relayout when implemented
+		if (rootContainer == null) {
+			rootContainer = createRootWidget();
+		} else {
+			rootContainer.relayout();
+		}
 	}
 
 	@Override
