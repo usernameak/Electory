@@ -166,7 +166,6 @@ public class CodecIBXM implements ICodec {
 	 * @return False if an error occurred or if end of stream was reached.
 	 */
 	public boolean initialize(URL url) {
-		System.out.println("i");
 		initialized(SET, false);
 		cleanup();
 

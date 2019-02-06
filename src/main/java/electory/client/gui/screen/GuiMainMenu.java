@@ -49,7 +49,6 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 	@Override
 	public void closeGuiScreen() {
 		super.closeGuiScreen();
-		System.out.println("closeGUI");
 		tc.soundManager.stopMusic("main_menu_music");
 	}
 

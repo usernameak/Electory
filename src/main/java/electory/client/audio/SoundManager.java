@@ -98,7 +98,6 @@ public class SoundManager {
 	
 	public void playMusic(String path, String name, boolean loop) {
 		String realPath = getRealSoundPath(path);
-		System.out.println("playMusic " + realPath);
 		soundSystem.backgroundMusic(name, getClass().getResource(realPath), realPath, loop);
 	}
 	
