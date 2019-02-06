@@ -40,8 +40,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public Random random = new Random(seed);
 
-	protected Vector3d spawnPoint = new Vector3d(random.nextInt(2048) - 1024, 256f,
-			random.nextInt(2048) - 1024);
+	protected Vector3d spawnPoint = new Vector3d(random.nextInt(2048) - 1024, 256f, random.nextInt(2048) - 1024);
 
 	public static final int FLAG_SKIP_RENDER_UPDATE = 1;
 	public static final int FLAG_SKIP_LIGHT_UPDATE = 2;
@@ -84,9 +83,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public void breakBlockByPlayer(EntityPlayer player, int x, int y, int z) {
 		Block block = getBlockAt(x, y, z);
-		
+
 		breakBlockWithParticles(x, y, z);
-		
+
 		player.inventory.giveItem(new ItemStack(Item.itemList[block.blockID]));
 	}
 
@@ -111,18 +110,20 @@ public abstract class World implements IChunkSaveStatusHandler {
 	public void interactWithBlock(EntityPlayer player, int x, int y, int z, EnumSide side) {
 		if (!this.getBlockAt(x, y, z).interactWithBlock(player, this, x, y, z, side)) {
 			ItemStack stack = player.inventory.getStackInSlot(player.inventory.getSelectedSlot());
-			if (stack.item != null && stack.item instanceof ItemBlock && stack.remove(1)) {
+			if (stack.item != null && stack.item instanceof ItemBlock) {
 				Block block = ((ItemBlock) stack.item).getBlock();
 				AABB blockAABB = block.getAABB(this, x + side.offsetX, y + side.offsetY, z + side.offsetZ, true);
 				if (entities.stream()
 						.noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
-					setBlockAt(x + side.offsetX, y + side.offsetY, z + side.offsetZ, block);
-					block.blockPlacedByPlayer(	player,
-												this,
-												x + side.offsetX,
-												y + side.offsetY,
-												z + side.offsetZ,
-												EnumSide.getOrientation(EnumSide.OPPOSITES[side.ordinal()]));
+					if (stack.remove(1)) {
+						setBlockAt(x + side.offsetX, y + side.offsetY, z + side.offsetZ, block);
+						block.blockPlacedByPlayer(	player,
+													this,
+													x + side.offsetX,
+													y + side.offsetY,
+													z + side.offsetZ,
+													EnumSide.getOrientation(EnumSide.OPPOSITES[side.ordinal()]));
+					}
 				}
 			}
 		}
