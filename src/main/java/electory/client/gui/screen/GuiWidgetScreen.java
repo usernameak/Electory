@@ -26,7 +26,7 @@ public abstract class GuiWidgetScreen extends GuiScreen {
 		if (rootContainer == null) {
 			rootContainer = createRootWidget();
 		} else {
-			rootContainer.relayout();
+			rootContainer.relayout(scaler.getWidth(), scaler.getHeight());
 		}
 	}
 

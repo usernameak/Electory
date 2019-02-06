@@ -66,7 +66,7 @@ public class GuiColumnLayout extends GuiWidget {
 	}
 
 	@Override
-	public void relayout() {
+	public void relayout(int width, int height) {
 		cachedWidth = cachedHeight = 0;
 		ListIterator<GuiWidget> it = children.listIterator();
 		while(it.hasNext()) {

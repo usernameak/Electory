@@ -98,7 +98,7 @@ public class GuiWidgetInventoryCell extends GuiWidget {
 	}
 
 	@Override
-	public void relayout() {
+	public void relayout(int width, int height) {
 	}
 
 }
