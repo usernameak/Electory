@@ -1,5 +1,6 @@
 package electory.world;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -10,6 +11,13 @@ import electory.entity.EntityPlayer;
 import electory.entity.EntityPlayerClient;
 
 public class WorldSP extends World {
+	private String worldName;
+
+	public WorldSP(String worldName) {
+		super();
+		this.worldName = worldName;
+	}
+
 	@Override
 	protected Collection<EntityPlayer> getPlayers() {
 		return Collections.singleton(TinyCraft.getInstance().player);
@@ -42,6 +50,13 @@ public class WorldSP extends World {
 			}
 		}
 		return TinyCraft.getInstance().player != null;
+	}
+	
+	@Override
+	public File getWorldSaveDir() {
+		File dir = new File(TinyCraft.getInstance().getUserDataDir(), "universes/" + worldName);
+		dir.mkdirs();
+		return dir;
 	}
 
 	@Override

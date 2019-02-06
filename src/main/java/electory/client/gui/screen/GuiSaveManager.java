@@ -1,6 +1,7 @@
 package electory.client.gui.screen;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
@@ -11,13 +12,13 @@ import electory.client.gui.widget.GuiColumnLayout;
 import electory.client.gui.widget.GuiMenuButton;
 import electory.client.gui.widget.GuiRootContainer;
 import electory.client.gui.widget.GuiRootContainer.Position;
-import electory.world.WorldSP;
 import electory.client.gui.widget.GuiWidget;
 import electory.utils.CrashException;
+import electory.world.WorldSP;
 
-public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
+public class GuiSaveManager extends GuiWidgetScreen implements IActionListener {
 
-	public GuiMainMenu(TinyCraft tc) {
+	public GuiSaveManager(TinyCraft tc) {
 		super(tc);
 	}
 
@@ -37,28 +38,43 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 		return true;
 	}
 
-	protected GuiMenuButton spButton;
+	protected GuiMenuButton newWorldButton;
 	protected GuiMenuButton quitButton;
-	
+
 	@Override
 	public void openGuiScreen() {
 		super.openGuiScreen();
-		tc.soundManager.playMusic("mus/main_menu_1.xm", "main_menu_music", true);
 	}
-	
+
 	@Override
 	public void closeGuiScreen() {
 		super.closeGuiScreen();
-		System.out.println("closeGUI");
-		tc.soundManager.stopMusic("main_menu_music");
 	}
 
 	@Override
 	public GuiWidget createRootWidget() {
 		GuiColumnLayout layout = new GuiColumnLayout(tc, 5);
-		spButton = new GuiMenuButton(tc, "Singleplayer", 200, this);
-		layout.add(spButton);
-		quitButton = new GuiMenuButton(tc, "Quit game", 200, this);
+		File folder = getSPWorldsFolder();
+		if (folder.isDirectory()) {
+			for (String worldName : folder.list()) {
+				layout.add(new GuiMenuButton(tc, worldName, 200) {
+					@Override
+					public void actionPerformed(GuiWidget widget) {
+						super.actionPerformed(widget);
+						tc.openGui(null);
+						tc.setWorld(new WorldSP(worldName));
+						try {
+							tc.world.load();
+						} catch (IOException e) {
+							throw new CrashException(e);
+						}
+					}
+				});
+			}
+		}
+		newWorldButton = new GuiMenuButton(tc, "New world", 200, this);
+		layout.add(newWorldButton);
+		quitButton = new GuiMenuButton(tc, "Back", 200, this);
 		layout.add(quitButton);
 		GuiRootContainer rootContainer = new GuiRootContainer(tc, layout);
 		rootContainer.position = Position.BOTTOM_LEFT;
@@ -67,12 +83,28 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 		return rootContainer;
 	}
 
+	protected File getSPWorldsFolder() {
+		return new File(tc.getUserDataDir(), "universes");
+	}
+
 	@Override
 	public void actionPerformed(GuiWidget widget) {
-		if (widget == spButton) {
-			tc.openGui(new GuiSaveManager(tc));
+		if (widget == newWorldButton) {
+			tc.openGui(null);
+			File spFolder = getSPWorldsFolder();
+			int i = 0;
+			while(new File(spFolder, "universe" + i).exists()) {
+				i++;
+			}
+			
+			tc.setWorld(new WorldSP("universe" + i));
+			try {
+				tc.world.load();
+			} catch (IOException e) {
+				throw new CrashException(e);
+			}
 		} else if (widget == quitButton) {
-			tc.shutdown();
+			tc.openGui(new GuiMainMenu(tc));
 		}
 	}
 }
