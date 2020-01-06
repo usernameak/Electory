@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -48,11 +49,17 @@ public class ChunkProviderSP implements IChunkProvider {
 			chunk = world.generationChunkProvider.loadChunk(cx, cy);
 		}
 
+		Lock lock = chunk.getNeighbourWriteLock();
+		
+		lock.lock();
+		
 		loadedChunks.put(ChunkPosition.createLong(chunk.getChunkX(), chunk.getChunkZ()), chunk);
 
 		chunk.notifyNeighbourChunks();
 		
 		chunk.tryPopulateWithNeighbours(this);
+		
+		lock.unlock();
 		
 		return chunk;
 	}

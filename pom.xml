@@ -79,7 +79,6 @@
 			<version>0.7.2</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 
 	<build>

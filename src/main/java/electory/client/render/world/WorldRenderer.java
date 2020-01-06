@@ -3,6 +3,10 @@ package electory.client.render.world;
 import static electory.math.MathUtils.deg2rad;
 
 import java.nio.IntBuffer;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.joml.Vector3d;
 import org.lwjgl.BufferUtils;
@@ -44,8 +48,17 @@ public class WorldRenderer {
 	public static final int VBO_COUNT = 2;
 
 	public static final int LIGHTMAP_SIZE = 1024;
+	
+	public static ExecutorService chunkUpdateExecutor = Executors.newSingleThreadExecutor();
 
 	public WorldRenderer() {
+	}
+	
+	public void terminate() throws InterruptedException {
+		chunkUpdateExecutor.shutdown();
+		if(!chunkUpdateExecutor.awaitTermination(1L, TimeUnit.SECONDS)) {
+			return;
+		}
 	}
 
 	public void setWorld(World world) {
@@ -249,7 +262,7 @@ public class WorldRenderer {
 				WorldRenderState rs2 = new WorldRenderState(renderState);
 				rs2.modelMatrix
 						.translate(cr.chunk.getChunkBlockCoordX() - pos.x, 0f, cr.chunk.getChunkBlockCoordZ() - pos.z);
-				cr.render(processRenderStateForPass(pass, rs2), getRenderPassShader(pass), pass, getVBOForPass(pass));
+				cr.render(processRenderStateForPass(pass, rs2), chunkUpdateExecutor, getRenderPassShader(pass), pass, getVBOForPass(pass));
 				if (c)
 					cr.endConditionalRender();
 			});

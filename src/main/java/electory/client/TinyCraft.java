@@ -74,7 +74,7 @@ public class TinyCraft {
 
 	public int fps = 0;
 	private int fpsc = 0;
-	public int chunkUpdCounter = 0;
+	public volatile int chunkUpdCounter = 0; // TODO: unsafe
 	public int chunkUpdates = 0;
 	private long fpsNanoCounterLast = System.nanoTime();
 	private long fpsNanoCounter = System.nanoTime();
@@ -162,6 +162,8 @@ public class TinyCraft {
 			}
 
 			Display.destroy();
+			
+			worldRenderer.terminate();
 		} catch (CrashException e) {
 			showCrashReport(e);
 		} catch (Exception e) {

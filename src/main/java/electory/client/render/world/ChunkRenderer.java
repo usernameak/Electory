@@ -1,5 +1,8 @@
 package electory.client.render.world;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.locks.Lock;
+
 import org.lwjgl.opengl.ARBOcclusionQuery;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -17,7 +20,7 @@ import electory.world.Chunk;
 
 public class ChunkRenderer {
 	private int[] vbos = new int[WorldRenderer.VBO_COUNT];
-	private TriangleBuffer qb = new TriangleBuffer();
+	// private TriangleBuffer qb = new TriangleBuffer();
 	final Chunk chunk;
 	private int[] triangleCounts = new int[vbos.length];
 	private int query = 0;
@@ -26,9 +29,14 @@ public class ChunkRenderer {
 			0xff5f5f5f, 0xff6f6f6f, 0xff7f7f7f, 0xff8f8f8f, 0xff9f9f9f, 0xffafafaf, 0xffbfbfbf, 0xffcfcfcf, 0xffdfdfdf,
 			0xffefefef, 0xffffffff };
 
-	public boolean needsUpdate = true;
+	public volatile boolean needsUpdate = true;
+	public volatile boolean updateInProgress = false;
+	private volatile boolean hasFirstUpdate = false;
+	// private volatile boolean isDirty = false;
 
 	private boolean isInitialized = false;
+
+	private volatile TriangleBuffer[] sentBuffers = null;
 
 	public ChunkRenderer(Chunk chunk) {
 		this.chunk = chunk;
@@ -46,7 +54,7 @@ public class ChunkRenderer {
 		}
 		query = ARBOcclusionQuery.glGenQueriesARB();
 		isInitialized = true;
-		update();
+		// update();
 	}
 
 	public void doChunkQuery(WorldRenderState rs) {
@@ -57,35 +65,37 @@ public class ChunkRenderer {
 		ShaderManager.solidProgram.loadRenderState(rs);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		TriangleBuffer buf = Tessellator.instance.getBuffer();
-		/*buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
-
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
-
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
-
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
-
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
-
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
-		buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);*/
+		/*
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
+		 * 
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
+		 * 
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
+		 * 
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
+		 * 
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
+		 * 
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
+		 */
 		buf.addQuadVertex(0, 0f, 0);
 		buf.addQuadVertex(0 + 16.0f, 0f, 0);
 		buf.addQuadVertex(0 + 16.0f, 0f, 0 + 16.0f);
@@ -131,65 +141,99 @@ public class ChunkRenderer {
 		NVConditionalRender.glEndConditionalRenderNV();
 	}
 
-	public void update() {
-		init();
-		needsUpdate = false;
-		TinyCraft.getInstance().chunkUpdCounter++;
-		for (int i = 0; i < vbos.length; i++) {
-			int tricount = 0;
-			for (int x = 0; x < 16; x++) {
-				for (int y = 0; y < 256; y++) {
-					for (int z = 0; z < 16; z++) {
-						Block block = chunk.getBlockAt(x, y, z);
-						if (block != null && block.shouldRenderInVBO(i)) {
-							tricount += block.getRenderer()
-									.getTriangleCount(	chunk.world,
-														block,
-														this,
-														chunk.getChunkBlockCoordX() + x,
-														y,
-														chunk.getChunkBlockCoordZ() + z,
-														x,
-														z);
+	public void update(Executor chunkUpdateExecutor) {
+		if (!updateInProgress) {
+			if (sentBuffers == null) {
+				init();
+				updateInProgress = true;
+				// isDirty = false;
+				// needsUpdate = false;
+				TinyCraft.getInstance().chunkUpdCounter++;
+				chunkUpdateExecutor.execute(new Runnable() {
+
+					@Override
+					public void run() {
+						Lock lock = chunk.renderLock.readLock();
+						lock.lock();
+						TriangleBuffer[] buffers = new TriangleBuffer[WorldRenderer.VBO_COUNT];
+						try {
+							for (int i = 0; i < vbos.length; i++) {
+								TriangleBuffer qb = new TriangleBuffer();
+								int tricount = 0;
+								for (int x = 0; x < 16; x++) {
+									for (int y = 0; y < 256; y++) {
+										for (int z = 0; z < 16; z++) {
+											Block block = chunk.getBlockAt(x, y, z);
+											if (block != null && block.shouldRenderInVBO(i)) {
+												tricount += block.getRenderer()
+														.getTriangleCount(	chunk.world,
+																			block,
+																			ChunkRenderer.this,
+																			chunk.getChunkBlockCoordX() + x,
+																			y,
+																			chunk.getChunkBlockCoordZ() + z,
+																			x,
+																			z);
+											}
+										}
+									}
+								}
+								triangleCounts[i] = tricount;
+								qb.allocate(tricount);
+								for (int x = 0; x < 16; x++) {
+									for (int y = 0; y < 256; y++) {
+										for (int z = 0; z < 16; z++) {
+											Block block = chunk.getBlockAt(x, y, z);
+											if (block != null && block.shouldRenderInVBO(i)) {
+												qb.setColor(lightColors[chunk.getSunLightLevelAt(x, y, z)]);
+												block.getRenderer()
+														.getTriangles(	chunk.world,
+																		block,
+																		ChunkRenderer.this,
+																		chunk.getChunkBlockCoordX() + x,
+																		y,
+																		chunk.getChunkBlockCoordZ() + z,
+																		x,
+																		z,
+																		qb);
+											}
+										}
+									}
+								}
+								qb.getBuffer().flip();
+								buffers[i] = qb;
+							}
+						} finally {
+							lock.unlock();
 						}
+						sentBuffers = buffers;
+						updateInProgress = false;
 					}
+				});
+			} else {
+				for (int i = 0; i < vbos.length; i++) {
+					GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbos[i]);
+					GL15.glBufferData(GL15.GL_ARRAY_BUFFER, sentBuffers[i].getBuffer(), GL15.GL_DYNAMIC_DRAW);
 				}
+				sentBuffers = null;
+				needsUpdate = false;
+				hasFirstUpdate = true;
+				/*if (isDirty) {
+					update(chunkUpdateExecutor); // force a new update because dirty again
+				}*/
 			}
-			triangleCounts[i] = tricount;
-			qb.allocate(tricount);
-			for (int x = 0; x < 16; x++) {
-				for (int y = 0; y < 256; y++) {
-					for (int z = 0; z < 16; z++) {
-						Block block = chunk.getBlockAt(x, y, z);
-						if (block != null && block.shouldRenderInVBO(i)) {
-							qb.setColor(lightColors[chunk.getSunLightLevelAt(x, y, z)]);
-							block.getRenderer()
-									.getTriangles(	chunk.world,
-													block,
-													this,
-													chunk.getChunkBlockCoordX() + x,
-													y,
-													chunk.getChunkBlockCoordZ() + z,
-													x,
-													z,
-													qb);
-						}
-					}
-				}
-			}
-			qb.getBuffer().flip();
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbos[i]);
-			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, qb.getBuffer(), GL15.GL_DYNAMIC_DRAW);
-			qb.reset();
 		}
 	}
 
-	public void render(WorldRenderState rs, DefaultProgram shader, int pass, int vbo) {
+	public void render(WorldRenderState rs, Executor chunkUpdateExecutor, DefaultProgram shader, int pass, int vbo) {
 		init();
 
 		if (needsUpdate) {
-			update();
+			update(chunkUpdateExecutor);
 		}
+
+		if (needsUpdate && !hasFirstUpdate)
+			return; // not renderable
 
 		shader.use();
 		shader.bindTexture(TextureManager.TERRAIN_TEXTURE);
@@ -212,5 +256,9 @@ public class ChunkRenderer {
 			GL15.glDeleteBuffers(vbos[i]);
 		}
 		ARBOcclusionQuery.glDeleteQueriesARB(query);
+	}
+
+	public void markDirty() {
+		needsUpdate = true;
 	}
 }

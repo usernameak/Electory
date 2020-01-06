@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.Lock;
 
 import org.joml.Vector3d;
 
@@ -77,6 +78,10 @@ public abstract class World implements IChunkSaveStatusHandler {
 		return chunkProvider.provideChunk(x, z);
 	}
 
+	public Chunk getChunkFromWorldCoord(int x, int z) {
+		return chunkProvider.provideChunk(x >> 4, z >> 4);
+	}
+
 	public void addEntity(Entity entity) {
 		this.entities.add(entity);
 	}
@@ -123,6 +128,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 													y + side.offsetY,
 													z + side.offsetZ,
 													EnumSide.getOrientation(EnumSide.OPPOSITES[side.ordinal()]));
+						
 					}
 				}
 			}
@@ -200,20 +206,20 @@ public abstract class World implements IChunkSaveStatusHandler {
 		chunksToLoad.removeAll(chunkProvider.getLoadedChunkMap().keySet());
 		{
 			LongCursor it = chunksToLoad.cursor();
-			boolean needsLoadNext = false;
-			do {
-				needsLoadNext = false;
+			int needsLoadNext = 1;
+			while (!checkSpawnAreaLoaded() || needsLoadNext > 0) {
+				needsLoadNext--;
 				if (it.moveNext()) {
 					long cpos = it.elem();
 					if (chunkProvider.canLoadChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L))) {
 						chunkProvider.loadChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L));
 					} else {
-						needsLoadNext = true;
+						needsLoadNext++;
 					}
 				} else {
 					break;
 				}
-			} while (!checkSpawnAreaLoaded() || needsLoadNext);
+			}
 		}
 		{
 			LongCursor it = chunksToUnload.cursor();
