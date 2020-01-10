@@ -64,20 +64,6 @@ public class ChunkGenerator implements IChunkProvider {
 				int x = (cx << 4) | i;
 				int y = (cy << 4) | j;
 				
-/*
-				for (int k = -8; k < 8; k++) {
-					for (int l = -8; l < 8; l++) {
-						double val1 = pgen.generate((x + k) / 64.0, (y + l) / 64.0);
-						double val1c = val1;
-						if (val1c > 1)
-							val1c = 1;
-						else if (val1c < 0)
-							val1c = 0;
-						double val = gen.generate(x + k, y + l, (int) (val1 * 256) - 128);
-						totalBiomeHeightVal += val < 0.5 ? 64 : 32;
-					}
-				}*/
-				
 				int totalBiomeHeightVal = MathUtils.getRectangleSum(psums, i, j, 16, 16) / 256;
 
 				double relief = rgen.generate(x / 64.0, y / 64.0);

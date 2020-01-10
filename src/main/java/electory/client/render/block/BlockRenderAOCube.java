@@ -5,11 +5,30 @@ import electory.client.render.IAtlasSprite;
 import electory.client.render.TriangleBuffer;
 import electory.client.render.world.ChunkRenderer;
 import electory.utils.EnumSide;
+import electory.world.Chunk;
 import electory.world.World;
 
 public class BlockRenderAOCube extends BlockRendererCube {
 
-	private int calculateAOLightLevel(int side1, int side2, int corner, int lightLevel) {
+	private int calculateAOLightLevel(Chunk chunk, int x, int y, int z, int bx, int by, int bz, int vx, int vy, int vz/*int side1, int side2, int corner, int lightLevel*/) {
+		int side1 = 0;
+		int side2 = 0;
+
+		if(vx == 0) {
+			side1 = chunk.getWorldSunLightLevelFast(x + bx, y + by + vy, z + bz);
+			side2 = chunk.getWorldSunLightLevelFast(x + bx, y + by, z + bz + vz);
+		} else if(vy == 0) {
+			side1 = chunk.getWorldSunLightLevelFast(x + bx + vx, y + by, z + bz);
+			side2 = chunk.getWorldSunLightLevelFast(x + bx, y + by, z + bz + vz);
+		} else if(vz == 0) {
+			side1 = chunk.getWorldSunLightLevelFast(x + bx + vx, y + by, z + bz);
+			side2 = chunk.getWorldSunLightLevelFast(x + bx, y + by + vy, z + bz);
+		}
+
+		int corner = chunk.getWorldSunLightLevelFast(x + bx + vx, y + by + vy, z + bz + vz);
+		
+		int lightLevel = chunk.getWorldSunLightLevelFast(x, y, z);
+
 		if (side1 == 0 && side2 == 0) {
 			return lightLevel / 4;
 		}
@@ -20,7 +39,7 @@ public class BlockRenderAOCube extends BlockRendererCube {
 	public void bakeBlockSide(World world, Block block, ChunkRenderer renderer, EnumSide dir, int x, int y, int z,
 			int wx, int wz, TriangleBuffer buffer, int lightLevel, IAtlasSprite sprite) {
 		// AO coefficients: upper case is positive, lower is negative
-
+/*
 		int sunLightAvg_xyz = renderer.getChunk().getWorldSunLightLevelFast(wx - 1, y - 1, wz - 1);
 		int sunLightAvg_xyZ = renderer.getChunk().getWorldSunLightLevelFast(wx - 1, y - 1, wz + 1);
 		int sunLightAvg_xYz = renderer.getChunk().getWorldSunLightLevelFast(wx - 1, y + 1, wz - 1);
@@ -41,134 +60,63 @@ public class BlockRenderAOCube extends BlockRendererCube {
 		int sunLightAvg_zX = renderer.getChunk().getWorldSunLightLevelFast(wx - 1, y, wz + 1);
 		int sunLightAvg_Zx = renderer.getChunk().getWorldSunLightLevelFast(wx + 1, y, wz - 1);
 		int sunLightAvg_ZX = renderer.getChunk().getWorldSunLightLevelFast(wx + 1, y, wz + 1);
-
+*/
 		buffer.setColor(ChunkRenderer.lightColors[lightLevel]);
 
 		if (dir == EnumSide.UP) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_xY,
-																			sunLightAvg_Yz,
-																			sunLightAvg_xYz,
-																			lightLevel)]);
+			
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, -1, 0, -1)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_xY,
-																			sunLightAvg_YZ,
-																			sunLightAvg_xYZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, -1, 0, +1)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_XY,
-																			sunLightAvg_YZ,
-																			sunLightAvg_XYZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, +1, 0, +1)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_XY,
-																			sunLightAvg_Yz,
-																			sunLightAvg_XYz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, +1, 0, -1)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMaxU(), sprite.getMinV());
 		} else if (dir == EnumSide.DOWN) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Xy,
-																			sunLightAvg_yz,
-																			sunLightAvg_Xyz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, +1, 0, -1)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Xy,
-																			sunLightAvg_yZ,
-																			sunLightAvg_XyZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, +1, 0, +1)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_xy,
-																			sunLightAvg_yZ,
-																			sunLightAvg_xyZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, -1, 0, +1)]);
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Xy,
-																			sunLightAvg_yz,
-																			sunLightAvg_Xyz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, -1, 0, -1)]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMinV());
 		} else if (dir == EnumSide.SOUTH) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Zx,
-																			sunLightAvg_yZ,
-																			sunLightAvg_xyZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, -1, -1, 0)]);
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_ZX,
-																			sunLightAvg_yZ,
-																			sunLightAvg_XyZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, +1, -1, 0)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_ZX,
-																			sunLightAvg_YZ,
-																			sunLightAvg_XYZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, +1, +1, 0)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Zx,
-																			sunLightAvg_YZ,
-																			sunLightAvg_xYZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, -1, +1, 0)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMinU(), sprite.getMinV());
 		} else if (dir == EnumSide.NORTH) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zx,
-																			sunLightAvg_Yz,
-																			sunLightAvg_xYz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, -1, +1, 0)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zX,
-																			sunLightAvg_Yz,
-																			sunLightAvg_XYz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, +1, +1, 0)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zX,
-																			sunLightAvg_yz,
-																			sunLightAvg_Xyz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, +1, -1, 0)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zx,
-																			sunLightAvg_yz,
-																			sunLightAvg_xyz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, -1, -1, 0)]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.EAST) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zX,
-																			sunLightAvg_XY,
-																			sunLightAvg_XYz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, +1, -1)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_ZX,
-																			sunLightAvg_XY,
-																			sunLightAvg_XYZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, +1, +1)]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_ZX,
-																			sunLightAvg_Xy,
-																			sunLightAvg_XYZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, -1, +1)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zX,
-																			sunLightAvg_Xy,
-																			sunLightAvg_Xyz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, -1, -1)]);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.WEST) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zx,
-																			sunLightAvg_xy,
-																			sunLightAvg_xyz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, -1, -1)]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Zx,
-																			sunLightAvg_xy,
-																			sunLightAvg_xyZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, -1, +1)]);
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_Zx,
-																			sunLightAvg_xY,
-																			sunLightAvg_xYZ,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, +1, +1)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(sunLightAvg_zx,
-																			sunLightAvg_xY,
-																			sunLightAvg_xYz,
-																			lightLevel)]);
+			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, +1, -1)]);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMinU(), sprite.getMinV());
 		}
 	}
