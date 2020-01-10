@@ -31,6 +31,29 @@ public class SoundManager {
 		try {
 			SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
 			SoundSystemConfig.setCodec("xm", CodecModPlug.class);
+			SoundSystemConfig.setCodec("s3m", CodecModPlug.class);
+			SoundSystemConfig.setCodec("it", CodecModPlug.class);
+			SoundSystemConfig.setCodec("abc", CodecModPlug.class);
+			SoundSystemConfig.setCodec("pat", CodecModPlug.class);
+			SoundSystemConfig.setCodec("stm", CodecModPlug.class);
+			SoundSystemConfig.setCodec("med", CodecModPlug.class);
+			SoundSystemConfig.setCodec("mtm", CodecModPlug.class);
+			SoundSystemConfig.setCodec("mdl", CodecModPlug.class);
+			SoundSystemConfig.setCodec("dbm", CodecModPlug.class);
+			SoundSystemConfig.setCodec("669", CodecModPlug.class);
+			SoundSystemConfig.setCodec("far", CodecModPlug.class);
+			SoundSystemConfig.setCodec("ams", CodecModPlug.class);
+			SoundSystemConfig.setCodec("okt", CodecModPlug.class);
+			SoundSystemConfig.setCodec("ptm", CodecModPlug.class);
+			SoundSystemConfig.setCodec("ult", CodecModPlug.class);
+			SoundSystemConfig.setCodec("dmf", CodecModPlug.class);
+			SoundSystemConfig.setCodec("dsm", CodecModPlug.class);
+			SoundSystemConfig.setCodec("umx", CodecModPlug.class);
+			SoundSystemConfig.setCodec("amf", CodecModPlug.class);
+			SoundSystemConfig.setCodec("psm", CodecModPlug.class);
+			SoundSystemConfig.setCodec("mt2", CodecModPlug.class);
+			SoundSystemConfig.setCodec("mod", CodecModPlug.class);
+			
 			SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
 			SoundSystemConfig.setCodec("wav", CodecWav.class);
 
@@ -88,6 +111,7 @@ public class SoundManager {
 	public String getRealSoundPath(String pathIn) {
 		String path = pathIn;
 		if(randomSoundRegistry.containsKey(path)) {
+			System.out.println(path);
 			List<String> l = randomSoundRegistry.get(path);
 			int r = rand.nextInt(l.size() + 1);
 			path = r > 0 ? l.get(r - 1) : path;

@@ -69,6 +69,7 @@ public class TinyCraft {
 	public SoundManager soundManager = new SoundManager();
 	public GuiScreen currentGui;
 	public Console console = null;
+	public boolean hadWorld = false;
 	// public ChunkLoadThread chunkLoadThread = new ChunkLoadThread();
 	private int width = 0, height = 0;
 
@@ -284,6 +285,14 @@ public class TinyCraft {
 	private long lastMillis = System.currentTimeMillis();
 
 	public void update() {
+		if(hadWorld && world == null) {
+			soundManager.stopMusic("ingame_music");
+			hadWorld = false;
+		} else if(!hadWorld && world != null) {
+			soundManager.playMusic("mus/cassette_1_chord_1.xm", "ingame_music", true);
+			hadWorld = true;
+		}
+		
 		if (!Display.isActive() && world != null && player != null && currentGui == null) {
 			if (lastMillis + 500L < System.currentTimeMillis()) {
 				openGui(new GuiPause(this));
