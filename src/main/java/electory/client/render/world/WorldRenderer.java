@@ -3,7 +3,6 @@ package electory.client.render.world;
 import static electory.math.MathUtils.deg2rad;
 
 import java.nio.IntBuffer;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;

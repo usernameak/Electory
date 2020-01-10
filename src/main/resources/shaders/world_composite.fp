@@ -15,6 +15,8 @@ uniform bool isSubmergedUnderwater = false;
 
 float voronoi(vec2 st);
 
+#define M_E 2.71828182846
+
 //RADIUS of our vignette, where 0.5 results in a circle fitting the screen
 const float RADIUS = 0.75;
 
@@ -29,11 +31,15 @@ float smoothstep2(float edge0, float edge1, float x) {
 }
 
 void main() {
+    // depth init
+
 	float depth = texture2D(depth_texture, vTexCoord).r;
 	float zDist = (zNear * zFar) / (zFar - depth * (zFar - zNear));
 	float opaquedepth = texture2D(opaque_depth_texture, vTexCoord).r;
 	float opaqueZDist = (zNear * zFar) / (zFar - opaquedepth * (zFar - zNear));
-	// return;
+	
+	// water effects
+	
 	vec2 tTexCoord = vTexCoord;
 	tTexCoord += texture2D(watermask_texture, vTexCoord).rb * .1;
 	
@@ -53,10 +59,10 @@ void main() {
 	vec3 underwaterColor = vec3(0.098, 0.298, 0.3412);
 	
 	if(isSubmergedUnderwater) {
-		float waterFogRamp = clamp((50 - zDist) / (50 - 2), 0.0, 1.0);
+		float waterFogRamp = 1 / pow(M_E, zDist * 0.1);
 		fc.rgb = mix(underwaterColor, fc.rgb, waterFogRamp);
 	} else {
-		float waterFogRamp = clamp((50 - odd) / (50 - 2), 0.0, 1.0);
+		float waterFogRamp = 1 / pow(M_E, odd * 0.1);
 		fc.rgb = mix(fc.rgb, mix(underwaterColor, fc.rgb, waterFogRamp), texture2D(watermask_texture, vTexCoord).g);
 	}
 	
@@ -67,13 +73,35 @@ void main() {
 		fc.rgb = mix(fc.rgb, vec3(1.0), uwvoro.y * 2.0);
 	}
 	
+	// world fog
+	
+	float worldZDist = zDist;
+	if(isSubmergedUnderwater) {
+		if(texture2D(watermask_texture, vTexCoord).g > 0.5) {
+			worldZDist = opaqueZDist - zDist;
+		} else {
+			worldZDist = 0;
+		}
+	}
+	float worldFogRamp = clamp((96 - worldZDist) / (96 - 80), 0.0, 1.0);
+	fc.rgb = mix(vec3(0.52, 0.8, 0.92), fc.rgb, worldFogRamp);
+	
+	
+	// vignette
+	
 	vec2 vignettePos = vTexCoord - vec2(0.5);
 	float len = length(vignettePos); 
 	float vignette = smoothstep2(RADIUS, RADIUS-SOFTNESS, len);
+	
 	fc = mix(fc, fc * vignette, 0.5);
+	
+	// alpha test
 	
 	if(fc.a < 0.1) {
 		discard;
 	}
+	
+	// output color
+	
 	gl_FragColor = fc;
 }

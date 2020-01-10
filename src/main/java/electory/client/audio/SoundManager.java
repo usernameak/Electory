@@ -111,7 +111,6 @@ public class SoundManager {
 	public String getRealSoundPath(String pathIn) {
 		String path = pathIn;
 		if(randomSoundRegistry.containsKey(path)) {
-			System.out.println(path);
 			List<String> l = randomSoundRegistry.get(path);
 			int r = rand.nextInt(l.size() + 1);
 			path = r > 0 ? l.get(r - 1) : path;
