@@ -30,7 +30,7 @@ public class SoundManager {
 	public void init() {
 		try {
 			SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
-			SoundSystemConfig.setCodec("xm", CodecIBXM.class);
+			SoundSystemConfig.setCodec("xm", CodecModPlug.class);
 			SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
 			SoundSystemConfig.setCodec("wav", CodecWav.class);
 

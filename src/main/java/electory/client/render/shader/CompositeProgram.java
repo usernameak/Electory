@@ -12,6 +12,8 @@ public class CompositeProgram extends DefaultProgram {
 	private int opaqueDepthTextureUniform;
 	private int submergedUniform;
 	private int depthShadowTextureUniform;
+	private int zNearUniform;
+	private int zFarUniform;
 	
 	public CompositeProgram(int... shaders) throws ShaderCompileException {
 		super(shaders);
@@ -20,6 +22,8 @@ public class CompositeProgram extends DefaultProgram {
 		opaqueDepthTextureUniform = GL20.glGetUniformLocation(handle, "opaque_depth_texture");
 		submergedUniform = GL20.glGetUniformLocation(handle, "isSubmergedUnderwater");
 		depthShadowTextureUniform = GL20.glGetUniformLocation(handle, "depth_shadow_texture");
+		zNearUniform = GL20.glGetUniformLocation(handle, "zNear");
+		zFarUniform = GL20.glGetUniformLocation(handle, "zFar");
 	}
 	
 	public void bindTextureWaterMask(String texture) {
@@ -45,6 +49,14 @@ public class CompositeProgram extends DefaultProgram {
 
 	public void setSubmergedInWater(boolean value) {
 		GL20.glUniform1i(submergedUniform, value ? 1 : 0);
+	}
+
+	public void setZNear(float value) {
+		GL20.glUniform1f(zNearUniform, value);
+	}
+
+	public void setZFar(float value) {
+		GL20.glUniform1f(zFarUniform, value);
 	}
 
 	public void bindTextureDepthShadow(String texture) {

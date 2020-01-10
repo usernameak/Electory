@@ -9,6 +9,8 @@ uniform sampler2D depth_texture;
 uniform sampler2D opaque_depth_texture;
 uniform sampler2D depth_shadow_texture;
 uniform float timer;
+uniform float zFar;
+uniform float zNear;
 uniform bool isSubmergedUnderwater = false;
 
 float voronoi(vec2 st);
@@ -27,6 +29,11 @@ float smoothstep2(float edge0, float edge1, float x) {
 }
 
 void main() {
+	float depth = texture2D(depth_texture, vTexCoord).r;
+	float zDist = (zNear * zFar) / (zFar - depth * (zFar - zNear));
+	float opaquedepth = texture2D(opaque_depth_texture, vTexCoord).r;
+	float opaqueZDist = (zNear * zFar) / (zFar - opaquedepth * (zFar - zNear));
+	// return;
 	vec2 tTexCoord = vTexCoord;
 	tTexCoord += texture2D(watermask_texture, vTexCoord).rb * .1;
 	
@@ -41,37 +48,29 @@ void main() {
 	
 	vec4 fc = texture2D(texture, tTexCoord) * vColor;
 	
-	float odd = texture2D(opaque_depth_texture, vTexCoord).r - texture2D(depth_texture, vTexCoord).r;
-	float d = 1.0 - odd * 1000.0; //(odd - 0.9999) * (1.0 / 0.0001);
+	float odd = opaqueZDist - zDist;
 	
-	d = clamp(d, 0.0, 1.0);
-	/*fc.rgb += d * vec3(0.52, 0.8, 0.92);*/
-	
-	// TODO: make better coefficients
+	vec3 underwaterColor = vec3(0.098, 0.298, 0.3412);
 	
 	if(isSubmergedUnderwater) {
-		fc.rgb = mix(fc.rgb, vec3(0.14117, 0.14117, 1.0), clamp((texture2D(depth_texture, vTexCoord).r - 0.9995) * 5000.0, 0.0, 1.0));
+		float waterFogRamp = clamp((50 - zDist) / (50 - 2), 0.0, 1.0);
+		fc.rgb = mix(underwaterColor, fc.rgb, waterFogRamp);
 	} else {
-		fc.rgb = mix(fc.rgb, mix(fc.rgb, vec3(0.14117, 0.14117, 1.0), d), texture2D(watermask_texture, vTexCoord).g);
+		float waterFogRamp = clamp((50 - odd) / (50 - 2), 0.0, 1.0);
+		fc.rgb = mix(fc.rgb, mix(underwaterColor, fc.rgb, waterFogRamp), texture2D(watermask_texture, vTexCoord).g);
 	}
 	
-	fc = mix(fc, vec4(1.0), texture2D(watermask_texture, vTexCoord).b);
+	fc = mix(fc, vec4(1.0), texture2D(watermask_texture, vTexCoord).b * 0.4);
 	
 	if(isSubmergedUnderwater) {
-		fc.rgb = mix(fc.rgb, vec3(0.14117, 0.14117, 1.0), 0.5);
-		fc.rgb = mix(fc.rgb, vec3(1.0), uwvoro.y * 10.0);
+		fc.rgb = mix(fc.rgb, underwaterColor, 0.5);
+		fc.rgb = mix(fc.rgb, vec3(1.0), uwvoro.y * 2.0);
 	}
-	
-	// fc.rgb = vec3(d);
 	
 	vec2 vignettePos = vTexCoord - vec2(0.5);
 	float len = length(vignettePos); 
 	float vignette = smoothstep2(RADIUS, RADIUS-SOFTNESS, len);
 	fc = mix(fc, fc * vignette, 0.5);
-	
-	// fc = /*mix(fc, */vec4(texture2D(depth_shadow_texture, vTexCoord).rgb, 1.0)/*, 0.5)*/;
-	
-	// fc = vec4(vec3(clamp((texture2D(depth_texture, vTexCoord).r - 0.9995) * 5000.0, 0.0, 1.0)), 1.0);
 	
 	if(fc.a < 0.1) {
 		discard;

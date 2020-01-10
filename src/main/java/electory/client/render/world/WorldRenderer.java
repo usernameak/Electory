@@ -284,6 +284,8 @@ public class WorldRenderer {
 			ShaderManager.worldCompositeProgram.bindTextureOpaqueDepth("/dynamic/framebuffer_world_opaque_depth.png");
 			// ShaderManager.worldCompositeProgram.bindTextureDepthShadow("/dynamic/framebuffer_world_sunspace_depth.png");
 			ShaderManager.worldCompositeProgram.setSubmergedInWater(TinyCraft.getInstance().player.isHeadUnderwater());
+			ShaderManager.worldCompositeProgram.setZNear(0.01f);
+			ShaderManager.worldCompositeProgram.setZFar(1000.f);
 			ShaderManager.worldCompositeProgram.loadRenderState(grs);
 			ShaderManager.worldCompositeProgram.setTimer(TinyCraft.getInstance().tickTimer.totalTicks
 					+ TinyCraft.getInstance().tickTimer.renderPartialTicks);

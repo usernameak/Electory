@@ -37,7 +37,7 @@ import electory.world.gen.ChunkGenerator;
 public abstract class World implements IChunkSaveStatusHandler {
 	private Set<Entity> entities = new HashSet<>();
 
-	public long seed = ThreadLocalRandom.current().nextLong();
+	public long seed = 0L;//ThreadLocalRandom.current().nextLong();
 
 	public Random random = new Random(seed);
 
