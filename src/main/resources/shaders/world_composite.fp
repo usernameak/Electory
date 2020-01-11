@@ -63,9 +63,9 @@ void main() {
 		} else {
 			worldZDist = 0;
 		}
+		float worldFogRamp = clamp((96 - worldZDist) / (96 - 80), 0.0, 1.0);
+		fc.rgb = mix(vec3(0.52, 0.8, 0.92), fc.rgb, worldFogRamp);
 	}
-	float worldFogRamp = clamp((96 - worldZDist) / (96 - 80), 0.0, 1.0);
-	fc.rgb = mix(vec3(0.52, 0.8, 0.92), fc.rgb, worldFogRamp);
 	
 	// water fog
 	
@@ -88,6 +88,12 @@ void main() {
 		fc.rgb = mix(fc.rgb, vec3(1.0), uwvoro.y * 2.0);
 	}
 	
+	// world fog cont.
+	
+	if(!isSubmergedUnderwater) {
+		float worldFogRamp = clamp((96 - worldZDist) / (96 - 80), 0.0, 1.0);
+		fc.rgb = mix(vec3(0.52, 0.8, 0.92), fc.rgb, worldFogRamp);
+	}
 	
 	// vignette
 	

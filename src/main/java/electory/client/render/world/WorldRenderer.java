@@ -135,6 +135,8 @@ public class WorldRenderer {
 			ShaderManager.waterProgram.use();
 			ShaderManager.waterProgram.setTimer(TinyCraft.getInstance().tickTimer.totalTicks
 					+ TinyCraft.getInstance().tickTimer.renderPartialTicks);
+			Vector3d vec = TinyCraft.getInstance().player.getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks);
+			ShaderManager.waterProgram.setWaterPositionOffset((float) vec.x, 0, (float) vec.z);
 		} /*
 			 * else if (pass == RENDERPASS_BASE_SHADOW) {
 			 * EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.
