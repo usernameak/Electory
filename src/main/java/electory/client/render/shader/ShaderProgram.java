@@ -10,7 +10,6 @@ public class ShaderProgram {
 		handle = GL20.glCreateProgram();
 		for (int shader : shaders) {
 			GL20.glAttachShader(handle, shader);
-			GL20.glAttachShader(handle, shader);
 		}
 		GL20.glLinkProgram(handle);
 		if (GL20.glGetProgrami(handle, GL20.GL_LINK_STATUS) != GL11.GL_TRUE) {
