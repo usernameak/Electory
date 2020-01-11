@@ -16,6 +16,7 @@ public class DefaultProgram extends ShaderProgram {
 	private int textureUniform;
 	private int timerUniform;
 	private int modelUniform;
+	private int colorUniform;
 
 	public static final int POSITION_ATTRIB = 0;
 	public static final int TEXCOORD_ATTRIB = 1;
@@ -31,6 +32,7 @@ public class DefaultProgram extends ShaderProgram {
 		viewUniform = GL20.glGetUniformLocation(handle, "viewMatrix");
 		projectionUniform = GL20.glGetUniformLocation(handle, "projectionMatrix");
 		timerUniform = GL20.glGetUniformLocation(handle, "timer");
+		colorUniform = GL20.glGetUniformLocation(handle, "uColor");
 	}
 
 	public void bindTexture(String texture) {
@@ -60,6 +62,10 @@ public class DefaultProgram extends ShaderProgram {
 
 	public void setTimer(float timer) {
 		GL20.glUniform1f(timerUniform, timer);
+	}
+
+	public void setColor(float r, float g, float b, float a) {
+		GL20.glUniform4f(colorUniform, r, g, b, a);
 	}
 	
 	public void loadRenderState(IRenderState rs) {

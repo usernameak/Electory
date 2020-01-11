@@ -43,59 +43,100 @@ public class BlockRenderAOCube extends BlockRendererCube {
 		//buffer.setColor(ChunkRenderer.lightColors[lightLevel]);
 
 		if (dir == EnumSide.UP) {
-			
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, -1, 0, -1)]);
+			int ao00 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, -1, 0, -1);
+			int ao01 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, -1, 0, +1);
+			int ao11 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, +1, 0, +1);
+			int ao10 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, +1, 0, -1);
+			if(ao00 + ao11 < ao01 + ao10) {
+				buffer.setNextQuadInvOrder(true);
+			}
+			buffer.setColor(ChunkRenderer.lightColors[ao00]);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, -1, 0, +1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao01]);
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, +1, 0, +1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao11]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, +1, 0, +1, 0, -1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao10]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMaxU(), sprite.getMinV());
 		} else if (dir == EnumSide.DOWN) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, +1, 0, -1)]);
+			int ao00 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, -1, 0, -1);
+			int ao01 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, -1, 0, +1);
+			int ao11 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, +1, 0, +1);
+			int ao10 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, +1, 0, -1);
+			if(ao00 + ao11 > ao01 + ao10) {
+				buffer.setNextQuadInvOrder(true);
+			}
+			buffer.setColor(ChunkRenderer.lightColors[ao10]);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, +1, 0, +1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao11]);
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, -1, 0, +1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao01]);
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, -1, 0, -1, 0, -1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao00]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMinV());
 		} else if (dir == EnumSide.SOUTH) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, -1, -1, 0)]);
+			int ao00 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, -1, -1, 0);
+			int ao10 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, +1, -1, 0);
+			int ao11 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, +1, +1, 0);
+			int ao01 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, -1, +1, 0);
+			if(ao00 + ao11 < ao01 + ao10) {
+				buffer.setNextQuadInvOrder(true);
+			}
+			buffer.setColor(ChunkRenderer.lightColors[ao00]);
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, +1, -1, 0)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao10]);
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, +1, +1, 0)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao11]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, +1, -1, +1, 0)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao01]);
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMinU(), sprite.getMinV());
 		} else if (dir == EnumSide.NORTH) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, -1, +1, 0)]);
+			int ao01 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, -1, +1, 0);
+			int ao11 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, +1, +1, 0);
+			int ao10 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, +1, -1, 0);
+			int ao00 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, -1, -1, 0);
+			if(ao00 + ao11 > ao01 + ao10) {
+				buffer.setNextQuadInvOrder(true);
+			}
+			buffer.setColor(ChunkRenderer.lightColors[ao01]);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, +1, +1, 0)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao11]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, +1, -1, 0)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao10]);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, 0, 0, -1, -1, -1, 0)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao00]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.EAST) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, +1, -1)]);
+			int ao10 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, +1, -1);
+			int ao11 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, +1, +1);
+			int ao01 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, -1, +1);
+			int ao00 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, -1, -1);
+			if(ao00 + ao11 > ao01 + ao10) {
+				buffer.setNextQuadInvOrder(true);
+			}
+			buffer.setColor(ChunkRenderer.lightColors[ao10]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, +1, +1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao11]);
 			buffer.addQuadVertexWithUV(x + 1, y + 1, z + 1, sprite.getMinU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, -1, +1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao01]);
 			buffer.addQuadVertexWithUV(x + 1, y, z + 1, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, +1, 0, 0, 0, -1, -1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao00]);
 			buffer.addQuadVertexWithUV(x + 1, y, z, sprite.getMaxU(), sprite.getMaxV());
 		} else if (dir == EnumSide.WEST) {
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, -1, -1)]);
+			int ao00 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, -1, -1);
+			int ao01 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, -1, +1);
+			int ao11 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, +1, +1);
+			int ao10 = calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, +1, -1);
+			if(ao00 + ao11 < ao01 + ao10) {
+				buffer.setNextQuadInvOrder(true);
+			}
+			buffer.setColor(ChunkRenderer.lightColors[ao00]);
 			buffer.addQuadVertexWithUV(x, y, z, sprite.getMinU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, -1, +1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao01]);
 			buffer.addQuadVertexWithUV(x, y, z + 1, sprite.getMaxU(), sprite.getMaxV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, +1, +1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao11]);
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMaxU(), sprite.getMinV());
-			buffer.setColor(ChunkRenderer.lightColors[calculateAOLightLevel(renderer.getChunk(), wx, y, wz, -1, 0, 0, 0, +1, -1)]);
+			buffer.setColor(ChunkRenderer.lightColors[ao10]);
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMinU(), sprite.getMinV());
 		}
 	}

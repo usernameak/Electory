@@ -54,6 +54,21 @@ void main() {
 	
 	vec4 fc = texture2D(texture, tTexCoord) * vColor;
 	
+	// world fog
+	
+	float worldZDist = zDist;
+	if(isSubmergedUnderwater) {
+		if(texture2D(watermask_texture, vTexCoord).g > 0.5) {
+			worldZDist = opaqueZDist - zDist;
+		} else {
+			worldZDist = 0;
+		}
+	}
+	float worldFogRamp = clamp((96 - worldZDist) / (96 - 80), 0.0, 1.0);
+	fc.rgb = mix(vec3(0.52, 0.8, 0.92), fc.rgb, worldFogRamp);
+	
+	// water fog
+	
 	float odd = opaqueZDist - zDist;
 	
 	vec3 underwaterColor = vec3(0.098, 0.298, 0.3412);
@@ -73,19 +88,6 @@ void main() {
 		fc.rgb = mix(fc.rgb, vec3(1.0), uwvoro.y * 2.0);
 	}
 	
-	// world fog
-	
-	float worldZDist = zDist;
-	if(isSubmergedUnderwater) {
-		if(texture2D(watermask_texture, vTexCoord).g > 0.5) {
-			worldZDist = opaqueZDist - zDist;
-		} else {
-			worldZDist = 0;
-		}
-	}
-	float worldFogRamp = clamp((96 - worldZDist) / (96 - 80), 0.0, 1.0);
-	fc.rgb = mix(vec3(0.52, 0.8, 0.92), fc.rgb, worldFogRamp);
-	
 	
 	// vignette
 	
@@ -96,10 +98,10 @@ void main() {
 	fc = mix(fc, fc * vignette, 0.5);
 	
 	// alpha test
-	
+	/*
 	if(fc.a < 0.1) {
 		discard;
-	}
+	}*/
 	
 	// output color
 	

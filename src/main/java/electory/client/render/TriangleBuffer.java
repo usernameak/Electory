@@ -14,6 +14,8 @@ public class TriangleBuffer {
 
 	private int vertexCount = 0;
 
+	private boolean quadInvOrder = false;
+
 	public void allocate(int count) {
 		bb = ByteBuffer.allocateDirect(count * 4 * 6 * 3);
 		bb.order(ByteOrder.nativeOrder());
@@ -64,6 +66,10 @@ public class TriangleBuffer {
 	public void addQuadVertex(float x, float y, float z) {
 		addQuadVertexWithUV(x, y, z, 0, 0);
 	}
+	
+	public void setNextQuadInvOrder(boolean order) {
+		this.quadInvOrder = order;
+	}
 
 	public void addQuadVertexWithUV(float x, float y, float z, float u, float v) {
 		quadBuffer.putFloat(x);
@@ -79,12 +85,22 @@ public class TriangleBuffer {
 		 */
 		if (quadBuffer.position() == quadBuffer.capacity()) {
 			byte[] qb = quadBuffer.array();
-			putBytesWithAuxData(qb, 0 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
-			putBytesWithAuxData(qb, 1 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
-			putBytesWithAuxData(qb, 2 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
-			putBytesWithAuxData(qb, 2 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
-			putBytesWithAuxData(qb, 3 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
-			putBytesWithAuxData(qb, 0 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+			if(quadInvOrder) {
+				putBytesWithAuxData(qb, 1 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 2 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 3 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 3 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 0 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 1 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+			} else {
+				putBytesWithAuxData(qb, 0 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 1 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 2 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 2 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 3 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+				putBytesWithAuxData(qb, 0 * QUAD_VERTEX_SIZE, QUAD_VERTEX_SIZE);
+			}
+			quadInvOrder = false;
 			quadBuffer.clear();
 		}
 	}

@@ -141,7 +141,7 @@ public class GuiInGame extends GuiScreen {
 				tc.player.inventory.setSelectedSlot(i);
 			} else if (eventKey == Keyboard.KEY_F12) {
 				TinyCraft
-						.getInstance().worldRenderer.debugShadows = !TinyCraft.getInstance().worldRenderer.debugShadows;
+						.getInstance().worldRenderer.wireframeEnabled = !TinyCraft.getInstance().worldRenderer.wireframeEnabled;
 			} else if (eventKey == Keyboard.KEY_F2) {
 				try {
 					TinyCraft.getInstance().world.save();

@@ -234,6 +234,12 @@ public class ChunkRenderer {
 
 		if (needsUpdate && !hasFirstUpdate)
 			return; // not renderable
+		
+		if(pass == WorldRenderer.RENDERPASS_WIREFRAME) {
+			GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
+			GL11.glPolygonOffset(-1, -1);
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+		}
 
 		shader.use();
 		shader.bindTexture(TextureManager.TERRAIN_TEXTURE);
@@ -249,6 +255,10 @@ public class ChunkRenderer {
 		GL20.glDisableVertexAttribArray(DefaultProgram.POSITION_ATTRIB);
 		GL20.glDisableVertexAttribArray(DefaultProgram.TEXCOORD_ATTRIB);
 		GL20.glDisableVertexAttribArray(DefaultProgram.COLOR_ATTRIB);
+		
+		GL11.glDisable(GL11.GL_POLYGON_OFFSET_LINE);
+		
+		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 	}
 
 	public void destroy() {
