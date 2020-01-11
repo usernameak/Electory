@@ -217,7 +217,7 @@ public class TinyCraft {
 			Display.setResizable(true);
 			Display.setTitle("Electory");
 			PixelFormat pf = new PixelFormat();
-			ContextAttribs attribs = new ContextAttribs(2, 1);
+			ContextAttribs attribs = new ContextAttribs(3, 2);
 			Display.setIcon(loadIcon("/img/icon.png"));
 			Display.create(pf, attribs);
 		} catch (LWJGLException e) {
