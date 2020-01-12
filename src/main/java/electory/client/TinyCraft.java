@@ -30,6 +30,7 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GLContext;
+import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.opengl.PixelFormat;
 
 import electory.client.audio.SoundManager;
@@ -217,7 +218,7 @@ public class TinyCraft {
 			Display.setResizable(true);
 			Display.setTitle("Electory");
 			PixelFormat pf = new PixelFormat();
-			ContextAttribs attribs = new ContextAttribs(3, 2);
+			ContextAttribs attribs = new ContextAttribs(3, 2).withDebug(true);
 			Display.setIcon(loadIcon("/img/icon.png"));
 			Display.create(pf, attribs);
 		} catch (LWJGLException e) {
@@ -245,7 +246,10 @@ public class TinyCraft {
 			ARBDebugOutput.glDebugMessageCallbackARB(new ARBDebugOutputCallback(new ARBDebugOutputCallback.Handler() {
 				@Override
 				public void handleMessage(int source, int type, int id, int severity, String message) {
-					System.out.println("OpenGL message, source "
+					if(type == KHRDebug.GL_DEBUG_TYPE_POP_GROUP || type == KHRDebug.GL_DEBUG_TYPE_PUSH_GROUP) {
+						
+					}
+					new Exception("OpenGL message, source "
 							+ source
 							+ " type "
 							+ type
@@ -254,7 +258,7 @@ public class TinyCraft {
 							+ " severity "
 							+ severity
 							+ ": "
-							+ message);
+							+ message).printStackTrace();
 				}
 			}));
 		}

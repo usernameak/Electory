@@ -3,10 +3,11 @@ package electory.client.render.world;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 
-import org.lwjgl.opengl.ARBOcclusionQuery;
+import org.lwjgl.opengl.ARBVertexArrayObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.NVConditionalRender;
 
 import electory.block.Block;
@@ -20,6 +21,7 @@ import electory.world.Chunk;
 
 public class ChunkRenderer {
 	private int[] vbos = new int[WorldRenderer.VBO_COUNT];
+	private int[] vaos = new int[WorldRenderer.VBO_COUNT];
 	// private TriangleBuffer qb = new TriangleBuffer();
 	final Chunk chunk;
 	private int[] triangleCounts = new int[vbos.length];
@@ -51,8 +53,20 @@ public class ChunkRenderer {
 			return;
 		for (int i = 0; i < vbos.length; i++) {
 			vbos[i] = GL15.glGenBuffers();
+			vaos[i] = ARBVertexArrayObject.glGenVertexArrays();
+			ARBVertexArrayObject.glBindVertexArray(vaos[i]);
+			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbos[i]);
+			GL20.glEnableVertexAttribArray(DefaultProgram.POSITION_ATTRIB);
+			GL20.glEnableVertexAttribArray(DefaultProgram.TEXCOORD_ATTRIB);
+			GL20.glEnableVertexAttribArray(DefaultProgram.COLOR_ATTRIB);
+			GL20.glVertexAttribPointer(DefaultProgram.POSITION_ATTRIB, 3, GL11.GL_FLOAT, false, 24, 0L);
+			GL20.glVertexAttribPointer(DefaultProgram.TEXCOORD_ATTRIB, 2, GL11.GL_FLOAT, false, 24, 12L);
+			GL20.glVertexAttribPointer(DefaultProgram.COLOR_ATTRIB, 4, GL11.GL_UNSIGNED_BYTE, true, 24, 20L);
+			// GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, triangleCounts[vbo] * 3);
+			ARBVertexArrayObject.glBindVertexArray(0);
 		}
-		query = ARBOcclusionQuery.glGenQueriesARB();
+		
+		query = GL15.glGenQueries();
 		isInitialized = true;
 		// update();
 	}
@@ -60,7 +74,7 @@ public class ChunkRenderer {
 	public void doChunkQuery(WorldRenderState rs) {
 		init();
 		GL11.glColorMask(false, false, false, false);
-		ARBOcclusionQuery.glBeginQueryARB(ARBOcclusionQuery.GL_SAMPLES_PASSED_ARB, query);
+		GL15.glBeginQuery(GL15.GL_SAMPLES_PASSED, query);
 		ShaderManager.solidProgram.use();
 		ShaderManager.solidProgram.loadRenderState(rs);
 		GL11.glDisable(GL11.GL_CULL_FACE);
@@ -127,18 +141,18 @@ public class ChunkRenderer {
 		buf.addQuadVertex(0, 0f, 0);
 		Tessellator.instance.draw();
 		GL11.glEnable(GL11.GL_CULL_FACE);
-		ARBOcclusionQuery.glEndQueryARB(ARBOcclusionQuery.GL_SAMPLES_PASSED_ARB);
+		GL15.glEndQuery(GL15.GL_SAMPLES_PASSED);
 		GL11.glColorMask(true, true, true, true);
 
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
 	public void beginConditionalRender() {
-		NVConditionalRender.glBeginConditionalRenderNV(query, NVConditionalRender.GL_QUERY_WAIT_NV);
+		GL30.glBeginConditionalRender(query, GL30.GL_QUERY_WAIT);
 	}
 
 	public void endConditionalRender() {
-		NVConditionalRender.glEndConditionalRenderNV();
+		GL30.glEndConditionalRender();
 	}
 
 	public void update(Executor chunkUpdateExecutor) {
@@ -244,7 +258,11 @@ public class ChunkRenderer {
 		shader.use();
 		shader.bindTexture(TextureManager.TERRAIN_TEXTURE);
 		shader.loadRenderState(rs);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbos[vbo]);
+		ARBVertexArrayObject.glBindVertexArray(vaos[vbo]);
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, triangleCounts[vbo] * 3);
+		ARBVertexArrayObject.glBindVertexArray(0);
+		
+		/*GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbos[vbo]);
 		GL20.glEnableVertexAttribArray(DefaultProgram.POSITION_ATTRIB);
 		GL20.glEnableVertexAttribArray(DefaultProgram.TEXCOORD_ATTRIB);
 		GL20.glEnableVertexAttribArray(DefaultProgram.COLOR_ATTRIB);
@@ -255,7 +273,7 @@ public class ChunkRenderer {
 		GL20.glDisableVertexAttribArray(DefaultProgram.POSITION_ATTRIB);
 		GL20.glDisableVertexAttribArray(DefaultProgram.TEXCOORD_ATTRIB);
 		GL20.glDisableVertexAttribArray(DefaultProgram.COLOR_ATTRIB);
-		
+		*/
 		GL11.glDisable(GL11.GL_POLYGON_OFFSET_LINE);
 		
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
@@ -265,7 +283,7 @@ public class ChunkRenderer {
 		for (int i = 0; i < vbos.length; i++) {
 			GL15.glDeleteBuffers(vbos[i]);
 		}
-		ARBOcclusionQuery.glDeleteQueriesARB(query);
+		GL15.glDeleteQueries(query);
 	}
 
 	public void markDirty() {
