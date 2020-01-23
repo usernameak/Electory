@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 import electory.utils.CrashException;
 
 public class TextureManager {
-	public static final String TERRAIN_TEXTURE = "/img/items/terrain.png";
+	public static final String TERRAIN_TEXTURE = "/img/generated/block_atlas.png";
 
 	private Map<String, Integer> loadedTextures = new HashMap<>();
 
@@ -77,6 +77,47 @@ public class TextureManager {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, s);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, t);
 	}
+	
+	public int loadTexture(String texture, BufferedImage image) {
+		int[] pixels = new int[image.getWidth() * image.getHeight()];
+		image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
+
+		ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
+
+		for (int y = 0; y < image.getHeight(); y++) {
+			for (int x = 0; x < image.getWidth(); x++) {
+				int pixel = pixels[y * image.getWidth() + x];
+				buffer.put((byte) ((pixel >> 16) & 0xFF));
+				buffer.put((byte) ((pixel >> 8) & 0xFF));
+				buffer.put((byte) (pixel & 0xFF));
+				buffer.put((byte) ((pixel >> 24) & 0xFF));
+			}
+		}
+
+		buffer.flip();
+
+		int textureUnit = GL11.glGenTextures();
+
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureUnit);
+
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+
+		GL11.glTexImage2D(	GL11.GL_TEXTURE_2D,
+							0,
+							GL11.GL_RGBA,
+							image.getWidth(),
+							image.getHeight(),
+							0,
+							GL11.GL_RGBA,
+							GL11.GL_UNSIGNED_BYTE,
+							buffer);
+
+		loadedTextures.put(texture, textureUnit);
+		return textureUnit;
+	}
 
 	public int getTextureUnit(String texture) {
 		if (loadedTextures.containsKey(texture)) {
@@ -85,44 +126,7 @@ public class TextureManager {
 		URL resourceURL = getClass().getResource(texture);
 		try {
 			BufferedImage image = ImageIO.read(resourceURL);
-			int[] pixels = new int[image.getWidth() * image.getHeight()];
-			image.getRGB(0, 0, image.getWidth(), image.getHeight(), pixels, 0, image.getWidth());
-
-			ByteBuffer buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
-
-			for (int y = 0; y < image.getHeight(); y++) {
-				for (int x = 0; x < image.getWidth(); x++) {
-					int pixel = pixels[y * image.getWidth() + x];
-					buffer.put((byte) ((pixel >> 16) & 0xFF));
-					buffer.put((byte) ((pixel >> 8) & 0xFF));
-					buffer.put((byte) (pixel & 0xFF));
-					buffer.put((byte) ((pixel >> 24) & 0xFF));
-				}
-			}
-
-			buffer.flip();
-
-			int textureUnit = GL11.glGenTextures();
-
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureUnit);
-
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-
-			GL11.glTexImage2D(	GL11.GL_TEXTURE_2D,
-								0,
-								GL11.GL_RGBA,
-								image.getWidth(),
-								image.getHeight(),
-								0,
-								GL11.GL_RGBA,
-								GL11.GL_UNSIGNED_BYTE,
-								buffer);
-
-			loadedTextures.put(texture, textureUnit);
-			return textureUnit;
+			return loadTexture(texture, image);
 		} catch (IOException e) {
 			throw new CrashException(e);
 		}

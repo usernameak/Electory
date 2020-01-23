@@ -11,7 +11,7 @@ public class BlockLog extends Block {
 
 	public BlockLog(int id) {
 		super(id);
-		setSpriteNumber(12);
+		setSpriteName("/img/blocks/log_side.png");
 	}
 
 	protected IAtlasSprite topSprite;
@@ -51,6 +51,6 @@ public class BlockLog extends Block {
 	@Override
 	public void registerAtlasSprites(IAtlasSpriteManager manager) {
 		super.registerAtlasSprites(manager);
-		topSprite = manager.registerSpriteByID(14);
+		topSprite = manager.registerSprite("/img/blocks/log_top.png");
 	}
 }

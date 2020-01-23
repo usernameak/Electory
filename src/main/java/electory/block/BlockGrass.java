@@ -8,7 +8,7 @@ public class BlockGrass extends Block {
 
 	public BlockGrass(int id) {
 		super(id);
-		setSpriteNumber(2);
+		setSpriteName("/img/blocks/grass_top.png");
 	}
 
 	protected IAtlasSprite sideSprite;
@@ -33,7 +33,7 @@ public class BlockGrass extends Block {
 	@Override
 	public void registerAtlasSprites(IAtlasSpriteManager manager) {
 		super.registerAtlasSprites(manager);
-		sideSprite = manager.registerSpriteByID(5);
-		bottomSprite = manager.registerSpriteByID(4);
+		sideSprite = manager.registerSprite("/img/blocks/grass_side.png");
+		bottomSprite = manager.registerSprite("/img/blocks/dirt.png");
 	}
 }

@@ -1,3 +1,0 @@
-script WorldStartupTest [STARTUP(WORLD)] {
-	ConsolePrint("TEST SCRIPT");
-}

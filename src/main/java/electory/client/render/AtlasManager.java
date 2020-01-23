@@ -1,9 +1,11 @@
 package electory.client.render;
 
 import electory.block.Block;
+import electory.client.render.texture.TextureManager;
+import electory.client.stitcher.AtlasSpriteManagerImplStitch;
 
 public class AtlasManager {
-	public static IAtlasSpriteManager blockSpriteManager = new AtlasSpriteManagerImpl(16, 16);
+	public static IAtlasSpriteManager blockSpriteManager = new AtlasSpriteManagerImplStitch(TextureManager.TERRAIN_TEXTURE);
 	
 	public static void registerAllTerrainSprites() {
 		for(Block block : Block.blockList) {
@@ -11,5 +13,6 @@ public class AtlasManager {
 				block.registerAtlasSprites(blockSpriteManager);
 			}
 		}
+		blockSpriteManager.buildAtlas();
 	}
 }

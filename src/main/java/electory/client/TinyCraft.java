@@ -21,16 +21,12 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.ARBDebugOutput;
-import org.lwjgl.opengl.ARBDebugOutputCallback;
 import org.lwjgl.opengl.ContextAttribs;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.opengl.PixelFormat;
 
 import electory.client.audio.SoundManager;
@@ -49,7 +45,11 @@ import electory.client.render.shader.ShaderManager;
 import electory.client.render.texture.TextureManager;
 import electory.client.render.world.WorldRenderer;
 import electory.entity.EntityPlayer;
+import electory.event.ElectoryInitEvent;
+import electory.event.EventRegistry;
+import electory.event.EventType;
 import electory.nbt.ShortArrayTag;
+import electory.scripting.ScriptingEngine;
 import electory.utils.CrashException;
 import electory.utils.TickTimer;
 import electory.world.World;
@@ -70,6 +70,7 @@ public class TinyCraft {
 	public SoundManager soundManager = new SoundManager();
 	public GuiScreen currentGui;
 	public Console console = null;
+	public ScriptingEngine scriptingEngine;
 	public boolean hadWorld = false;
 	// public ChunkLoadThread chunkLoadThread = new ChunkLoadThread();
 	private int width = 0, height = 0;
@@ -218,7 +219,7 @@ public class TinyCraft {
 			Display.setResizable(true);
 			Display.setTitle("Electory");
 			PixelFormat pf = new PixelFormat();
-			ContextAttribs attribs = new ContextAttribs(3, 2).withDebug(true);
+			ContextAttribs attribs = new ContextAttribs(3, 2).withDebug(false);
 			Display.setIcon(loadIcon("/img/icon.png"));
 			Display.create(pf, attribs);
 		} catch (LWJGLException e) {
@@ -241,13 +242,13 @@ public class TinyCraft {
 		System.out.println("GLSL version: " + GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
 		System.out.println("GL extensions: " + GL11.glGetString(GL11.GL_EXTENSIONS));
 		System.out.println("Max texture size: " + GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE));
-
+/*
 		if (GLContext.getCapabilities().GL_ARB_debug_output) {
 			ARBDebugOutput.glDebugMessageCallbackARB(new ARBDebugOutputCallback(new ARBDebugOutputCallback.Handler() {
 				@Override
 				public void handleMessage(int source, int type, int id, int severity, String message) {
-					if(type == KHRDebug.GL_DEBUG_TYPE_POP_GROUP || type == KHRDebug.GL_DEBUG_TYPE_PUSH_GROUP) {
-						
+					/*if(type == KHRDebug.GL_DEBUG_TYPE_POP_GROUP || type == KHRDebug.GL_DEBUG_TYPE_PUSH_GROUP) {
+						return;
 					}
 					new Exception("OpenGL message, source "
 							+ source
@@ -258,10 +259,10 @@ public class TinyCraft {
 							+ " severity "
 							+ severity
 							+ ": "
-							+ message).printStackTrace();
-				}
-			}));
-		}
+							+ message).printStackTrace();*/
+				/*}
+			/*}));
+		}*/
 
 		try {
 			ShaderManager.init();
@@ -275,6 +276,14 @@ public class TinyCraft {
 	}
 
 	public void initGame() {
+		eventRegistry.registerEventType(new EventType("init", ElectoryInitEvent.class));
+		scriptingEngine = new ScriptingEngine();
+		try {
+			scriptingEngine.runScript("/scripts/main.lua");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		eventRegistry.emit(new ElectoryInitEvent());
 		openGui(new GuiMainMenu(this));
 		/*
 		 * try { world.load(); } catch (IOException e) { e.printStackTrace(); }
@@ -287,6 +296,8 @@ public class TinyCraft {
 	}
 
 	private long lastMillis = System.currentTimeMillis();
+
+	public EventRegistry eventRegistry = new EventRegistry();
 
 	public void update() {
 		if(hadWorld && world == null) {

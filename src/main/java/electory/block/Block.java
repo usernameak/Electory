@@ -9,6 +9,8 @@ import electory.item.ItemBlock;
 import electory.math.AABB;
 import electory.utils.EnumSide;
 import electory.world.World;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 public class Block {
 	public static Block blockList[] = new Block[32768];
@@ -30,7 +32,10 @@ public class Block {
 
 	public int blockID;
 
-	private int spriteNumber = 0;
+	@Setter
+	@Accessors(chain = true)
+	private String spriteName;
+
 	private boolean breakable = true;
 	private boolean solid = true;
 	private boolean liquid = false;
@@ -38,14 +43,9 @@ public class Block {
 	private BlockSound sound = SOUND_WOOD;
 
 	protected IAtlasSprite blockSprite;
-	
+
 	public static final BlockSound SOUND_WOOD = new BlockSound("sfx/break/wood1.ogg");
 	public static final BlockSound SOUND_SAND = new BlockSound("sfx/break/sand1.ogg");
-
-	public Block setSpriteNumber(int spriteNumber) {
-		this.spriteNumber = spriteNumber;
-		return this;
-	}
 
 	public IBlockRenderer getRenderer() {
 		return doesBlockAffectAO() ? IBlockRenderer.cubeAO : IBlockRenderer.cube;
@@ -58,13 +58,13 @@ public class Block {
 	public IAtlasSprite getAtlasSprite(EnumSide side) {
 		return getAtlasSprite();
 	}
-	
+
 	public IAtlasSprite getAtlasSprite(World world, int x, int y, int z, EnumSide side) {
 		return getAtlasSprite(side);
 	}
 
 	public void registerAtlasSprites(IAtlasSpriteManager manager) {
-		blockSprite = manager.registerSpriteByID(spriteNumber);
+		blockSprite = manager.registerSprite(spriteName);
 	}
 
 	public boolean isSolidOnSide(EnumSide side) {
@@ -124,7 +124,7 @@ public class Block {
 	public byte getSkyLightOpacity() {
 		return 15;
 	}
-	
+
 	public boolean doesBlockAffectAO() {
 		return isSolid();
 	}
@@ -137,30 +137,30 @@ public class Block {
 		this.sound = sound;
 		return this;
 	}
-	
+
 	public boolean interactWithBlock(EntityPlayer player, World world, int x, int y, int z, EnumSide side) {
 		return false;
 	}
-	
+
 	public void blockPlacedByPlayer(EntityPlayer player, World world, int x, int y, int z, EnumSide side) {
-		
+
 	}
 
 	static {
-		blockCobblestone = new Block(1).setSpriteNumber(1);
+		blockCobblestone = new Block(1).setSpriteName("/img/blocks/cobblestone.png");
 		blockGrass = new BlockGrass(2);
-		blockPlanks = new Block(3).setSpriteNumber(3);
-		blockDirt = new Block(4).setSpriteNumber(4);
-		blockRootStone = new Block(5).setSpriteNumber(6).setBreakable(false);
-		blockGlass = new Block(6).setSpriteNumber(7).setSolid(false);
+		blockPlanks = new Block(3).setSpriteName("/img/blocks/planks.png");
+		blockDirt = new Block(4).setSpriteName("/img/blocks/dirt.png");
+		blockRootStone = new Block(5).setSpriteName("/img/blocks/rootstone.png").setBreakable(false);
+		blockGlass = new Block(6).setSpriteName("/img/blocks/glass.png").setSolid(false);
 		blockLog = new BlockLog(7);
-		blockLeaves = new Block(8).setSpriteNumber(15);
-		blockWater = new BlockWater(9).setSpriteNumber(16).setSolid(false).setLiquid(true).setImpassable(false);
-		blockSand = new Block(10).setSpriteNumber(11).setSound(SOUND_SAND);
-		blockStone = new Block(11).setSpriteNumber(18);
-		blockGravel = new Block(12).setSpriteNumber(9);
-		blockTallGrass = new BlockTallGrass(13).setSpriteNumber(20).setSolid(false).setImpassable(false);
-		blockSapling = new BlockSapling(14).setSpriteNumber(21).setSolid(false).setImpassable(false);
+		blockLeaves = new Block(8).setSpriteName("/img/blocks/leaves.png");
+		blockWater = new BlockWater(9).setSpriteName("/img/blocks/water.png").setSolid(false).setLiquid(true).setImpassable(false);
+		blockSand = new Block(10).setSpriteName("/img/blocks/sand.png").setSound(SOUND_SAND);
+		blockStone = new Block(11).setSpriteName("/img/blocks/stone.png");
+		blockGravel = new Block(12).setSpriteName("/img/blocks/gravel.png");
+		blockTallGrass = new BlockTallGrass(13).setSpriteName("/img/blocks/tallgrass.png").setSolid(false).setImpassable(false);
+		blockSapling = new BlockSapling(14).setSpriteName("/img/blocks/sapling.png").setSolid(false).setImpassable(false);
 	}
 
 	public boolean canBeReplaced() {
