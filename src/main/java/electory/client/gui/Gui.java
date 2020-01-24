@@ -1,5 +1,6 @@
 package electory.client.gui;
 
+import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 
@@ -13,7 +14,7 @@ public abstract class Gui {
 
 	public abstract void renderGui(GuiRenderState rs);
 
-	public abstract void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar);
+	public abstract void handleKeyEvent(KeyEvent event);
 
 	public abstract void handleMouseEvent(MouseEvent event);
 }

@@ -1,5 +1,6 @@
 package electory.client.gui.screen;
 
+import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.FontRenderer;
@@ -52,9 +53,9 @@ public abstract class GuiWidgetScreen extends GuiScreen {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
-		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
-		rootContainer.handleKeyEvent(eventKey, eventKeyState, keyChar);
+	public void handleKeyEvent(KeyEvent event) {
+		super.handleKeyEvent(event);
+		rootContainer.handleKeyEvent(event);
 	}
 
 	@Override

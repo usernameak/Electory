@@ -2,8 +2,9 @@ package electory.client.gui.screen;
 
 import java.io.IOException;
 
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
+import electory.client.KeyEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.IActionListener;
 import electory.client.gui.widget.GuiColumnLayout;
@@ -19,14 +20,14 @@ public class GuiPause extends GuiWidgetScreen implements IActionListener {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
-		if (eventKeyState) {
-			if (eventKey == Keyboard.KEY_ESCAPE) {
+	public void handleKeyEvent(KeyEvent event) {
+		if (event.isKeyState()) {
+			if (event.getKey() == GLFW.GLFW_KEY_ESCAPE) {
 				tc.openGui(null);
 				return;
 			}
 		}
-		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
+		super.handleKeyEvent(event);
 	}
 
 	@Override

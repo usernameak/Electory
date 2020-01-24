@@ -29,6 +29,7 @@ public class Block {
 	public static Block blockGravel;
 	public static Block blockTallGrass;
 	public static Block blockSapling;
+	public static Block blockSandstone;
 
 	public int blockID;
 
@@ -161,6 +162,7 @@ public class Block {
 		blockGravel = new Block(12).setSpriteName("/img/blocks/gravel.png");
 		blockTallGrass = new BlockTallGrass(13).setSpriteName("/img/blocks/tallgrass.png").setSolid(false).setImpassable(false);
 		blockSapling = new BlockSapling(14).setSpriteName("/img/blocks/sapling.png").setSolid(false).setImpassable(false);
+		blockSandstone = new Block(15).setSpriteName("/img/blocks/sandstone.png");
 	}
 
 	public boolean canBeReplaced() {

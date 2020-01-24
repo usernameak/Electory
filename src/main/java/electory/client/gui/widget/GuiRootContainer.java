@@ -5,6 +5,7 @@ import java.awt.Point;
 
 import org.lwjgl.opengl.GL11;
 
+import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
@@ -124,9 +125,9 @@ public class GuiRootContainer extends GuiWidget implements IRelayoutable {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
-		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
-		child.handleKeyEvent(eventKey, eventKeyState, keyChar);
+	public void handleKeyEvent(KeyEvent event) {
+		super.handleKeyEvent(event);
+		child.handleKeyEvent(event);
 	}
 
 	@Override

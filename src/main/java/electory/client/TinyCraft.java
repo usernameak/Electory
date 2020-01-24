@@ -7,9 +7,13 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -17,17 +21,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCursorPosCallbackI;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWKeyCallbackI;
+import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.EXTFramebufferObject;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.PixelFormat;
 
 import electory.client.audio.SoundManager;
 import electory.client.console.Console;
@@ -63,7 +66,7 @@ public class TinyCraft {
 	public TickTimer tickTimer = new TickTimer(20.0f);
 	public ResolutionScaler resolutionScaler = new ResolutionScaler(1.0f);
 	public GuiInGame theHUD = new GuiInGame(this);
-	private DisplayMode windowedDisplayMode = new DisplayMode(800, 500);
+	// private DisplayMode windowedDisplayMode = new DisplayMode(800, 500);
 	public WorldRenderer worldRenderer = new WorldRenderer();
 	private GuiRenderState renderState = new GuiRenderState();
 	public FontRenderer fontRenderer = new FontRenderer();
@@ -71,9 +74,12 @@ public class TinyCraft {
 	public GuiScreen currentGui;
 	public Console console = null;
 	public ScriptingEngine scriptingEngine;
+	public Logger logger;
 	public boolean hadWorld = false;
 	// public ChunkLoadThread chunkLoadThread = new ChunkLoadThread();
 	private int width = 0, height = 0;
+	private double oldCursorPosX = 0;
+	private double oldCursorPosY = 0;
 
 	public int fps = 0;
 	private int fpsc = 0;
@@ -81,6 +87,8 @@ public class TinyCraft {
 	public int chunkUpdates = 0;
 	private long fpsNanoCounterLast = System.nanoTime();
 	private long fpsNanoCounter = System.nanoTime();
+
+	public long window;
 
 	private static String version = "version unknown";
 
@@ -135,17 +143,20 @@ public class TinyCraft {
 	}
 
 	public void start() {
+		initLogging();
 		try {
 			initRenderer();
 			initGame();
 			initConsole();
 
-			while (!Display.isCloseRequested() && !shutdown) {
+			while (!GLFW.glfwWindowShouldClose(window) && !shutdown) {
 				update();
-				if (Display.isActive() || Display.isDirty()) {
+				if (GLFW.GLFW_TRUE == GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_FOCUSED)) {
 					render();
 				}
-				Display.update();
+				GLFW.glfwPollEvents();
+
+				GLFW.glfwSwapBuffers(window);
 				fpsc++;
 				fpsNanoCounter = System.nanoTime();
 				if (fpsNanoCounter >= fpsNanoCounterLast + 1000000000L) {
@@ -164,8 +175,8 @@ public class TinyCraft {
 				world.unload();
 			}
 
-			Display.destroy();
-			
+			GLFW.glfwTerminate();
+
 			worldRenderer.terminate();
 		} catch (CrashException e) {
 			showCrashReport(e);
@@ -174,15 +185,26 @@ public class TinyCraft {
 		}
 	}
 
+	private void initLogging() {
+		InputStream stream = getClass().getResourceAsStream("/logging.properties");
+		try {
+			LogManager.getLogManager().readConfiguration(stream);
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+		}
+		this.logger = Logger.getLogger("Electory");
+	}
+
 	public void showCrashReport(CrashException exception) {
-		System.err.println("\n\nCrash report:\n");
-		exception.printStackTrace();
+		logger.log(Level.SEVERE, "Crash report", exception);
 
 		try {
-			Mouse.setGrabbed(false);
-			Mouse.destroy();
-			Keyboard.destroy();
-			Display.destroy();
+			GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+			// Mouse.setGrabbed(false);
+			/*
+			 * Mouse.destroy(); Keyboard.destroy(); Display.destroy();
+			 */
+			GLFW.glfwTerminate();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -207,62 +229,121 @@ public class TinyCraft {
 			crashFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			crashFrame.setVisible(true);
 
-			System.out.println("Showing crash report window.");
+			logger.info("Showing crash report window.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private void onMouseEvent(MouseEvent event) {
+
+		if (player != null && currentGui == null && !isPaused()) {
+			player.playerController.processMouseEvent(player, event);
+			theHUD.handleMouseEvent(event.adjustToGuiScale(resolutionScaler));
+		}
+		if (currentGui != null) {
+			currentGui.handleMouseEvent(event.adjustToGuiScale(resolutionScaler));
+		}
+	}
+
+	private void onKeyEvent(KeyEvent event) {
+		if (currentGui == null) {
+			if (player != null && !isPaused()) {
+				theHUD.handleKeyEvent(event);
+			}
+		} else {
+			currentGui.handleKeyEvent(event);
+		}
+		if (event.getKey() == GLFW.GLFW_KEY_F11 && event.isKeyState()) {
+			if (GLFW.glfwGetWindowMonitor(window) != 0L) {
+				GLFW.glfwSetWindowMonitor(window, 0L, 0, 0, 800, 500, 0);
+			} else {
+				GLFWVidMode mode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
+				GLFW.glfwSetWindowMonitor(window, GLFW.glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
+			}
+		} else if (event.getKey() == GLFW.GLFW_KEY_C
+				&& GLFW.glfwGetKey(window, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS
+			&& event.isKeyState()) 	{
+			throw new CrashException("Debug crash.");
+		}
+	}
+
 	public void initRenderer() {
-		try {
-			Display.setDisplayMode(windowedDisplayMode);
-			Display.setResizable(true);
-			Display.setTitle("Electory");
-			PixelFormat pf = new PixelFormat();
-			ContextAttribs attribs = new ContextAttribs(3, 2).withDebug(false);
-			Display.setIcon(loadIcon("/img/icon.png"));
-			Display.create(pf, attribs);
-		} catch (LWJGLException e) {
-			e.printStackTrace();
-		}
+		GLFWErrorCallback.createPrint(System.err).set();
 
-		try {
-			Keyboard.create();
-			Mouse.create();
-			// Mouse.setGrabbed(true);
-		} catch (LWJGLException e) {
-			e.printStackTrace();
+		if (!GLFW.glfwInit()) {
+			throw new RuntimeException("Failed to init glfw");
 		}
+		// try {
+		// Display.setDisplayMode(windowedDisplayMode);
+		// Display.setResizable(true);
+		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE);
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 2);
+		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_FALSE);
+		this.window = GLFW.glfwCreateWindow(800, 500, "Electory", 0L, 0L);
+		GLFW.glfwMakeContextCurrent(window);
+		GL.createCapabilities();
 
-		System.out.println("Max color attachments: "
-				+ GL11.glGetInteger(EXTFramebufferObject.GL_MAX_COLOR_ATTACHMENTS_EXT));
-		System.out.println("GL vendor: " + GL11.glGetString(GL11.GL_VENDOR));
-		System.out.println("GL version: " + GL11.glGetString(GL11.GL_VERSION));
-		System.out.println("GL renderer: " + GL11.glGetString(GL11.GL_RENDERER));
-		System.out.println("GLSL version: " + GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
-		System.out.println("GL extensions: " + GL11.glGetString(GL11.GL_EXTENSIONS));
-		System.out.println("Max texture size: " + GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE));
-/*
-		if (GLContext.getCapabilities().GL_ARB_debug_output) {
-			ARBDebugOutput.glDebugMessageCallbackARB(new ARBDebugOutputCallback(new ARBDebugOutputCallback.Handler() {
-				@Override
-				public void handleMessage(int source, int type, int id, int severity, String message) {
-					/*if(type == KHRDebug.GL_DEBUG_TYPE_POP_GROUP || type == KHRDebug.GL_DEBUG_TYPE_PUSH_GROUP) {
-						return;
-					}
-					new Exception("OpenGL message, source "
-							+ source
-							+ " type "
-							+ type
-							+ " id "
-							+ id
-							+ " severity "
-							+ severity
-							+ ": "
-							+ message).printStackTrace();*/
-				/*}
-			/*}));
-		}*/
+		GLFW.glfwSetKeyCallback(window, new GLFWKeyCallbackI() {
+			@Override
+			public void invoke(long window, int key, int scancode, int action, int mods) {
+				KeyEvent event = new KeyEvent(key, action != GLFW.GLFW_RELEASE, '\0');
+				onKeyEvent(event);
+			}
+		});
+
+		GLFW.glfwSetCursorPosCallback(window, new GLFWCursorPosCallbackI() {
+			@Override
+			public void invoke(long window, double xpos, double ypos) {
+				onMouseEvent(MouseEvent.createPosEvent(xpos, ypos, xpos - oldCursorPosX, ypos - oldCursorPosY));
+
+				oldCursorPosX = xpos;
+				oldCursorPosY = ypos;
+			}
+		});
+
+		GLFW.glfwSetMouseButtonCallback(window, new GLFWMouseButtonCallbackI() {
+			@Override
+			public void invoke(long window, int button, int action, int mods) {
+				onMouseEvent(MouseEvent.createButtonEvent(oldCursorPosX, oldCursorPosY, button, action, mods));
+			}
+		});
+		// Display.setTitle("Electory");
+		// PixelFormat pf = new PixelFormat();
+		// ContextAttribs attribs = new ContextAttribs(3, 2).withDebug(false);
+		// Display.setIcon(loadIcon("/img/icon.png"));
+		// Display.create(pf, attribs);
+		/*
+		 * } catch (LWJGLException e) { e.printStackTrace(); }
+		 */
+
+		/*
+		 * try { Keyboard.create(); Mouse.create(); // Mouse.setGrabbed(true); } catch
+		 * (LWJGLException e) { e.printStackTrace(); }
+		 */
+
+		logger.info("Max color attachments: " + GL11.glGetInteger(EXTFramebufferObject.GL_MAX_COLOR_ATTACHMENTS_EXT));
+		logger.info("GL vendor: " + GL11.glGetString(GL11.GL_VENDOR));
+		logger.info("GL version: " + GL11.glGetString(GL11.GL_VERSION));
+		logger.info("GL renderer: " + GL11.glGetString(GL11.GL_RENDERER));
+		logger.info("GLSL version: " + GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
+		logger.info("GL extensions: " + GL11.glGetString(GL11.GL_EXTENSIONS));
+		logger.info("Max texture size: " + GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE));
+		/*
+		 * if (GLContext.getCapabilities().GL_ARB_debug_output) {
+		 * ARBDebugOutput.glDebugMessageCallbackARB(new ARBDebugOutputCallback(new
+		 * ARBDebugOutputCallback.Handler() {
+		 * 
+		 * @Override public void handleMessage(int source, int type, int id, int
+		 * severity, String message) { /*if(type == KHRDebug.GL_DEBUG_TYPE_POP_GROUP ||
+		 * type == KHRDebug.GL_DEBUG_TYPE_PUSH_GROUP) { return; } new
+		 * Exception("OpenGL message, source " + source + " type " + type + " id " + id
+		 * + " severity " + severity + ": " + message).printStackTrace();
+		 */
+		/*
+		 * } /*})); }
+		 */
 
 		try {
 			ShaderManager.init();
@@ -276,7 +357,9 @@ public class TinyCraft {
 	}
 
 	public void initGame() {
+
 		eventRegistry.registerEventType(new EventType("init", ElectoryInitEvent.class));
+		logger.info("Initializing script engine");
 		scriptingEngine = new ScriptingEngine();
 		try {
 			scriptingEngine.runScript("/scripts/main.lua");
@@ -300,15 +383,18 @@ public class TinyCraft {
 	public EventRegistry eventRegistry = new EventRegistry();
 
 	public void update() {
-		if(hadWorld && world == null) {
+		if (hadWorld && world == null) {
 			soundManager.stopMusic("ingame_music");
 			hadWorld = false;
-		} else if(!hadWorld && world != null) {
+		} else if (!hadWorld && world != null) {
 			soundManager.playMusic("mus/cassette_1_chord_1.xm", "ingame_music", true);
 			hadWorld = true;
 		}
-		
-		if (!Display.isActive() && world != null && player != null && currentGui == null) {
+
+		if (GLFW.GLFW_FALSE == GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_FOCUSED)
+				&& world != null
+				&& player != null
+				&& currentGui == null) {
 			if (lastMillis + 500L < System.currentTimeMillis()) {
 				openGui(new GuiPause(this));
 			}
@@ -325,59 +411,13 @@ public class TinyCraft {
 		for (int i = 0; i < tickTimer.elapsedTicks; i++) {
 			tick(tickTimer.renderPartialTicks);
 		}
+		/*
+		 * while (Mouse.next()) {
+		 * 
+		 * }
+		 */
 
-		while (Mouse.next()) {
-			if (player != null && currentGui == null && !isPaused()) {
-				player.playerController.processMouseEvent(player);
-				theHUD.handleMouseEvent(MouseEvent.fromLWJGLEvent().adjustToGuiScale(resolutionScaler));
-			}
-			if (currentGui != null) {
-				currentGui.handleMouseEvent(MouseEvent.fromLWJGLEvent().adjustToGuiScale(resolutionScaler));
-			}
-		}
 
-		while (Keyboard.next()) {
-			if (currentGui == null) {
-				if (player != null && !isPaused()) {
-					theHUD.handleKeyEvent(	Keyboard.getEventKey(),
-											Keyboard.getEventKeyState(),
-											Keyboard.getEventCharacter());
-				}
-			} else {
-				currentGui.handleKeyEvent(	Keyboard.getEventKey(),
-											Keyboard.getEventKeyState(),
-											Keyboard.getEventCharacter());
-			}
-			if (Keyboard.getEventKey() == Keyboard.KEY_F11 && Keyboard.getEventKeyState()) {
-				if (Display.isFullscreen()) {
-					try {
-						Display.setFullscreen(false);
-						Display.setDisplayMode(windowedDisplayMode);
-						Mouse.setGrabbed(false);
-						Mouse.destroy();
-						Mouse.create();
-						// Mouse.setGrabbed(true);
-					} catch (LWJGLException e) {
-						e.printStackTrace();
-					}
-				} else {
-					try {
-						windowedDisplayMode = Display.getDisplayMode();
-						Display.setDisplayModeAndFullscreen(Display.getDesktopDisplayMode());
-						Mouse.setGrabbed(false);
-						Mouse.destroy();
-						Mouse.create();
-						// Mouse.setGrabbed(true);
-					} catch (LWJGLException e) {
-						e.printStackTrace();
-					}
-				}
-			} else if (Keyboard.getEventKey() == Keyboard.KEY_C
-					&& Keyboard.isKeyDown(Keyboard.KEY_F3)
-					&& Keyboard.getEventKeyState()) {
-				throw new CrashException("Debug crash.");
-			}
-		}
 
 	}
 
@@ -393,11 +433,21 @@ public class TinyCraft {
 	}
 
 	public static long getSystemTime() {
-		return Sys.getTime() * 1000L / Sys.getTimerResolution();
+		return 0L /* Sys.getTime() * 1000L / Sys.getTimerResolution() */;
 	}
 
 	public void render() {
-		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+		int[] width_ = new int[1];
+		int[] height_ = new int[1];
+
+		GLFW.glfwGetFramebufferSize(TinyCraft.getInstance().window, width_, height_);
+
+		int nwidth = width_[0];
+		int nheight = height_[0];
+
+		//
+
+		GL11.glViewport(0, 0, nwidth, nheight);
 
 		if (player != null) {
 			GL11.glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
@@ -406,9 +456,9 @@ public class TinyCraft {
 		}
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-		if (width != Display.getWidth() || height != Display.getHeight()) {
-			width = Display.getWidth();
-			height = Display.getHeight();
+		if (width != nwidth || height != nheight) {
+			width = nwidth;
+			height = nheight;
 			worldRenderer.updateScreenSize();
 			if (currentGui != null) {
 				currentGui.setupGuiElementsForScreenSize(resolutionScaler);
@@ -425,9 +475,11 @@ public class TinyCraft {
 
 		if (currentGui != null) {
 			currentGui.renderGui(renderState);
-			Mouse.setGrabbed(false);
+			GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+			// Mouse.setGrabbed(false);
 		} else {
-			Mouse.setGrabbed(true);
+			GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+			// Mouse.setGrabbed(true);
 		}
 	}
 

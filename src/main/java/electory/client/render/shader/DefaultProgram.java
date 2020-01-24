@@ -45,19 +45,19 @@ public class DefaultProgram extends ShaderProgram {
 	public void setProjectionMatrix(Matrix4d matrix) {
 		FloatBuffer fb = BufferPool.get().getFloatBuffer(16);
 		matrix.get(fb);
-		GL20.glUniformMatrix4(projectionUniform, false, fb);
+		GL20.glUniformMatrix4fv(projectionUniform, false, fb);
 	}
 	
 	public void setViewMatrix(Matrix4d matrix) {
 		FloatBuffer fb = BufferPool.get().getFloatBuffer(16);
 		matrix.get(fb);
-		GL20.glUniformMatrix4(viewUniform, false, fb);
+		GL20.glUniformMatrix4fv(viewUniform, false, fb);
 	}
 	
 	public void setModelMatrix(Matrix4d matrix) {
 		FloatBuffer fb = BufferPool.get().getFloatBuffer(16);
 		matrix.get(fb);
-		GL20.glUniformMatrix4(modelUniform, false, fb);
+		GL20.glUniformMatrix4fv(modelUniform, false, fb);
 	}
 
 	public void setTimer(float timer) {

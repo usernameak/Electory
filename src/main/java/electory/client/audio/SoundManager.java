@@ -16,8 +16,6 @@ import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemException;
 import paulscode.sound.codecs.CodecJOrbis;
 import paulscode.sound.codecs.CodecWav;
-import paulscode.sound.libraries.LibraryJavaSound;
-import paulscode.sound.libraries.LibraryLWJGLOpenAL;
 
 public class SoundManager {
 
@@ -29,6 +27,7 @@ public class SoundManager {
 
 	public void init() {
 		try {
+			
 			SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
 			SoundSystemConfig.setCodec("xm", CodecModPlug.class);
 			SoundSystemConfig.setCodec("s3m", CodecModPlug.class);

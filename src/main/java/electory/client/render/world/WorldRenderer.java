@@ -9,16 +9,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.joml.Vector3d;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.ARBCopyImage;
 import org.lwjgl.opengl.ARBDrawBuffers;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.EXTFramebufferBlit;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTPackedDepthStencil;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.NVCopyImage;
-import org.lwjgl.opengl.SharedDrawable;
 
 import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
@@ -69,8 +68,16 @@ public class WorldRenderer {
 	}
 
 	public void preRenderPass(int pass) {
+		int[] width_ = new int[1];
+		int[] height_= new int[1];
+		
+		GLFW.glfwGetFramebufferSize(TinyCraft.getInstance().window, width_, height_);
+		
+		int width = width_[0];
+		int height = height_[0];
+		
 		if (pass == WorldRenderer.RENDERPASS_LIQUID1) {
-			if (GLContext.getCapabilities().GL_NV_copy_image) {
+			if (GL.getCapabilities().GL_NV_copy_image) {
 				NVCopyImage
 						.glCopyImageSubDataNV(	TinyCraft.getInstance().textureManager
 								.getTextureUnit("/dynamic/framebuffer_world_depth.png"),
@@ -86,10 +93,10 @@ public class WorldRenderer {
 												0,
 												0,
 												0,
-												Display.getWidth(),
-												Display.getHeight(),
+												width,
+												height,
 												1);
-			} else if (GLContext.getCapabilities().GL_ARB_copy_image) {
+			} else if (GL.getCapabilities().GL_ARB_copy_image) {
 				ARBCopyImage.glCopyImageSubData(
 												TinyCraft.getInstance().textureManager
 														.getTextureUnit("/dynamic/framebuffer_world_depth.png"),
@@ -105,19 +112,19 @@ public class WorldRenderer {
 												0,
 												0,
 												0,
-												Display.getWidth(),
-												Display.getHeight(),
+												width,
+												height,
 												1);
 			} else {
 				EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferBlit.GL_DRAW_FRAMEBUFFER_EXT, framebuffer2);
 				EXTFramebufferBlit.glBlitFramebufferEXT(0,
 														0,
-														Display.getWidth(),
-														Display.getHeight(),
+														width,
+														height,
 														0,
 														0,
-														Display.getWidth(),
-														Display.getHeight(),
+														width,
+														height,
 														GL11.GL_DEPTH_BUFFER_BIT,
 														GL11.GL_NEAREST);
 				EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferBlit.GL_DRAW_FRAMEBUFFER_EXT, framebuffer);
@@ -174,8 +181,8 @@ public class WorldRenderer {
 		} /*
 			 * else if (pass == RENDERPASS_BASE_SHADOW) {
 			 * EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.
-			 * GL_FRAMEBUFFER_EXT, framebuffer); GL11.glViewport(0, 0, Display.getWidth(),
-			 * Display.getHeight()); GL11.glDepthRange(0.01f, 1000f); }
+			 * GL_FRAMEBUFFER_EXT, framebuffer); GL11.glViewport(0, 0, width,
+			 * height); GL11.glDepthRange(0.01f, 1000f); }
 			 */
 	}
 
@@ -216,6 +223,14 @@ public class WorldRenderer {
 	}
 
 	public void render(float renderPartialTicks) {
+		int[] width_ = new int[1];
+		int[] height_= new int[1];
+		
+		GLFW.glfwGetFramebufferSize(TinyCraft.getInstance().window, width_, height_);
+		
+		int width = width_[0];
+		int height = height_[0];
+		
 		RenderUtilities.pushDebugGroup("World render");
 
 		{
@@ -242,7 +257,7 @@ public class WorldRenderer {
 
 		renderState.projectionMatrix.identity();
 		renderState.projectionMatrix
-				.perspective(1.22173f, (float) Display.getWidth() / (float) Display.getHeight(), 0.01f, 1000f);
+				.perspective(1.22173f, (float) width / (float) height, 0.01f, 1000f);
 		renderState.viewMatrix.identity();
 		renderState.viewMatrix.lookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
 		renderState.viewMatrix.rotate((float) deg2rad(TinyCraft.getInstance().player.pitch), 1.0f, 0.0f, 0.0f);
@@ -371,6 +386,14 @@ public class WorldRenderer {
 	}
 
 	public void updateScreenSize() {
+		int[] width_ = new int[1];
+		int[] height_= new int[1];
+		
+		GLFW.glfwGetFramebufferSize(TinyCraft.getInstance().window, width_, height_);
+		
+		int width = width_[0];
+		int height = height_[0];
+		
 		// Base buffer
 
 		if (framebuffer != 0) {
@@ -381,8 +404,8 @@ public class WorldRenderer {
 		EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebuffer);
 		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world.png");
 		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world.png",
-																	Display.getWidth(),
-																	Display.getHeight(),
+																	width,
+																	height,
 																	GL11.GL_RGBA,
 																	GL11.GL_RGBA,
 																	GL11.GL_UNSIGNED_BYTE);
@@ -397,8 +420,8 @@ public class WorldRenderer {
 
 		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_watermask.png");
 		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_watermask.png",
-																	Display.getWidth(),
-																	Display.getHeight(),
+																	width,
+																	height,
 																	GL11.GL_RGBA,
 																	GL11.GL_RGBA,
 																	GL11.GL_UNSIGNED_BYTE);
@@ -415,8 +438,8 @@ public class WorldRenderer {
 		 * TinyCraft.getInstance().textureManager.disposeTexture(
 		 * "/dynamic/framebuffer_world_depth_shadow.png");
 		 * TinyCraft.getInstance().textureManager.createVirtualTexture(
-		 * "/dynamic/framebuffer_world_depth_shadow.png", Display.getWidth(),
-		 * Display.getHeight(), GL11.GL_RGBA, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE);
+		 * "/dynamic/framebuffer_world_depth_shadow.png", width,
+		 * height, GL11.GL_RGBA, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE);
 		 * 
 		 * EXTFramebufferObject .glFramebufferTexture2DEXT(
 		 * EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
@@ -427,8 +450,8 @@ public class WorldRenderer {
 
 		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_depth.png");
 		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_depth.png",
-																	Display.getWidth(),
-																	Display.getHeight(),
+																	width,
+																	height,
 																	EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT,
 																	EXTPackedDepthStencil.GL_DEPTH_STENCIL_EXT,
 																	EXTPackedDepthStencil.GL_UNSIGNED_INT_24_8_EXT);
@@ -441,8 +464,8 @@ public class WorldRenderer {
 
 		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_opaque_depth.png");
 		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_opaque_depth.png",
-																	Display.getWidth(),
-																	Display.getHeight(),
+																	width,
+																	height,
 																	EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT,
 																	EXTPackedDepthStencil.GL_DEPTH_STENCIL_EXT,
 																	EXTPackedDepthStencil.GL_UNSIGNED_INT_24_8_EXT);
@@ -454,7 +477,7 @@ public class WorldRenderer {
 
 		// Framebuffer blit buffer
 
-		if (!GLContext.getCapabilities().GL_NV_copy_image && !GLContext.getCapabilities().GL_ARB_copy_image) {
+		if (!GL.getCapabilities().GL_NV_copy_image && !GL.getCapabilities().GL_ARB_copy_image) {
 			if (framebuffer2 != 0) {
 				EXTFramebufferObject.glDeleteFramebuffersEXT(framebuffer2);
 			}

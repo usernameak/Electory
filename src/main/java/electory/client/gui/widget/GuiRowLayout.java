@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
@@ -41,8 +42,8 @@ public class GuiRowLayout extends GuiWidget {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
-		children.stream().forEach(c -> c.handleKeyEvent(eventKey, eventKeyState, keyChar));
+	public void handleKeyEvent(KeyEvent event) {
+		children.stream().forEach(c -> c.handleKeyEvent(event));
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package electory.client;
 
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
+import org.lwjgl.glfw.GLFW;
 
 import electory.client.gui.ResolutionScaler;
 
@@ -26,17 +25,25 @@ public class MouseEvent {
 		this.dWheel = from.dWheel;
 	}
 
-	public static MouseEvent fromLWJGLEvent() {
+	public static MouseEvent createPosEvent(double x, double y, double dx, double dy) {
 		MouseEvent event = new MouseEvent();
 
-		event.button = Mouse.getEventButton();
-		event.buttonState = Mouse.getEventButtonState();
-		event.x = Mouse.getEventX();
-		event.y = Display.getHeight() - Mouse.getEventY();
-		event.dx = Mouse.getEventDX();
-		event.dy = -Mouse.getEventDY();
-		event.dWheel = Mouse.getEventDWheel();
+		event.x = (int) x;
+		event.y = (int) y;
+		event.dx = (int) dx;
+		event.dy = (int) dy;
 
+		return event;
+	}
+
+	public static MouseEvent fromLWJGLEvent() {
+		MouseEvent event = new MouseEvent();
+		/*
+		 * event.button = Mouse.getEventButton(); event.buttonState =
+		 * Mouse.getEventButtonState(); event.x = Mouse.getEventX(); event.y =
+		 * Display.getHeight() - Mouse.getEventY(); event.dx = Mouse.getEventDX();
+		 * event.dy = -Mouse.getEventDY(); event.dWheel = Mouse.getEventDWheel();
+		 */
 		return event;
 	}
 
@@ -87,7 +94,18 @@ public class MouseEvent {
 		ret.x -= x;
 		ret.y -= y;
 		ret.hovered = this.hovered && this.x >= x && this.y >= y && this.x < x + w && this.y < y + h;
-		
+
 		return ret;
+	}
+
+	public static MouseEvent createButtonEvent(double x, double y, int button, int action, int mods) {
+		MouseEvent event = new MouseEvent();
+
+		event.button = button;
+		event.buttonState = action != GLFW.GLFW_RELEASE;
+		event.x = (int) x;
+		event.y = (int) y;
+
+		return event;
 	}
 }

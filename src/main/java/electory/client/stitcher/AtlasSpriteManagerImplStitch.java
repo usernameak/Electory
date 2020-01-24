@@ -181,7 +181,9 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
             slots = newSlots;
 		}
 		
-		BufferedImage outImg = new BufferedImage(atlasSide, atlasSide, BufferedImage.TYPE_INT_ARGB);
+		int atlasHeight = totalArea <= (atlasSide * atlasSide / 2) ? atlasSide / 2 : atlasSide;
+		
+		BufferedImage outImg = new BufferedImage(atlasSide, atlasHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D gr = outImg.createGraphics();
 
 		for (int g = tileGroups.size() - 1; g >= 0; g--) {
@@ -196,12 +198,13 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
                 tile.sprite.y = tile.y;
                 tile.sprite.side = tile.side;
                 tile.sprite.atlasWidth = atlasSide;
-                tile.sprite.atlasHeight = atlasSide;
+                tile.sprite.atlasHeight = atlasHeight;
 			}
 		}
 		
 		ImageIO.write(outImg, "png", new File("test1902.png"));
 		TinyCraft.getInstance().textureManager.loadTexture(textureName, outImg);
+		TinyCraft.getInstance().logger.info("Stitched " + outImg.getWidth() + "x" + outImg.getHeight() + " atlas '" + textureName + "'");
 	}
 
 }

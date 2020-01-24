@@ -1,6 +1,8 @@
 package electory.client.gui;
 
-import org.lwjgl.opengl.Display;
+import org.lwjgl.glfw.GLFW;
+
+import electory.client.TinyCraft;
 
 public class ResolutionScaler {
 	public float scale;
@@ -12,17 +14,26 @@ public class ResolutionScaler {
 	public void setupOrtho(GuiRenderState renderState) {
 		renderState.scaler = this;
 		renderState.projectionMatrix.identity();
-		renderState.projectionMatrix.ortho2D(0f, Display.getWidth() / scale, Display.getHeight() / scale, 0f);
+		int[] w = new int[1];
+		int[] h = new int[1];
+		GLFW.glfwGetFramebufferSize(TinyCraft.getInstance().window, w, h);
+		renderState.projectionMatrix.ortho2D(0f, w[0] / scale, h[0] / scale, 0f);
 		renderState.viewMatrix.identity();
 		renderState.modelMatrix.identity();
 	}
 	
 	
 	public int getWidth() {
-		return (int) (Display.getWidth() / scale);
+		int[] w = new int[1];
+		int[] h = new int[1];
+		GLFW.glfwGetFramebufferSize(TinyCraft.getInstance().window, w, h);
+		return (int) (w[0] / scale);
 	}
 	
 	public int getHeight() {
-		return (int) (Display.getHeight() / scale);
+		int[] w = new int[1];
+		int[] h = new int[1];
+		GLFW.glfwGetFramebufferSize(TinyCraft.getInstance().window, w, h);
+		return (int) (h[0] / scale);
 	}
 }

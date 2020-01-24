@@ -1,7 +1,7 @@
 package electory.entity;
 
 import org.joml.Vector3f;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 import electory.client.TinyCraft;
 import electory.world.World;
@@ -17,7 +17,7 @@ public class EntityPlayerClient extends EntityPlayer {
 		return super.getAcceleration()
 				.add(	0f,
 						TinyCraft.getInstance().currentGui == null
-								&& Keyboard.isKeyDown(Keyboard.KEY_SPACE)
+								&& GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS
 								&& (onGround || isUnderwater) ? (isUnderwater ? 0.006f : 0.512f) : 0f,
 						0f);
 	}

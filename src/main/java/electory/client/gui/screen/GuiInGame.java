@@ -5,9 +5,10 @@ import java.io.IOException;
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.FontRenderer;
@@ -134,25 +135,25 @@ public class GuiInGame extends GuiScreen {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
-		if (eventKeyState) {
-			if (eventKey >= Keyboard.KEY_1 && eventKey <= Keyboard.KEY_9) {
-				int i = eventKey - Keyboard.KEY_1;
+	public void handleKeyEvent(KeyEvent event) {
+		if (event.isKeyState()) {
+			if (event.getKey() >= GLFW.GLFW_KEY_1 && event.getKey() <= GLFW.GLFW_KEY_9) {
+				int i = event.getKey() - GLFW.GLFW_KEY_1;
 				tc.player.inventory.setSelectedSlot(i);
-			} else if (eventKey == Keyboard.KEY_F12) {
+			} else if (event.getKey() == GLFW.GLFW_KEY_F12) {
 				TinyCraft
 						.getInstance().worldRenderer.wireframeEnabled = !TinyCraft.getInstance().worldRenderer.wireframeEnabled;
-			} else if (eventKey == Keyboard.KEY_F2) {
+			} else if (event.getKey() == GLFW.GLFW_KEY_F2) {
 				try {
 					TinyCraft.getInstance().world.save();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			} else if (eventKey == Keyboard.KEY_ESCAPE) {
+			} else if (event.getKey() == GLFW.GLFW_KEY_ESCAPE) {
 				tc.openGui(new GuiPause(tc));
-			} else if (eventKey == GuiConsole.KEY_TILDE) {
+			} else if (event.getKey() == GuiConsole.KEY_TILDE) {
 				tc.openGui(tc.console.gui);
-			} else if(eventKey == Keyboard.KEY_E) {
+			} else if(event.getKey() == GLFW.GLFW_KEY_E) {
 				tc.openGui(new GuiPlayerInventory(tc));
 			}
 		}

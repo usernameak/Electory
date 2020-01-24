@@ -1,5 +1,6 @@
 package electory.client.gui.widget;
 
+import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.Gui;
@@ -30,7 +31,7 @@ public abstract class GuiWidget extends Gui implements IRelayoutable {
 	}
 	
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
+	public void handleKeyEvent(KeyEvent event) {
 		
 	}
 }

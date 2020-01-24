@@ -6,8 +6,7 @@ import org.joml.AxisAngle4f;
 import org.joml.Matrix4x3f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import org.lwjgl.glfw.GLFW;
 
 import electory.block.Block;
 import electory.entity.EntityPlayer;
@@ -30,19 +29,19 @@ public class PlayerControllerClient implements IPlayerController {
 
 		float movementSpeed = player.isUnderwater ? 0.25f : (player.onGround ? 0.3f : 0.2f);
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+		if (GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
 			movementVector.add(0.0f, 0.0f, 1.0f);
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		if (GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
 			movementVector.add(-1.0f, 0.0f, 0.0f);
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+		if (GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS) {
 			movementVector.add(1.0f, 0.0f, 0.0f);
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+		if (GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
 			movementVector.add(0.0f, 0.0f, -1.0f);
 		}
 
@@ -54,16 +53,16 @@ public class PlayerControllerClient implements IPlayerController {
 	}
 
 	@Override
-	public void processMouseEvent(EntityPlayer player) {
-		player.yaw += Mouse.getEventDX() * 0.1f;
-		player.pitch += Mouse.getEventDY() * 0.1f;
+	public void processMouseEvent(EntityPlayer player, MouseEvent event) {
+		player.yaw += event.getDX() * 0.1f;
+		player.pitch += -event.getDY() * 0.1f;
 		if (player.pitch > 90f) {
 			player.pitch = 90f;
 		} else if (player.pitch < -90f) {
 			player.pitch = -90f;
 		}
-		if (Mouse.getEventButton() == 0 || Mouse.getEventButton() == 1) {
-			if (Mouse.getEventButtonState()) {
+		if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT || event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+			if (event.getButtonState()) {
 				Vector3d pos = player.getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks);
 				pos.add(0f, player.getEyeHeight(), 0f);
 
@@ -100,9 +99,9 @@ public class PlayerControllerClient implements IPlayerController {
 				}
 
 				if (tres.hasHit && tres.distance <= 5.0f) {
-					if (Mouse.getEventButton() == 0 && player.world.getBlockAt(tx, ty, tz).isBreakable()) {
+					if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_LEFT && player.world.getBlockAt(tx, ty, tz).isBreakable()) {
 						player.world.breakBlockByPlayer(player, tx, ty, tz);
-					} else if (Mouse.getEventButton() == 1) {
+					} else if (event.getButton() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 						player.world.interactWithBlock(player, tx, ty, tz, tres.side);
 					}
 				}

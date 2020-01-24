@@ -2,8 +2,9 @@ package electory.client.gui.screen;
 
 import java.util.ArrayList;
 
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
+import electory.client.KeyEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
@@ -17,7 +18,7 @@ import electory.utils.Rect2D;
 
 public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 
-	public static final int KEY_TILDE = Keyboard.KEY_GRAVE;
+	public static final int KEY_TILDE = GLFW.GLFW_KEY_GRAVE_ACCENT;
 	private static final int CONSOLE_WIDTH = 800; // TODO: Get from the screen's width
 	private static final int CONSOLE_HEIGHT = CONSOLE_WIDTH / 4;
 
@@ -35,14 +36,14 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
-		if (eventKeyState) {
-			switch (eventKey) {
+	public void handleKeyEvent(KeyEvent event) {
+		if (event.isKeyState()) {
+			switch (event.getKey()) {
 			case GuiConsole.KEY_TILDE:
-			case Keyboard.KEY_ESCAPE:
+			case GLFW.GLFW_KEY_ESCAPE:
 				tc.openGui(null);
 				return;
-			case Keyboard.KEY_RETURN:
+			case GLFW.GLFW_KEY_ENTER:
 				println("> " + consoleInputString);
 
 				// If the history isn't empty and the command isn't doublicate of previous
@@ -55,16 +56,16 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				consoleInputString = "";
 
 				break;
-			case Keyboard.KEY_BACK:
+			case GLFW.GLFW_KEY_BACKSPACE:
 				if (consoleInputString.length() > 0)
 					consoleInputString = consoleInputString.substring(0, consoleInputString.length() - 1);
 				break;
-			case Keyboard.KEY_UP:
-			case Keyboard.KEY_DOWN:
+			case GLFW.GLFW_KEY_UP:
+			case GLFW.GLFW_KEY_DOWN:
 				if (!consoleHistory.isEmpty()) {
-					if (eventKey == Keyboard.KEY_UP)
+					if (event.getKey() == GLFW.GLFW_KEY_UP)
 						consoleHistoryIndex++;
-					else if (eventKey == Keyboard.KEY_DOWN)
+					else if (event.getKey() == GLFW.GLFW_KEY_DOWN)
 						consoleHistoryIndex--;
 
 					if (consoleHistoryIndex < 0) { // Latest change
@@ -79,13 +80,13 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 				}
 				break;
 			default:
-				if (keyChar != '\0') {
-					consoleInputString += keyChar;
+				if (event.getKeyChar() != '\0') {
+					consoleInputString += event.getKeyChar();
 				}
 			}
 		}
 
-		super.handleKeyEvent(eventKey, eventKeyState, keyChar);
+		super.handleKeyEvent(event);
 
 	}
 
@@ -144,13 +145,13 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	@Override
 	public void closeGuiScreen() {
 		super.closeGuiScreen();
-		Keyboard.enableRepeatEvents(false);
+		// GLFW.GLFW_enableRepeatEvents(false); // FIXME:
 		consoleInputString = "";
 	}
 	
 	@Override
 	public void openGuiScreen() {
 		super.openGuiScreen();
-		Keyboard.enableRepeatEvents(true);
+		// GLFW.GLFW_enableRepeatEvents(true); // FIXME:
 	}
 }

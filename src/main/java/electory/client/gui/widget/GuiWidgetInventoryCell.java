@@ -2,6 +2,7 @@ package electory.client.gui.widget;
 
 import org.lwjgl.opengl.GL11;
 
+import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
 import electory.client.gui.FontRenderer;
@@ -77,7 +78,7 @@ public class GuiWidgetInventoryCell extends GuiWidget {
 	}
 
 	@Override
-	public void handleKeyEvent(int eventKey, boolean eventKeyState, char keyChar) {
+	public void handleKeyEvent(KeyEvent event) {
 		// TODO:
 
 	}

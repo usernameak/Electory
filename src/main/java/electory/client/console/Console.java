@@ -42,7 +42,7 @@ public class Console {
 		String cmd = tokens[0];
 		String[] args = Arrays.copyOfRange(tokens, 1, tokens.length);
 		
-		System.out.println("> " + commandline);
+		tc.logger.info("> " + commandline);
 
 		for (ConsoleCommand command : consoleCommands) {
 			if(command.getName().equals(cmd)) {
