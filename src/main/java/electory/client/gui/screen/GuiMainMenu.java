@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFW;
 
 import electory.client.KeyEvent;
 import electory.client.TinyCraft;
+import electory.client.audio.AudioSource;
 import electory.client.gui.IActionListener;
 import electory.client.gui.widget.GuiColumnLayout;
 import electory.client.gui.widget.GuiMenuButton;
@@ -37,13 +38,14 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 
 	protected GuiMenuButton spButton;
 	protected GuiMenuButton quitButton;
-	
+
 	@Override
 	public void openGuiScreen() {
 		super.openGuiScreen();
-		tc.soundManager.playMusic("mus/main_menu_1.xm", "main_menu_music", true);
+		tc.soundManager.play(	"main_menu_music",
+								new AudioSource("mus/main_menu_1.xm").setAmbient(true).setStreaming(true));
 	}
-	
+
 	@Override
 	public void closeGuiScreen() {
 		super.closeGuiScreen();

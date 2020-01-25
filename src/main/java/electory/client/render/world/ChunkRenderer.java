@@ -1,5 +1,6 @@
 package electory.client.render.world;
 
+import java.nio.BufferOverflowException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 
@@ -167,6 +168,7 @@ public class ChunkRenderer {
 
 					@Override
 					public void run() {
+						boolean unlockedInstantly = false;
 						Lock lock = chunk.renderLock.readLock();
 						lock.lock();
 						TriangleBuffer[] buffers = new TriangleBuffer[WorldRenderer.VBO_COUNT];
@@ -217,8 +219,14 @@ public class ChunkRenderer {
 								qb.getBuffer().flip();
 								buffers[i] = qb;
 							}
-						} finally {
+						} catch(BufferOverflowException e) {
+							TinyCraft.getInstance().logger.warning("buffer overflow in chunk update. that's not okay. reupdating");
 							lock.unlock();
+							unlockedInstantly = true;
+							run();
+							return;
+						} finally {
+							if(!unlockedInstantly) lock.unlock();
 						}
 						sentBuffers = buffers;
 						updateInProgress = false;

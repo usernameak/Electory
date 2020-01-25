@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import electory.client.audio.AudioSource;
 import electory.client.audio.SoundManager;
 import electory.client.console.Console;
 import electory.client.gui.FontRenderer;
@@ -151,6 +152,7 @@ public class TinyCraft {
 
 			while (!GLFW.glfwWindowShouldClose(window) && !shutdown) {
 				update();
+				soundManager.update();
 				if (GLFW.GLFW_TRUE == GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_FOCUSED)) {
 					render();
 				}
@@ -169,7 +171,7 @@ public class TinyCraft {
 				}
 			}
 
-			soundManager.destroy();
+			// soundManager.destroy();
 
 			if (world != null) {
 				world.unload();
@@ -259,11 +261,17 @@ public class TinyCraft {
 				GLFW.glfwSetWindowMonitor(window, 0L, 0, 0, 800, 500, 0);
 			} else {
 				GLFWVidMode mode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-				GLFW.glfwSetWindowMonitor(window, GLFW.glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
+				GLFW.glfwSetWindowMonitor(	window,
+											GLFW.glfwGetPrimaryMonitor(),
+											0,
+											0,
+											mode.width(),
+											mode.height(),
+											mode.refreshRate());
 			}
 		} else if (event.getKey() == GLFW.GLFW_KEY_C
 				&& GLFW.glfwGetKey(window, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS
-			&& event.isKeyState()) 	{
+				&& event.isKeyState()) {
 			throw new CrashException("Debug crash.");
 		}
 	}
@@ -387,7 +395,8 @@ public class TinyCraft {
 			soundManager.stopMusic("ingame_music");
 			hadWorld = false;
 		} else if (!hadWorld && world != null) {
-			soundManager.playMusic("mus/cassette_1_chord_1.xm", "ingame_music", true);
+			soundManager.play(	"ingame_music",
+								new AudioSource("mus/cassette_1_chord_1.xm").setAmbient(true).setStreaming(true));
 			hadWorld = true;
 		}
 
@@ -416,8 +425,6 @@ public class TinyCraft {
 		 * 
 		 * }
 		 */
-
-
 
 	}
 

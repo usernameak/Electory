@@ -1,5 +1,8 @@
 package electory.client.audio;
 
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,65 +12,62 @@ import java.util.Scanner;
 
 import org.joml.Vector3d;
 import org.joml.Vector3f;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.AL10;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALC10;
+import org.lwjgl.openal.ALCCapabilities;
 
+import electory.client.audio.decoder.AudioDecoder;
+import electory.client.audio.decoder.ModPlugDecoder;
+import electory.client.audio.decoder.VorbisDecoder;
 import electory.entity.EntityPlayer;
-import paulscode.sound.SoundSystem;
-import paulscode.sound.SoundSystemConfig;
-import paulscode.sound.SoundSystemException;
-import paulscode.sound.codecs.CodecJOrbis;
-import paulscode.sound.codecs.CodecWav;
 
 public class SoundManager {
-
-	private SoundSystem soundSystem;
-
 	private Map<String, List<String>> randomSoundRegistry = new HashMap<>();
-	
+
 	private Random rand = new Random();
 
+	private Map<String, ISound> streaming = new HashMap<>();
+
+	private Map<String, Class<? extends AudioDecoder>> decoders = new HashMap<>();;
+
 	public void init() {
-		try {
-			
-			SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
-			SoundSystemConfig.setCodec("xm", CodecModPlug.class);
-			SoundSystemConfig.setCodec("s3m", CodecModPlug.class);
-			SoundSystemConfig.setCodec("it", CodecModPlug.class);
-			SoundSystemConfig.setCodec("abc", CodecModPlug.class);
-			SoundSystemConfig.setCodec("pat", CodecModPlug.class);
-			SoundSystemConfig.setCodec("stm", CodecModPlug.class);
-			SoundSystemConfig.setCodec("med", CodecModPlug.class);
-			SoundSystemConfig.setCodec("mtm", CodecModPlug.class);
-			SoundSystemConfig.setCodec("mdl", CodecModPlug.class);
-			SoundSystemConfig.setCodec("dbm", CodecModPlug.class);
-			SoundSystemConfig.setCodec("669", CodecModPlug.class);
-			SoundSystemConfig.setCodec("far", CodecModPlug.class);
-			SoundSystemConfig.setCodec("ams", CodecModPlug.class);
-			SoundSystemConfig.setCodec("okt", CodecModPlug.class);
-			SoundSystemConfig.setCodec("ptm", CodecModPlug.class);
-			SoundSystemConfig.setCodec("ult", CodecModPlug.class);
-			SoundSystemConfig.setCodec("dmf", CodecModPlug.class);
-			SoundSystemConfig.setCodec("dsm", CodecModPlug.class);
-			SoundSystemConfig.setCodec("umx", CodecModPlug.class);
-			SoundSystemConfig.setCodec("amf", CodecModPlug.class);
-			SoundSystemConfig.setCodec("psm", CodecModPlug.class);
-			SoundSystemConfig.setCodec("mt2", CodecModPlug.class);
-			SoundSystemConfig.setCodec("mod", CodecModPlug.class);
-			
-			SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
-			SoundSystemConfig.setCodec("wav", CodecWav.class);
+		long device = ALC10.alcOpenDevice((CharSequence) null);
+		ALCCapabilities alcCaps = ALC.createCapabilities(device);
+		long ctx = ALC10.alcCreateContext(device, (IntBuffer) null);
+		ALC10.alcMakeContextCurrent(ctx);
+		AL.createCapabilities(alcCaps);
 
-			soundSystem = new SoundSystem();
+		decoders.put("xm", ModPlugDecoder.class);
+		decoders.put("s3m", ModPlugDecoder.class);
+		decoders.put("it", ModPlugDecoder.class);
+		decoders.put("abc", ModPlugDecoder.class);
+		decoders.put("pat", ModPlugDecoder.class);
+		decoders.put("stm", ModPlugDecoder.class);
+		decoders.put("med", ModPlugDecoder.class);
+		decoders.put("mtm", ModPlugDecoder.class);
+		decoders.put("mdl", ModPlugDecoder.class);
+		decoders.put("dbm", ModPlugDecoder.class);
+		decoders.put("669", ModPlugDecoder.class);
+		decoders.put("far", ModPlugDecoder.class);
+		decoders.put("ams", ModPlugDecoder.class);
+		decoders.put("okt", ModPlugDecoder.class);
+		decoders.put("ptm", ModPlugDecoder.class);
+		decoders.put("ult", ModPlugDecoder.class);
+		decoders.put("dmf", ModPlugDecoder.class);
+		decoders.put("dsm", ModPlugDecoder.class);
+		decoders.put("umx", ModPlugDecoder.class);
+		decoders.put("amf", ModPlugDecoder.class);
+		decoders.put("psm", ModPlugDecoder.class);
+		decoders.put("mt2", ModPlugDecoder.class);
+		decoders.put("mod", ModPlugDecoder.class);
 
-			soundSystem.changeDopplerFactor(10.0f);
-			
-			registerRandomSounds();
+		decoders.put("ogg", VorbisDecoder.class);
 
-			// soundSystem.backgroundMusic("music",
-			// getClass().getResource("/music/cassette_5_darling.xm"),
-			// "/music/cassette_5_darling.xm", true);
-		} catch (SoundSystemException e) {
-			e.printStackTrace();
-		}
+		// new VorbisDecoder(getClass().getResource("/audio/sfx/door1.ogg"));
+
+		registerRandomSounds();
 	}
 
 	private void registerRandomSounds() {
@@ -90,8 +90,68 @@ public class SoundManager {
 		sc.close();
 	}
 
-	public void destroy() {
-		soundSystem.cleanup();
+	public String getRealSoundPath(String pathIn) {
+		String path = pathIn;
+		if (randomSoundRegistry.containsKey(path)) {
+			List<String> l = randomSoundRegistry.get(path);
+			int r = rand.nextInt(l.size() + 1);
+			path = r > 0 ? l.get(r - 1) : path;
+		}
+
+		return "/audio/" + path;
+	}
+
+	public void update() {
+		streaming.values().forEach(ISound::update);
+		streaming.values().removeIf(ISound::isEndOfStream);
+	}
+
+	public void play(String name, AudioSource data) {
+		String realPath = getRealSoundPath(data.getPath());
+
+		int source = AL10.alGenSources();
+
+		if (data.isAmbient()) {
+			AL10.alSourcei(source, AL10.AL_SOURCE_RELATIVE, AL10.AL_TRUE);
+			AL10.alSource3f(source, AL10.AL_POSITION, 0, 0, 0);
+		} else {
+			AL10.alSource3f(source, AL10.AL_POSITION, data.getPosition().x, data.getPosition().y, data.getPosition().z);
+			AL10.alSourcef(source, AL10.AL_REFERENCE_DISTANCE, 0);
+			AL10.alSourcef(source, AL10.AL_MAX_DISTANCE, data.getRadius());
+		}
+
+		ISound sound;
+
+		if (data.isStreaming()) {
+			sound = new StreamingSound();
+		} else {
+			sound = new PrefetchSound();
+		}
+
+		AudioDecoder decoder;
+		URL url = getClass().getResource(realPath);
+
+		String upath = url.getPath();
+		String ext = upath.substring(upath.lastIndexOf('.') + 1);
+		try {
+			decoder = decoders.get(ext).getConstructor(URL.class).newInstance(url);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new RuntimeException(e);
+		}
+		sound.setDecoder(decoder);
+		sound.setSource(source);
+
+		sound.initialize();
+
+		streaming.put(name, sound);
+	}
+
+	public void stopMusic(String name) {
+		if (streaming.containsKey(name)) {
+			streaming.get(name).destroy();
+			streaming.remove(name);
+		}
 	}
 
 	public void updateListener(EntityPlayer player) {
@@ -102,46 +162,9 @@ public class SoundManager {
 		float var13 = (float) -Math.sin(-var4 * 0.017453292F - (float) Math.PI);
 		float var14 = (float) -Math.sin(-var3 * 0.017453292F - (float) Math.PI);
 		float var15 = (float) -Math.cos(-var4 * 0.017453292F - (float) Math.PI);
-		soundSystem.setListenerPosition((float) vec.x, (float) vec.y, (float) vec.z);
-		soundSystem.setListenerVelocity(vel.x, vel.y, vel.z);
-		soundSystem.setListenerOrientation(var13, var14, var15, 0f, 1f, 0f);
-	}
-	
-	public String getRealSoundPath(String pathIn) {
-		String path = pathIn;
-		if(randomSoundRegistry.containsKey(path)) {
-			List<String> l = randomSoundRegistry.get(path);
-			int r = rand.nextInt(l.size() + 1);
-			path = r > 0 ? l.get(r - 1) : path;
-		}
-		
-		return "/audio/" + path;
-	}
-	
-	public void playMusic(String path, String name, boolean loop) {
-		String realPath = getRealSoundPath(path);
-		soundSystem.backgroundMusic(name, getClass().getResource(realPath), realPath, loop);
-	}
-	
-	public void stopMusic(String name) {
-		soundSystem.stop(name);
-		soundSystem.removeSource(name);
-	}
-
-	public void playSFX(String path, String name, float x, float y, float z, float radius) {
-		String realPath = getRealSoundPath(path);
-		
-		soundSystem.newSource(	false,
-								name,
-								getClass().getResource(realPath),
-								realPath,
-								false,
-								x,
-								y,
-								z,
-								SoundSystemConfig.ATTENUATION_LINEAR,
-								radius);
-		soundSystem.setVolume(name, 1.0f);
-		soundSystem.play(name);
+		AL10.alListener3f(AL10.AL_POSITION, (float) vec.x, (float) vec.y, (float) vec.z);
+		AL10.alListener3f(AL10.AL_VELOCITY, (float) vel.x, (float) vel.y, (float) vel.z);
+		AL10.alListenerfv(AL10.AL_ORIENTATION, new float[] { var13, var14, var15, 0f, 1f, 0f });
+		// soundSystem.setListenerOrientation(var13, var14, var15, 0f, 1f, 0f);
 	}
 }

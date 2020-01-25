@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Lock;
 
 import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 import com.koloboke.collect.LongCursor;
 import com.koloboke.collect.set.hash.HashLongSet;
@@ -19,6 +20,7 @@ import com.koloboke.collect.set.hash.HashLongSets;
 
 import electory.block.Block;
 import electory.client.TinyCraft;
+import electory.client.audio.AudioSource;
 import electory.entity.Entity;
 import electory.entity.EntityMap;
 import electory.entity.EntityPlayer;
@@ -37,7 +39,7 @@ import electory.world.gen.ChunkGenerator;
 public abstract class World implements IChunkSaveStatusHandler {
 	private Set<Entity> entities = new HashSet<>();
 
-	public long seed = 0L;//ThreadLocalRandom.current().nextLong();
+	public long seed = 0L;// ThreadLocalRandom.current().nextLong();
 
 	public Random random = new Random(seed);
 
@@ -128,7 +130,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 													y + side.offsetY,
 													z + side.offsetZ,
 													EnumSide.getOrientation(EnumSide.OPPOSITES[side.ordinal()]));
-						
+
 					}
 				}
 			}
@@ -356,7 +358,8 @@ public abstract class World implements IChunkSaveStatusHandler {
 	}
 
 	public void playSFX(String path, float x, float y, float z, float radius) {
-		TinyCraft.getInstance().soundManager.playSFX(path, "world;" + path, x, y, z, radius);
+		TinyCraft.getInstance().soundManager
+				.play("world;" + path, new AudioSource(path).setPosition(new Vector3f(x, y, z)).setRadius(radius));
 	}
 
 	public <T> T getBlockMetadataAt(int x, int y, int z) {
