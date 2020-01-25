@@ -21,6 +21,9 @@ import org.lwjgl.openal.ALCCapabilities;
 import electory.client.audio.decoder.AudioDecoder;
 import electory.client.audio.decoder.ModPlugDecoder;
 import electory.client.audio.decoder.VorbisDecoder;
+import electory.client.audio.sound.ISound;
+import electory.client.audio.sound.PrefetchSound;
+import electory.client.audio.sound.StreamingSound;
 import electory.entity.EntityPlayer;
 
 public class SoundManager {
@@ -30,13 +33,16 @@ public class SoundManager {
 
 	private Map<String, ISound> streaming = new HashMap<>();
 
-	private Map<String, Class<? extends AudioDecoder>> decoders = new HashMap<>();;
+	private Map<String, Class<? extends AudioDecoder>> decoders = new HashMap<>();
+
+	private long alContext;
+	private long device;
 
 	public void init() {
-		long device = ALC10.alcOpenDevice((CharSequence) null);
+		device = ALC10.alcOpenDevice((CharSequence) null);
 		ALCCapabilities alcCaps = ALC.createCapabilities(device);
-		long ctx = ALC10.alcCreateContext(device, (IntBuffer) null);
-		ALC10.alcMakeContextCurrent(ctx);
+		alContext = ALC10.alcCreateContext(device, (IntBuffer) null);
+		ALC10.alcMakeContextCurrent(alContext);
 		AL.createCapabilities(alcCaps);
 
 		decoders.put("xm", ModPlugDecoder.class);
@@ -152,6 +158,15 @@ public class SoundManager {
 			streaming.get(name).destroy();
 			streaming.remove(name);
 		}
+	}
+
+	public void destroy() {
+		for (ISound sound : streaming.values()) {
+			sound.destroy();
+		}
+		ALC10.alcDestroyContext(this.alContext);
+		ALC10.alcCloseDevice(this.device);
+		ALC.destroy();
 	}
 
 	public void updateListener(EntityPlayer player) {

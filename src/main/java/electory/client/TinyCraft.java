@@ -171,7 +171,7 @@ public class TinyCraft {
 				}
 			}
 
-			// soundManager.destroy();
+			soundManager.destroy();
 
 			if (world != null) {
 				world.unload();

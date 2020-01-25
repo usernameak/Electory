@@ -1,4 +1,4 @@
-package electory.client.audio;
+package electory.client.audio.sound;
 
 import java.nio.ByteBuffer;
 
@@ -26,11 +26,8 @@ public class PrefetchSound implements ISound {
 
 	@Override
 	public void update() {
-		if (decoder.isEOF()) {
-			if (AL10.alGetSourcei(source, AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
-				this.endOfStream = true;
-			}
-			return;
+		if (AL10.alGetSourcei(source, AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
+			this.endOfStream = true;
 		}
 	}
 
@@ -45,6 +42,8 @@ public class PrefetchSound implements ISound {
 	public void initialize() {
 		ByteBuffer data = decoder.fetchAllSoundData();
 		AL10.alBufferData(buffer, decoder.getFormat(), data, decoder.getSampleRate());
+		decoder.close();
+		decoder = null;
 		
 		AL10.alSourcei(source, AL10.AL_BUFFER, buffer);
 

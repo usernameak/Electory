@@ -9,9 +9,9 @@ import org.lwjgl.openal.AL10;
 
 import com.sun.jna.Memory;
 
-import electory.client.audio.StreamingSound;
 import electory.client.audio.modplug.ModPlugLibrary;
 import electory.client.audio.modplug.ModPlugLibrary.ModPlugFile;
+import electory.client.audio.sound.StreamingSound;
 import electory.client.audio.modplug.ModPlug_Settings;
 
 public class ModPlugDecoder extends AudioDecoder {
@@ -26,7 +26,7 @@ public class ModPlugDecoder extends AudioDecoder {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		Memory mem = new Memory(data.length);
 		mem.write(0, data, 0, data.length);
 		ModPlug_Settings settings = new ModPlug_Settings();
@@ -47,7 +47,8 @@ public class ModPlugDecoder extends AudioDecoder {
 	public ByteBuffer fetchSoundData() {
 		Memory mem = new Memory(StreamingSound.STREAMING_BUFFER_SIZE);
 		int readSize = ModPlugLibrary.INSTANCE.ModPlug_Read(modPlugFile, mem, (int) mem.size());
-		if(readSize == 0) endOfStream = true;
+		if (readSize == 0)
+			endOfStream = true;
 		return mem.getByteBuffer(0L, readSize);
 	}
 
@@ -70,6 +71,14 @@ public class ModPlugDecoder extends AudioDecoder {
 	public ByteBuffer fetchAllSoundData() {
 		throw new UnsupportedOperationException();
 	}
-	
-	
+
+	private boolean isClosed = false;
+
+	@Override
+	public void close() {
+		if (!isClosed)
+			ModPlugLibrary.INSTANCE.ModPlug_Unload(modPlugFile);
+		isClosed = true;
+	}
+
 }

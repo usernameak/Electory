@@ -1,4 +1,4 @@
-package electory.client.audio;
+package electory.client.audio.sound;
 
 import java.nio.ByteBuffer;
 
@@ -30,6 +30,7 @@ public class StreamingSound implements ISound {
 	@Override
 	public void update() {
 		if (decoder.isEOF()) {
+			decoder.close();
 			// no more buffers to feed
 			int processed = AL10.alGetSourcei(source, AL10.AL_BUFFERS_PROCESSED);
 			for (int i = 0; i < processed; i++) {

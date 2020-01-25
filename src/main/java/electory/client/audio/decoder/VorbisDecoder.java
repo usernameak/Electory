@@ -15,7 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.lwjgl.openal.AL10;
 
-import electory.client.audio.StreamingSound;
+import electory.client.audio.sound.StreamingSound;
 import lombok.Getter;
 
 public class VorbisDecoder extends AudioDecoder {
@@ -26,13 +26,14 @@ public class VorbisDecoder extends AudioDecoder {
 	@Getter(onMethod = @__(@Override))
 	private int format;
 
+	private AudioInputStream baseStream;
 	private AudioInputStream decodedStream;
 
 	private boolean eof;
 
 	public VorbisDecoder(URL url) {
 		try {
-			AudioInputStream baseStream = AudioSystem.getAudioInputStream(url);
+			this.baseStream = AudioSystem.getAudioInputStream(url);
 			AudioFormat baseFormat = baseStream.getFormat();
 			AudioFormat decodedFormat = new AudioFormat(baseFormat.getSampleRate(), 16, baseFormat.getChannels(), true,
 					ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN);
@@ -100,6 +101,21 @@ public class VorbisDecoder extends AudioDecoder {
 				}
 				baos.write(data, 0, count);
 			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private boolean isClosed = false;
+
+	@Override
+	public void close() {
+		try {
+			if (!isClosed) {
+				decodedStream.close();
+				baseStream.close();
+			}
+			isClosed = true;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -8,4 +8,5 @@ public abstract class AudioDecoder {
 	public abstract int getSampleRate();
 	public abstract int getFormat();
 	public abstract boolean isEOF();
+	public abstract void close();
 }

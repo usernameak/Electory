@@ -1,4 +1,4 @@
-package electory.client.audio;
+package electory.client.audio.sound;
 
 import electory.client.audio.decoder.AudioDecoder;
 
