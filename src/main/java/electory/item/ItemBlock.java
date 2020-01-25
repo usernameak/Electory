@@ -5,12 +5,12 @@ import electory.client.render.item.IItemRenderer;
 
 public class ItemBlock extends Item {
 
-	public ItemBlock(int id) {
-		super(id);
+	public ItemBlock(Block block) {
+		super();
 	}
 	
 	public Block getBlock() {
-		return Block.blockList[itemID];
+		return Block.REGISTRY.get(getRegistryName());
 	}
 
 	@Override

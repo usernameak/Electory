@@ -6,8 +6,8 @@ import electory.utils.EnumSide;
 
 public class BlockGrass extends Block {
 
-	public BlockGrass(int id) {
-		super(id);
+	public BlockGrass() {
+		super();
 		setSpriteName("/img/blocks/grass_top.png");
 	}
 

@@ -4,8 +4,8 @@ import electory.client.render.block.IBlockRenderer;
 
 public class BlockTallGrass extends Block {
 
-	public BlockTallGrass(int id) {
-		super(id);
+	public BlockTallGrass() {
+		super();
 	}
 	
 	@Override

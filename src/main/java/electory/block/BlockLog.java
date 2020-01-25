@@ -9,8 +9,8 @@ import electory.world.World;
 
 public class BlockLog extends Block {
 
-	public BlockLog(int id) {
-		super(id);
+	public BlockLog() {
+		super();
 		setSpriteName("/img/blocks/log_side.png");
 	}
 

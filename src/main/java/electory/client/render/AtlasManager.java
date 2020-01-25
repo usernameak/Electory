@@ -8,7 +8,7 @@ public class AtlasManager {
 	public static IAtlasSpriteManager blockSpriteManager = new AtlasSpriteManagerImplStitch(TextureManager.TERRAIN_TEXTURE);
 	
 	public static void registerAllTerrainSprites() {
-		for(Block block : Block.blockList) {
+		for(Block block : Block.REGISTRY.getAllBlocks()) {
 			if(block != null) {
 				block.registerAtlasSprites(blockSpriteManager);
 			}

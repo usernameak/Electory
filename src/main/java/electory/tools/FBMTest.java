@@ -69,7 +69,7 @@ public class FBMTest extends JFrame {
 		Random rand = new Random();
 		
 		
-		FBM fbm = new FBM(8, rand.nextLong());
+		// FBM fbm = new FBM(8, rand.nextLong());
 		
 		@SuppressWarnings("unused")
 		long seed1 = rand.nextLong();

@@ -62,7 +62,7 @@ public class ItemStack implements IMetaSerializable {
 
 	@Override
 	public void writeToNBT(CompoundTag tag) {
-		tag.putInt("item", item == null ? 0 : item.itemID);
+		tag.putString("item", item == null ? "" : item.getRegistryName());
 		tag.putInt("count", count);
 		if (meta != null) {
 			tag.put("meta", MetaSerializer.serializeObject(meta));
@@ -76,7 +76,8 @@ public class ItemStack implements IMetaSerializable {
 
 	@Override
 	public void readFromNBT(CompoundTag tag) {
-		item = Item.itemList[tag.getInt("item")];
+		String name = tag.getString("item");
+		item = name.isEmpty() ? null : Item.REGISTRY.get(name);
 		count = tag.getInt("count");
 		if (tag.containsKey("meta")) {
 			meta = MetaSerializer.deserializeObject(tag.getCompoundTag("meta"));

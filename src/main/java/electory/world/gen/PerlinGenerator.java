@@ -1,6 +1,6 @@
 package electory.world.gen;
 
-public class PerlinGenerator implements INoiseGenerator {
+public class PerlinGenerator {
 	private long seed;
 	private int octaves;
 	private double lacunarity;
@@ -62,8 +62,7 @@ public class PerlinGenerator implements INoiseGenerator {
 		return (mix(a, b, us) + (c - a) * ut * (1.0 - us) + (d - b) * us * ut);
 	}
 
-	@Override
-	public double generate(double s, double t, double u) {
+	public double generate(double s, double t) {
 		double value = 0;
 		double amplitude = .5;
 		for (int i = 0; i < octaves; i++) {

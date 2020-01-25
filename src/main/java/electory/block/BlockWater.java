@@ -5,8 +5,8 @@ import electory.client.render.world.WorldRenderer;
 
 public class BlockWater extends Block {
 
-	public BlockWater(int id) {
-		super(id);
+	public BlockWater() {
+		super();
 	}
 
 	public byte getSkyLightOpacity() {

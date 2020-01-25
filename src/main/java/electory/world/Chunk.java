@@ -128,7 +128,7 @@ public class Chunk {
 		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
 			return null;
 		}
-		return Block.blockList[blockArray[x + y * 16 + z * 16 * 256]];
+		return world.blockIdRegistry.getBlockById(blockArray[x + y * 16 + z * 16 * 256]);
 	}
 
 	public Block getWorldBlockFast(int x, int y, int z) {
@@ -137,7 +137,7 @@ public class Chunk {
 		if (cx < 0 || y < 0 || cz < 0 || cx >= 16 || y >= 256 || cz >= 16) {
 			return world.getBlockAt(x, y, z);
 		}
-		return Block.blockList[blockArray[cx + y * 16 + cz * 16 * 256]];
+		return world.blockIdRegistry.getBlockById(blockArray[cx + y * 16 + cz * 16 * 256]);
 	}
 
 	public int getSunLightLevelAt(int x, int y, int z) {
@@ -208,7 +208,7 @@ public class Chunk {
 		Lock lock = renderLock.writeLock();
 		lock.lock();
 		try {
-			blockArray[x + y * 16 + z * 16 * 256] = (block == null ? 0 : (short) block.blockID);
+			blockArray[x + y * 16 + z * 16 * 256] = (short) world.blockIdRegistry.getBlockId(block);
 			metaArray[x + y * 16 + z * 16 * 256] = meta;
 			if (block != null && block.isSolid()) {
 				if (heightMap[x * 16 + z] < y) {

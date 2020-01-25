@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.locks.Lock;
 
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -54,6 +52,8 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public IChunkProvider generationChunkProvider = new ChunkGenerator(this, seed);
 	public IChunkProvider chunkProvider = new ChunkProviderSP(this);
+	
+	public BlockIDRegistry blockIdRegistry = new BlockIDRegistry();
 
 	protected EntityPlayer playerToSpawn = null;
 
@@ -93,7 +93,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 		breakBlockWithParticles(x, y, z);
 
-		player.inventory.giveItem(new ItemStack(Item.itemList[block.blockID]));
+		player.inventory.giveItem(new ItemStack(Item.REGISTRY.get(block.getRegistryName())));
 	}
 
 	public void breakBlockWithParticles(int x, int y, int z) {
@@ -257,6 +257,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 			tag.putDouble("spawn_x", spawnPoint.x);
 			tag.putDouble("spawn_y", spawnPoint.y);
 			tag.putDouble("spawn_z", spawnPoint.z);
+			CompoundTag rtag = new CompoundTag();
+			blockIdRegistry.save(rtag);
+			tag.put("block_registry", rtag);
 			NBTUtil.writeTag(tag, new File(getWorldSaveDir(), "world_info.sav"), false);
 		}
 		{
@@ -286,6 +289,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 				CompoundTag tag = (CompoundTag) NBTUtil.readTag(new File(getWorldSaveDir(), "world_info.sav"));
 				seed = tag.getLong("seed");
 				spawnPoint.set(tag.getDouble("spawn_x"), tag.getDouble("spawn_y"), tag.getDouble("spawn_z"));
+				blockIdRegistry.load(tag.getCompoundTag("block_registry"));
 				generationChunkProvider = new ChunkGenerator(this, seed);
 			}
 			{

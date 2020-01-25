@@ -1,19 +1,28 @@
 package electory.item;
 
 import electory.client.render.item.IItemRenderer;
+import electory.utils.IRegistriable;
+import electory.utils.NamedRegistry;
 
-public class Item {
-	public final int itemID;
-	
-	public static Item itemList[] = new Item[32768];
+public class Item implements IRegistriable {
+	public static final NamedRegistry<Item> REGISTRY = new NamedRegistry<>();
+	private String registryName;	
 
-	public Item(int id) {
-		itemList[id] = this;
-		this.itemID = id;
+	public Item() {
 	}
 	
 	public IItemRenderer getRenderer() {
 		return null;
+	}
+
+	@Override
+	public void setRegistryName(String name) {
+		this.registryName = name;
+	}
+
+	@Override
+	public String getRegistryName() {
+		return this.registryName;
 	}
 
 }
