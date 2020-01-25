@@ -145,9 +145,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 		int y2 = (int) Math.ceil(aabbIn.y1);
 		int z2 = (int) Math.ceil(aabbIn.z1);
 		Set<AABB> aabbs = new HashSet<AABB>();
-		for (int x = x1; x <= x2; x++) {
-			for (int y = y1; y <= y2; y++) {
-				for (int z = z1; z <= z2; z++) {
+		for (int x = x1; x < x2; x++) {
+			for (int y = y1; y < y2; y++) {
+				for (int z = z1; z < z2; z++) {
 					Block block = getBlockAt(x, y, z);
 					if (block != null && (!ignorePassable || block.isImpassable())) {
 						aabbs.add(block.getAABB(this, x, y, z, false));
@@ -166,9 +166,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 		int x2 = (int) Math.ceil(aabbIn.x1);
 		int y2 = (int) Math.ceil(aabbIn.y1);
 		int z2 = (int) Math.ceil(aabbIn.z1);
-		for (int x = x1; x <= x2; x++) {
-			for (int y = y1; y <= y2; y++) {
-				for (int z = z1; z <= z2; z++) {
+		for (int x = x1; x < x2; x++) {
+			for (int y = y1; y < y2; y++) {
+				for (int z = z1; z < z2; z++) {
 					Block block = getBlockAt(x, y, z);
 					if (block != null && block.isLiquid()) {
 						return true;

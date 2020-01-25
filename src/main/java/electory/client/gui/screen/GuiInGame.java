@@ -131,6 +131,8 @@ public class GuiInGame extends GuiScreen {
 												+ ")",
 										2,
 										42);
+
+			tc.fontRenderer.drawText(rs, "underwater: " + tc.player.isUnderwater, 2, 58);
 		}
 	}
 
@@ -141,8 +143,8 @@ public class GuiInGame extends GuiScreen {
 				int i = event.getKey() - GLFW.GLFW_KEY_1;
 				tc.player.inventory.setSelectedSlot(i);
 			} else if (event.getKey() == GLFW.GLFW_KEY_F12) {
-				TinyCraft
-						.getInstance().worldRenderer.wireframeEnabled = !TinyCraft.getInstance().worldRenderer.wireframeEnabled;
+				TinyCraft.getInstance().worldRenderer.wireframeEnabled = !TinyCraft
+						.getInstance().worldRenderer.wireframeEnabled;
 			} else if (event.getKey() == GLFW.GLFW_KEY_F2) {
 				try {
 					TinyCraft.getInstance().world.save();
@@ -153,7 +155,7 @@ public class GuiInGame extends GuiScreen {
 				tc.openGui(new GuiPause(tc));
 			} else if (event.getKey() == GuiConsole.KEY_TILDE) {
 				tc.openGui(tc.console.gui);
-			} else if(event.getKey() == GLFW.GLFW_KEY_E) {
+			} else if (event.getKey() == GLFW.GLFW_KEY_E) {
 				tc.openGui(new GuiPlayerInventory(tc));
 			}
 		}

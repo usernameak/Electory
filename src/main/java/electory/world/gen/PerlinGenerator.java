@@ -17,7 +17,7 @@ public class PerlinGenerator {
 		x ^= x >> 12; // a
 		x ^= x << 25; // b
 		x ^= x >> 27; // c
-		return (x * 0x2545F4914F6CDD1DL) ^ 0x132485746548574EL;
+		return (x * 0x2545F4914F6CDD1DL) ^ 0x7ffffe24dbaed607L;//0x132485746548574EL;
 	}
 
 	private long xorshift64star_(long x) {
