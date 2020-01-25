@@ -11,11 +11,10 @@ import com.sun.jna.Memory;
 
 import electory.client.audio.modplug.ModPlugLibrary;
 import electory.client.audio.modplug.ModPlugLibrary.ModPlugFile;
-import electory.client.audio.sound.StreamingSound;
 import electory.client.audio.modplug.ModPlug_Settings;
+import electory.client.audio.sound.StreamingSound;
 
 public class ModPlugDecoder extends AudioDecoder {
-	private URL url;
 	private ModPlugFile modPlugFile;
 	private boolean endOfStream;
 
