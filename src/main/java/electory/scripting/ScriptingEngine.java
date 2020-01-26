@@ -3,6 +3,7 @@ package electory.scripting;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.Lua;
@@ -24,7 +25,7 @@ public class ScriptingEngine {
 	
 	public void runScript(String path) throws IOException {
 		InputStream is = getClass().getResourceAsStream(path);
-		InputStreamReader isr = new InputStreamReader(is);
+		InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
 		LuaValue chunk = globals.load(isr, path);
 		chunk.call();
 		isr.close();

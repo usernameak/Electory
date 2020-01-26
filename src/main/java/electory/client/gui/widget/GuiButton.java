@@ -1,7 +1,7 @@
 package electory.client.gui.widget;
 
-import electory.client.KeyEvent;
 import electory.client.TinyCraft;
+import electory.client.event.KeyEvent;
 import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 

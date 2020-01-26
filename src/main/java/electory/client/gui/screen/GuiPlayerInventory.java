@@ -2,8 +2,8 @@ package electory.client.gui.screen;
 
 import org.lwjgl.glfw.GLFW;
 
-import electory.client.KeyEvent;
 import electory.client.TinyCraft;
+import electory.client.event.KeyEvent;
 import electory.client.gui.widget.GuiColumnLayout;
 import electory.client.gui.widget.GuiRootContainer;
 import electory.client.gui.widget.GuiRootContainer.Position;

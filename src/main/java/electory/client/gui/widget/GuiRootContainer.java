@@ -5,9 +5,9 @@ import java.awt.Point;
 
 import org.lwjgl.opengl.GL11;
 
-import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
+import electory.client.event.KeyEvent;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;
 import electory.client.render.Tessellator;

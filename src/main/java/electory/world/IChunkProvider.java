@@ -6,7 +6,16 @@ import java.util.Iterator;
 import com.koloboke.collect.map.LongObjMap;
 
 public interface IChunkProvider {
-	Chunk loadChunk(int cx, int cy);
+	default void loadChunk(int cx, int cy) {
+		loadChunkSynchronously(cx, cy);
+	}
+	
+	default void update() {
+	}
+	
+	default boolean isLoading(int cx, int cy) {
+		return false;
+	}
 
 	Chunk provideChunk(int cx, int cy);
 
@@ -29,4 +38,6 @@ public interface IChunkProvider {
 	void unloadChunk(Chunk chunk, Iterator<Chunk> it, boolean doSave);
 
 	void coldUnloadAllChunks();
+
+	Chunk loadChunkSynchronously(int cx, int cy);
 }

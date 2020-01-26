@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
+import electory.client.event.KeyEvent;
 import electory.client.gui.GuiRenderState;
 
 public class GuiRowLayout extends GuiWidget {

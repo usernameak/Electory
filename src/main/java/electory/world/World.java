@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -37,7 +38,7 @@ import electory.world.gen.ChunkGenerator;
 public abstract class World implements IChunkSaveStatusHandler {
 	private Set<Entity> entities = new HashSet<>();
 
-	public long seed = 0L;// ThreadLocalRandom.current().nextLong();
+	public long seed = ThreadLocalRandom.current().nextLong();
 
 	public Random random = new Random(seed);
 
@@ -52,7 +53,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public IChunkProvider generationChunkProvider = new ChunkGenerator(this, seed);
 	public IChunkProvider chunkProvider = new ChunkProviderSP(this);
-	
+
 	public BlockIDRegistry blockIdRegistry = new BlockIDRegistry();
 
 	protected EntityPlayer playerToSpawn = null;
@@ -190,6 +191,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 	protected abstract Collection<EntityPlayer> getPlayers();
 
 	private void chunkLoadingTick() {
+		chunkProvider.update();
+		generationChunkProvider.update();
+		
 		HashLongSet chunksToLoad = HashLongSets.newMutableSet();
 		for (EntityPlayer player : getPlayers()) {
 			Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f)
@@ -208,13 +212,14 @@ public abstract class World implements IChunkSaveStatusHandler {
 		chunksToLoad.removeAll(chunkProvider.getLoadedChunkMap().keySet());
 		{
 			LongCursor it = chunksToLoad.cursor();
-			int needsLoadNext = 1;
+			int needsLoadNext = Integer.MAX_VALUE;
 			while (!checkSpawnAreaLoaded() || needsLoadNext > 0) {
 				needsLoadNext--;
 				if (it.moveNext()) {
 					long cpos = it.elem();
-					if (chunkProvider.canLoadChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L))) {
-						chunkProvider.loadChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L));
+					int cx = (int) (cpos & 4294967295L), cz = (int) ((cpos >> 32) & 4294967295L);
+					if (!chunkProvider.isLoading(cx, cz) && chunkProvider.canLoadChunk(cx, cz)) {
+						chunkProvider.loadChunk(cx, cz);
 					} else {
 						needsLoadNext++;
 					}
@@ -363,7 +368,8 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public void playSFX(String path, float x, float y, float z, float radius, boolean loop) {
 		TinyCraft.getInstance().soundManager
-				.play("world;" + path, new AudioSource(path).setPosition(new Vector3f(x, y, z)).setRadius(radius).setLooping(loop));
+				.play(	"world;" + path,
+						new AudioSource(path).setPosition(new Vector3f(x, y, z)).setRadius(radius).setLooping(loop));
 	}
 
 	public <T> T getBlockMetadataAt(int x, int y, int z) {

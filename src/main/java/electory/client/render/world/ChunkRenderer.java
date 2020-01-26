@@ -18,6 +18,7 @@ import electory.client.render.TriangleBuffer;
 import electory.client.render.shader.DefaultProgram;
 import electory.client.render.shader.ShaderManager;
 import electory.client.render.texture.TextureManager;
+import electory.profiling.ElectoryProfiler;
 import electory.world.Chunk;
 
 public class ChunkRenderer {
@@ -234,8 +235,11 @@ public class ChunkRenderer {
 				});
 			} else {
 				for (int i = 0; i < vbos.length; i++) {
+					ElectoryProfiler.INSTANCE.begin("chunk_gpu_upload");
 					GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbos[i]);
 					GL15.glBufferData(GL15.GL_ARRAY_BUFFER, sentBuffers[i].getBuffer(), GL15.GL_DYNAMIC_DRAW);
+					ElectoryProfiler.INSTANCE.end("chunk_gpu_upload");
+					// System.out.println("updating buffer took " + (endTime - startTime) + " nanoseconds");
 				}
 				sentBuffers = null;
 				needsUpdate = false;

@@ -35,6 +35,7 @@ import org.lwjgl.opengl.GL20;
 import electory.client.audio.AudioSource;
 import electory.client.audio.SoundManager;
 import electory.client.console.Console;
+import electory.client.event.KeyEvent;
 import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;
@@ -52,6 +53,7 @@ import electory.entity.EntityPlayer;
 import electory.event.ElectoryInitEvent;
 import electory.event.EventRegistry;
 import electory.event.EventType;
+import electory.event.HandleEvent;
 import electory.nbt.ShortArrayTag;
 import electory.scripting.ScriptingEngine;
 import electory.utils.CrashException;
@@ -142,10 +144,18 @@ public class TinyCraft {
 	public static String getVersion() {
 		return version;
 	}
+	
+	public void initEvents() {
+		eventRegistry.registerEventType(new EventType("init", ElectoryInitEvent.class));
+		eventRegistry.registerEventType(new EventType("key_event", KeyEvent.class));
+		
+		eventRegistry.registerHandler(this);
+	}
 
 	public void start() {
-		initLogging();
 		try {
+			initLogging();
+			initEvents();
 			initRenderer();
 			initGame();
 			initConsole();
@@ -199,6 +209,7 @@ public class TinyCraft {
 
 	public void showCrashReport(CrashException exception) {
 		logger.log(Level.SEVERE, "Crash report", exception);
+		exception.printStackTrace();
 
 		try {
 			GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
@@ -248,7 +259,8 @@ public class TinyCraft {
 		}
 	}
 
-	private void onKeyEvent(KeyEvent event) {
+	@HandleEvent
+	public void onKeyEvent(KeyEvent event) {
 		if (currentGui == null) {
 			if (player != null && !isPaused()) {
 				theHUD.handleKeyEvent(event);
@@ -296,8 +308,8 @@ public class TinyCraft {
 		GLFW.glfwSetKeyCallback(window, new GLFWKeyCallbackI() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
-				KeyEvent event = new KeyEvent(key, action != GLFW.GLFW_RELEASE, '\0');
-				onKeyEvent(event);
+				KeyEvent event = new KeyEvent(key, action != GLFW.GLFW_RELEASE);
+				eventRegistry.emit(event);
 			}
 		});
 
@@ -366,7 +378,6 @@ public class TinyCraft {
 
 	public void initGame() {
 
-		eventRegistry.registerEventType(new EventType("init", ElectoryInitEvent.class));
 		logger.info("Initializing script engine");
 		scriptingEngine = new ScriptingEngine();
 		try {

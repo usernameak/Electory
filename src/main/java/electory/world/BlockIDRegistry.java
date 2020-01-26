@@ -2,8 +2,6 @@ package electory.world;
 
 import java.util.Map;
 
-import com.koloboke.collect.map.hash.HashIntObjMap;
-import com.koloboke.collect.map.hash.HashIntObjMaps;
 import com.koloboke.collect.map.hash.HashObjIntMap;
 import com.koloboke.collect.map.hash.HashObjIntMaps;
 
@@ -13,7 +11,7 @@ import electory.nbt.IntTag;
 import electory.nbt.Tag;
 
 public class BlockIDRegistry {
-	private HashIntObjMap<Block> idToBlock = HashIntObjMaps.newMutableMap();
+	private Block[] idToBlock = new Block[32768];
 	private HashObjIntMap<Block> blockToId = HashObjIntMaps.newMutableMap();
 	private int nextId = 1;
 
@@ -24,7 +22,7 @@ public class BlockIDRegistry {
 			return blockToId.getInt(block);
 		}
 		int id = nextId++;
-		idToBlock.put(id, block);
+		idToBlock[id] = block;
 		blockToId.put(block, id);
 		return id;
 	}
@@ -32,8 +30,8 @@ public class BlockIDRegistry {
 	public Block getBlockById(int id) {
 		if (id == 0)
 			return null;
-		if (idToBlock.containsKey(id)) {
-			return idToBlock.get(id);
+		if (idToBlock[id] != null) {
+			return idToBlock[id];
 		}
 		throw new IllegalArgumentException("no block id " + id);
 	}
@@ -45,7 +43,9 @@ public class BlockIDRegistry {
 	}
 
 	public void load(CompoundTag compoundTag) {
-		idToBlock.clear();
+		for(int i = 0; i < idToBlock.length; i++) {
+			idToBlock[i] = null;
+		}
 		blockToId.clear();
 		for (Map.Entry<String, Tag<?>> entry : compoundTag.entrySet()) {
 			String blockName = entry.getKey();
@@ -54,7 +54,7 @@ public class BlockIDRegistry {
 			if (id + 1 > nextId) {
 				nextId = id + 1;
 			}
-			idToBlock.put(id, block);
+			idToBlock[id] = block;
 			blockToId.put(block, id);
 		}
 	}

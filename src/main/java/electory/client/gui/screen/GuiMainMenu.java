@@ -4,9 +4,9 @@ import java.awt.Color;
 
 import org.lwjgl.glfw.GLFW;
 
-import electory.client.KeyEvent;
 import electory.client.TinyCraft;
 import electory.client.audio.AudioSource;
+import electory.client.event.KeyEvent;
 import electory.client.gui.IActionListener;
 import electory.client.gui.widget.GuiColumnLayout;
 import electory.client.gui.widget.GuiMenuButton;

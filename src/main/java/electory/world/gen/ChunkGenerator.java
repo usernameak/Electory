@@ -29,7 +29,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public Chunk loadChunk(int cx, int cy) {
+	public Chunk loadChunkSynchronously(int cx, int cy) {
 		VoronoiGenerator gen = new VoronoiGenerator(seed ^ 0x1337L, 128);
 		PerlinGenerator pgen = new PerlinGenerator(seed ^ 0xCAFEBABE, 8, 3, 0.5);
 		PerlinGenerator rgen = new PerlinGenerator(seed ^ 0xDEADBEEF, 6, 2, 0.5);
@@ -155,5 +155,10 @@ public class ChunkGenerator implements IChunkProvider {
 	@Override
 	public LongObjMap<Chunk> getLoadedChunkMap() {
 		return null;
+	}
+
+	@Override
+	public void loadChunk(int cx, int cy) {
+		throw new UnsupportedOperationException();
 	}
 }

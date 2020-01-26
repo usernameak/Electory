@@ -1,8 +1,8 @@
 package electory.client.gui.screen;
 
-import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
+import electory.client.event.KeyEvent;
 import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;

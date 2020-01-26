@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.lwjgl.glfw.GLFW;
 
-import electory.client.KeyEvent;
 import electory.client.TinyCraft;
+import electory.client.event.KeyEvent;
 import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.IActionListener;
@@ -79,10 +79,10 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 					}
 				}
 				break;
-			default:
+			/*default:
 				if (event.getKeyChar() != '\0') {
 					consoleInputString += event.getKeyChar();
-				}
+				}*/
 			}
 		}
 

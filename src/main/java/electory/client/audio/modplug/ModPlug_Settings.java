@@ -1,8 +1,5 @@
 package electory.client.audio.modplug;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;

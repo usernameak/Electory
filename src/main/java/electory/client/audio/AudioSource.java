@@ -1,7 +1,5 @@
 package electory.client.audio;
 
-import java.net.URL;
-
 import org.joml.Vector3f;
 
 import lombok.Data;

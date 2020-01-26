@@ -1,7 +1,5 @@
 package electory.world.gen;
 
-import java.util.Random;
-
 public class VoronoiGenerator {
 	private long seed;
 	private int cellSize;

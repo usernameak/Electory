@@ -26,4 +26,8 @@ public class EventType {
 	public void emit(IEvent event) {
 		handlers.forEach(h -> h.invoke(event));
 	}
+
+	public void unregisterHandler(IEventHandler handler) {
+		handlers.remove(handler);
+	}
 }

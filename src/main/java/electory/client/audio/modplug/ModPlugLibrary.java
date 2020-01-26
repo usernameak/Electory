@@ -12,7 +12,6 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 
 /**
  * JNA Wrapper for library <b>ModPlug</b><br>

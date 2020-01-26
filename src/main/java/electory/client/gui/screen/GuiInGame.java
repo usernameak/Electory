@@ -1,6 +1,7 @@
 package electory.client.gui.screen;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.joml.Matrix4d;
 import org.joml.Vector3d;
@@ -8,14 +9,15 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
-import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
+import electory.client.event.KeyEvent;
 import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 import electory.client.render.Tessellator;
 import electory.client.render.shader.ShaderManager;
 import electory.item.ItemStack;
+import electory.profiling.ElectoryProfiler;
 
 public class GuiInGame extends GuiScreen {
 
@@ -133,6 +135,11 @@ public class GuiInGame extends GuiScreen {
 										42);
 
 			tc.fontRenderer.drawText(rs, "snd: " + tc.soundManager.numPlayingSounds(), 2, 58);
+		}
+		int y = 66;
+		for(Map.Entry<String, Long> entry : ElectoryProfiler.INSTANCE.getTimes().entrySet()) {
+			tc.fontRenderer.drawText(rs, String.format("%-20s: %dns", entry.getKey(), entry.getValue()), 2, y);
+			y += 8;
 		}
 	}
 

@@ -1,8 +1,7 @@
 package electory.inventory;
 
-import electory.item.ItemStack;
-
 import electory.entity.EntityPlayer;
+import electory.item.ItemStack;
 
 public enum SlotClickAction {
 	CLICK_ALL {

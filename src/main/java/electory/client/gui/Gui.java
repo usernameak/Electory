@@ -1,8 +1,8 @@
 package electory.client.gui;
 
-import electory.client.KeyEvent;
 import electory.client.MouseEvent;
 import electory.client.TinyCraft;
+import electory.client.event.KeyEvent;
 
 public abstract class Gui {
 	protected final TinyCraft tc;
