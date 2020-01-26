@@ -38,6 +38,10 @@ public class SoundManager {
 	private long alContext;
 	private long device;
 
+	public int numPlayingSounds() {
+		return streaming.size();
+	}
+
 	public void init() {
 		device = ALC10.alcOpenDevice((CharSequence) null);
 		ALCCapabilities alcCaps = ALC.createCapabilities(device);
@@ -134,13 +138,15 @@ public class SoundManager {
 			sound = new PrefetchSound();
 		}
 
+		sound.setLooping(data.isLooping());
+
 		AudioDecoder decoder;
 		URL url = getClass().getResource(realPath);
 
 		String upath = url.getPath();
 		String ext = upath.substring(upath.lastIndexOf('.') + 1);
 		try {
-			decoder = decoders.get(ext).getConstructor(URL.class).newInstance(url);
+			decoder = decoders.get(ext).getConstructor(URL.class, boolean.class).newInstance(url, data.isLooping());
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			throw new RuntimeException(e);

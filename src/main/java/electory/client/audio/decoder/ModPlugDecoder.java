@@ -17,8 +17,12 @@ import electory.client.audio.sound.StreamingSound;
 public class ModPlugDecoder extends AudioDecoder {
 	private ModPlugFile modPlugFile;
 	private boolean endOfStream;
+	private URL url;
+	private boolean looping;
 
-	public ModPlugDecoder(URL url) {
+	public ModPlugDecoder(URL url, boolean looping) {
+		this.url = url;
+		this.looping = looping;
 		byte[] data;
 		try {
 			data = IOUtils.toByteArray(url);
@@ -36,7 +40,7 @@ public class ModPlugDecoder extends AudioDecoder {
 		settings.mResamplingMode = ModPlugLibrary._ModPlug_ResamplingMode.MODPLUG_RESAMPLE_LINEAR;
 		settings.mStereoSeparation = 32;
 		settings.mMaxMixChannels = 256;
-		settings.mLoopCount = -1;
+		settings.mLoopCount = looping ? -1 : 0;
 		ModPlugLibrary.INSTANCE.ModPlug_SetSettings(settings);
 		this.modPlugFile = ModPlugLibrary.INSTANCE.ModPlug_Load(mem, (int) mem.size());
 		endOfStream = false;
@@ -48,6 +52,10 @@ public class ModPlugDecoder extends AudioDecoder {
 		int readSize = ModPlugLibrary.INSTANCE.ModPlug_Read(modPlugFile, mem, (int) mem.size());
 		if (readSize == 0)
 			endOfStream = true;
+		if (hasReset && readSize == 0) {
+			throw new IllegalStateException();
+		}
+		hasReset = false;
 		return mem.getByteBuffer(0L, readSize);
 	}
 
@@ -72,6 +80,7 @@ public class ModPlugDecoder extends AudioDecoder {
 	}
 
 	private boolean isClosed = false;
+	private boolean hasReset = false;
 
 	@Override
 	public void close() {
@@ -80,4 +89,14 @@ public class ModPlugDecoder extends AudioDecoder {
 		isClosed = true;
 	}
 
+	@Override
+	public AudioDecoder clone() {
+		return new ModPlugDecoder(url, this.looping);
+	}
+/*
+	@Override
+	public void advancedReset() {
+		endOfStream = false;
+		hasReset = true;
+	}*/ // FIXME: loop points
 }

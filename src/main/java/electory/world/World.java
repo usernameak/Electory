@@ -361,9 +361,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 		}
 	}
 
-	public void playSFX(String path, float x, float y, float z, float radius) {
+	public void playSFX(String path, float x, float y, float z, float radius, boolean loop) {
 		TinyCraft.getInstance().soundManager
-				.play("world;" + path, new AudioSource(path).setPosition(new Vector3f(x, y, z)).setRadius(radius));
+				.play("world;" + path, new AudioSource(path).setPosition(new Vector3f(x, y, z)).setRadius(radius).setLooping(loop));
 	}
 
 	public <T> T getBlockMetadataAt(int x, int y, int z) {

@@ -29,7 +29,8 @@ public class VorbisDecoder extends AudioDecoder {
 
 	private boolean eof;
 
-	public VorbisDecoder(URL url) {
+	public VorbisDecoder(URL url, boolean looping) {
+		this.url = url;
 		try {
 			this.baseStream = AudioSystem.getAudioInputStream(url);
 			AudioFormat baseFormat = baseStream.getFormat();
@@ -106,6 +107,8 @@ public class VorbisDecoder extends AudioDecoder {
 
 	private boolean isClosed = false;
 
+	private URL url;
+
 	@Override
 	public void close() {
 		try {
@@ -119,4 +122,8 @@ public class VorbisDecoder extends AudioDecoder {
 		}
 	}
 
+	@Override
+	public AudioDecoder clone() {
+		return new ModPlugDecoder(url, false);
+	}
 }

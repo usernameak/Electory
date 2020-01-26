@@ -132,7 +132,7 @@ public class GuiInGame extends GuiScreen {
 										2,
 										42);
 
-			tc.fontRenderer.drawText(rs, "underwater: " + tc.player.isUnderwater, 2, 58);
+			tc.fontRenderer.drawText(rs, "snd: " + tc.soundManager.numPlayingSounds(), 2, 58);
 		}
 	}
 

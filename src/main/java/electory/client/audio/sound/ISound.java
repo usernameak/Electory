@@ -8,5 +8,6 @@ public interface ISound {
 	void destroy();
 	void setDecoder(AudioDecoder decoder);
 	void setSource(int source);
+	void setLooping(boolean looping);
 	boolean isEndOfStream();
 }

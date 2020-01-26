@@ -13,6 +13,8 @@ public class AudioSource {
 	private boolean streaming = false;
 	
 	private boolean ambient = false;
+	
+	private boolean looping = false;
 
 	private String path;
 	

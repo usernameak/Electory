@@ -14,6 +14,9 @@ public class PrefetchSound implements ISound {
 
 	@Setter(onMethod = @__(@Override))
 	private AudioDecoder decoder;
+	
+	@Setter(onMethod = @__(@Override))
+	private boolean looping;
 
 	private int buffer = 0;
 
@@ -27,7 +30,11 @@ public class PrefetchSound implements ISound {
 	@Override
 	public void update() {
 		if (AL10.alGetSourcei(source, AL10.AL_SOURCE_STATE) != AL10.AL_PLAYING) {
-			this.endOfStream = true;
+			if(looping) {
+				AL10.alSourcePlay(source);
+			} else {
+				this.endOfStream = true;
+			}
 		}
 	}
 
