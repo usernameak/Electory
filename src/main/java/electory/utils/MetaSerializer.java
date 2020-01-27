@@ -1,10 +1,31 @@
 package electory.utils;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.invoke.CallSite;
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.Optional;
 
 import electory.nbt.CompoundTag;
 
 public abstract class MetaSerializer {
+	@FunctionalInterface
+	public interface ConstructorSerializer {
+		IMetaSerializable get();
+	}
+	private static final MethodType INVOKED = MethodType.methodType(IMetaSerializable.class);
+	private static final MethodType NOARGS_CONSTRUCTOR = MethodType.methodType(void.class);
+	private static final ClassValue<Optional<ConstructorSerializer>> SERIALIZABLE_GETTER = new ClassValue<Optional<ConstructorSerializer>>() {
+		@Override
+	    protected Optional<ConstructorSerializer> computeValue(Class<?> type) {
+			try {
+				MethodHandle construtor = MethodHandles.publicLookup().findConstructor(type, NOARGS_CONSTRUCTOR);
+				return Optional.of(((ConstructorSerializer)LambdaMetafactory.metafactory(MethodHandles.publicLookup(), "get", INVOKED, construtor.type(), construtor, construtor.type()).getTarget().invokeExact()));
+			} catch (Throwable e) { }
+			return Optional.empty();
+		}
+	};
 	private MetaSerializer() {
 	}
 
@@ -42,16 +63,9 @@ public abstract class MetaSerializer {
 		if (Enum.class.isAssignableFrom(clazz)) {
 			return Enum.valueOf((Class<? extends Enum>) clazz, tag.getString("EnumValue"));
 		} else if (IMetaSerializable.class.isAssignableFrom(clazz)) {
-			IMetaSerializable meta;
-			try {
-				// TODO to method handles!!!ы
-				meta = ((IMetaSerializable)clazz.getDeclaredConstructor().newInstance());
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
-				return null;
-			}
-			meta.readFromNBT(tag);
-			return meta;
+			Optional<IMetaSerializable> meta = SERIALIZABLE_GETTER.get(clazz).map(e -> e.get());
+			meta.ifPresent(e -> e.readFromNBT(tag));
+			return meta.orElse(null);
 		}
 		return null;
 	}
