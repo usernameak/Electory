@@ -1,6 +1,7 @@
 package electory.network.packet;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import com.koloboke.collect.map.IntObjMap;
 import com.koloboke.collect.map.ObjIntMap;
@@ -11,18 +12,18 @@ import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
 
 public abstract class Packet {
-	private static IntObjMap<Class<? extends Packet>> registeredPackets = HashIntObjMaps.newMutableMap();
-	private static ObjIntMap<Class<? extends Packet>> registeredPacketIDs = HashObjIntMaps.newMutableMap();
+	private static IntObjMap<Supplier<? extends Packet>> registeredPackets = HashIntObjMaps.newMutableMap();
+	private static ObjIntMap<Supplier<? extends Packet>> registeredPacketIDs = HashObjIntMaps.newMutableMap();
 
 	public static int getPacketId(Class<? extends Packet> packet) {
 		return registeredPacketIDs.getInt(packet);
 	}
 
-	public static Class<? extends Packet> getPacketById(int id) {
+	public static Supplier<? extends Packet> getPacketById(int id) {
 		return registeredPackets.get(id);
 	}
 
-	protected static void registerPacket(int packetId, Class<? extends Packet> packet) {
+	protected static void registerPacket(int packetId, Supplier<? extends Packet> packet) {
 		registeredPackets.put(packetId, packet);
 		registeredPacketIDs.put(packet, packetId);
 	}
@@ -31,6 +32,6 @@ public abstract class Packet {
 	public abstract void readFromPacketBuffer(ArrayDataInput adi) throws IOException;
 
 	static {
-		registerPacket(0, S00ServerHandshake.class);
+		registerPacket(0, S00ServerHandshake::new);
 	}
 }

@@ -45,10 +45,10 @@ public class ServerNetworkHandler {
 						terminateConnection();
 						return;
 					}
-					Packet packet = Packet.getPacketById(packetId).newInstance();
+					Packet packet = Packet.getPacketById(packetId).get();
 					packet.readFromPacketBuffer(inputStream);
 					recvQueue.add(packet);
-				} catch (IOException | InstantiationException | IllegalAccessException e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 					return;
 				}

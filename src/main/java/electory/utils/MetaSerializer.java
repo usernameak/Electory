@@ -1,11 +1,11 @@
 package electory.utils;
 
+import java.lang.reflect.InvocationTargetException;
+
 import electory.nbt.CompoundTag;
 
 public abstract class MetaSerializer {
-
 	private MetaSerializer() {
-
 	}
 
 	public static CompoundTag serializeObject(Object object) {
@@ -44,8 +44,9 @@ public abstract class MetaSerializer {
 		} else if (IMetaSerializable.class.isAssignableFrom(clazz)) {
 			IMetaSerializable meta;
 			try {
-				meta = ((IMetaSerializable)clazz.newInstance());
-			} catch (InstantiationException | IllegalAccessException e) {
+				// TODO to method handles!!!ы
+				meta = ((IMetaSerializable)clazz.getDeclaredConstructor().newInstance());
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 				return null;
 			}
