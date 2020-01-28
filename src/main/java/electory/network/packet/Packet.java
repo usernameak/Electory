@@ -1,6 +1,11 @@
 package electory.network.packet;
 
 import java.io.IOException;
+import java.lang.invoke.LambdaMetafactory;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.koloboke.collect.map.IntObjMap;
@@ -12,18 +17,35 @@ import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
 
 public abstract class Packet {
-	private static IntObjMap<Supplier<? extends Packet>> registeredPackets = HashIntObjMaps.newMutableMap();
-	private static ObjIntMap<Supplier<? extends Packet>> registeredPacketIDs = HashObjIntMaps.newMutableMap();
+	private static IntObjMap<Class<? extends Packet>> registeredPackets = HashIntObjMaps.newMutableMap();
+	private static ObjIntMap<Class<? extends Packet>> registeredPacketIDs = HashObjIntMaps.newMutableMap();
 
 	public static int getPacketId(Class<? extends Packet> packet) {
 		return registeredPacketIDs.getInt(packet);
 	}
 
-	public static Supplier<? extends Packet> getPacketById(int id) {
-		return registeredPackets.get(id);
+	@FunctionalInterface
+	public interface ConstructorSerializer extends Supplier<Packet> {
+		Packet get();
+	}
+	private static final MethodType INVOKED = MethodType.methodType(Packet.class);
+	private static final MethodType NOARGS_CONSTRUCTOR = MethodType.methodType(void.class);
+	private static final ClassValue<Optional<ConstructorSerializer>> PACKET_GETTER = new ClassValue<Optional<ConstructorSerializer>>() {
+		@Override
+	    protected Optional<ConstructorSerializer> computeValue(Class<?> type) {
+			try {
+				MethodHandle construtor = MethodHandles.publicLookup().findConstructor(type, NOARGS_CONSTRUCTOR);
+				return Optional.of(((ConstructorSerializer)LambdaMetafactory.metafactory(MethodHandles.publicLookup(), "get", INVOKED, construtor.type(), construtor, construtor.type()).getTarget().invokeExact()));
+			} catch (Throwable e) { }
+			return Optional.empty();
+		}
+	};
+
+	public static Supplier<Packet> getPacketById(int id) {
+		return PACKET_GETTER.get(registeredPackets.get(id)).orElse(null);
 	}
 
-	protected static void registerPacket(int packetId, Supplier<? extends Packet> packet) {
+	protected static void registerPacket(int packetId, Class<? extends Packet> packet) {
 		registeredPackets.put(packetId, packet);
 		registeredPacketIDs.put(packet, packetId);
 	}
@@ -32,6 +54,6 @@ public abstract class Packet {
 	public abstract void readFromPacketBuffer(ArrayDataInput adi) throws IOException;
 
 	static {
-		registerPacket(0, S00ServerHandshake::new);
+		registerPacket(0, S00ServerHandshake.class);
 	}
 }
