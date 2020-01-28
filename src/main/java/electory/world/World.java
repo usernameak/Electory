@@ -200,8 +200,8 @@ public abstract class World implements IChunkSaveStatusHandler {
 					: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
 			int startX = (((int) ppos.x) >> 4) - CHUNKLOAD_DISTANCE;
 			int startZ = (((int) ppos.z) >> 4) - CHUNKLOAD_DISTANCE;
-			for (int x = startX; x < startX + CHUNKLOAD_DISTANCE2; x++) {
-				for (int z = startZ; z < startZ + CHUNKLOAD_DISTANCE2; z++) {
+			for (int x = startX; x <= startX + CHUNKLOAD_DISTANCE2; x++) {
+				for (int z = startZ; z <= startZ + CHUNKLOAD_DISTANCE2; z++) {
 					chunksToLoad.add(ChunkPosition.createLong(x, z));
 				}
 			}

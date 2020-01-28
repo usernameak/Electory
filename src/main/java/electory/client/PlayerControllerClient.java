@@ -27,7 +27,7 @@ public class PlayerControllerClient implements IPlayerController {
 
 		movementMatrix.rotate((float) deg2rad(-player.yaw), 0.0f, 1.0f, 0.0f);
 
-		float movementSpeed = player.isUnderwater ? 0.25f : (player.onGround ? 0.3f : 0.2f);
+		// float movementSpeed = player.isUnderwater ? 0.25f : (player.onGround ? 0.3f : 0.2f);
 
 		if (GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
 			movementVector.add(0.0f, 0.0f, 1.0f);
@@ -46,7 +46,7 @@ public class PlayerControllerClient implements IPlayerController {
 		}
 
 		if (movementVector.lengthSquared() != 0f) {
-			movementVector.normalize().mul(movementSpeed);
+			movementVector.normalize();//.mul(movementSpeed);
 		}
 
 		movementMatrix.transformDirection(movementVector);

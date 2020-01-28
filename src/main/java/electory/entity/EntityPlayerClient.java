@@ -18,7 +18,7 @@ public class EntityPlayerClient extends EntityPlayer {
 				.add(	0f,
 						TinyCraft.getInstance().currentGui == null
 								&& GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS
-								&& (onGround || isUnderwater) ? (isUnderwater ? 0.006f : 0.512f) : 0f,
+								&& (onGround || isUnderwater) ? (isUnderwater ? 0.128f : 0.512f) : 0f,
 						0f);
 	}
 }

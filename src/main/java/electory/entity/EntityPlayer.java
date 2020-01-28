@@ -35,7 +35,10 @@ public abstract class EntityPlayer extends EntityLiving {
 			playerController.doMovement(this, movementVector);
 		}
 		
-		moveClipped(movementVector.x, movementVector.y, movementVector.z);
+		movementVector.mul(onGround ? 0.5f : 0.3f);
+		
+		// moveClipped(movementVector.x, movementVector.y, movementVector.z);
+		this.velocity.add(movementVector);
 		
 		super.update();
 	}

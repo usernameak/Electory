@@ -31,12 +31,6 @@ float smoothstep2(float edge0, float edge1, float x) {
 }
 
 void main() {
-    // depth init
-
-	float depth = texture2D(depth_texture, vTexCoord).r;
-	float zDist = (zNear * zFar) / (zFar - depth * (zFar - zNear));
-	float opaquedepth = texture2D(opaque_depth_texture, vTexCoord).r;
-	float opaqueZDist = (zNear * zFar) / (zFar - opaquedepth * (zFar - zNear));
 	
 	// water effects
 	
@@ -54,11 +48,18 @@ void main() {
 	
 	vec4 fc = texture2D(texture, tTexCoord) * vColor;
 	
+    // depth init
+
+	float depth = texture2D(depth_texture, tTexCoord).r;
+	float zDist = (zNear * zFar) / (zFar - depth * (zFar - zNear));
+	float opaquedepth = texture2D(opaque_depth_texture, tTexCoord).r;
+	float opaqueZDist = (zNear * zFar) / (zFar - opaquedepth * (zFar - zNear));
+	
 	// world fog
 	
 	float worldZDist = zDist;
 	if(isSubmergedUnderwater) {
-		if(texture2D(watermask_texture, vTexCoord).g > 0.5) {
+		if(texture2D(watermask_texture, tTexCoord).g > 0.5) {
 			worldZDist = opaqueZDist - zDist;
 		} else {
 			worldZDist = 0;
