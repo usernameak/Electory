@@ -7,8 +7,10 @@ import java.lang.invoke.MethodType;
 import java.util.Optional;
 
 import electory.nbt.CompoundTag;
+import electory.obf.Keep;
 
 public abstract class MetaSerializer {
+	@Keep
 	@FunctionalInterface
 	public interface ConstructorSerializer {
 		IMetaSerializable get();

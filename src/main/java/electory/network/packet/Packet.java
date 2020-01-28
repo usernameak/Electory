@@ -13,6 +13,7 @@ import com.koloboke.collect.map.ObjIntMap;
 import com.koloboke.collect.map.hash.HashIntObjMaps;
 import com.koloboke.collect.map.hash.HashObjIntMaps;
 
+import electory.obf.Keep;
 import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
 
@@ -23,7 +24,7 @@ public abstract class Packet {
 	public static int getPacketId(Class<? extends Packet> packet) {
 		return registeredPacketIDs.getInt(packet);
 	}
-
+	@Keep
 	@FunctionalInterface
 	public interface ConstructorSerializer extends Supplier<Packet> {
 		Packet get();

@@ -1,7 +1,10 @@
 package electory.utils;
 
+import electory.obf.Keep;
+
+@Keep
 public class CrashException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -5741648382068154712L;
 
 	public CrashException() {
 		super();

@@ -45,7 +45,7 @@ public class ServerNetworkHandler {
 						terminateConnection();
 						return;
 					}
-					Packet packet = Packet.getPacketById(packetId).get();
+					Packet packet = Packet.getPacketSupplierById(packetId).get();
 					packet.readFromPacketBuffer(inputStream);
 					recvQueue.add(packet);
 				} catch (IOException e) {
