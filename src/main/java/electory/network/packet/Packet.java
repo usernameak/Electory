@@ -41,8 +41,12 @@ public abstract class Packet {
 		}
 	};
 
-	public static Supplier<Packet> getPacketById(int id) {
+	public static Supplier<Packet> getPacketSupplierById(int id) {
 		return PACKET_GETTER.get(registeredPackets.get(id)).orElse(null);
+	}
+
+	public static Class<? extends Packet> getPacketById(int id) {
+		return registeredPackets.get(id);
 	}
 
 	protected static void registerPacket(int packetId, Class<? extends Packet> packet) {
