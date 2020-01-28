@@ -264,7 +264,7 @@ public class WorldRenderer {
 		renderState.viewMatrix.rotate((float) deg2rad(TinyCraft.getInstance().player.yaw), 0.0f, 1.0f, 0.0f);
 		Vector3d pos = TinyCraft.getInstance().player.getInterpolatedPosition(renderPartialTicks);
 		pos.add(0f, TinyCraft.getInstance().player.getEyeHeight(), 0f);
-		renderState.viewMatrix.translate(0f, -pos.y, 0f);
+		//renderState.viewMatrix.translate(0f, /*-pos.y*/0f, 0f);
 		GL11.glDepthRange(0.01f, 1000f);
 
 		{
@@ -272,7 +272,7 @@ public class WorldRenderer {
 			world.chunkProvider.getAllLoadedChunks().stream().map(Chunk::getRenderer).forEach(cr -> {
 				WorldRenderState rs2 = new WorldRenderState(renderState);
 				rs2.modelMatrix
-						.translate(cr.chunk.getChunkBlockCoordX() - pos.x, 0f, cr.chunk.getChunkBlockCoordZ() - pos.z);
+						.translate(cr.chunk.getChunkBlockCoordX() - pos.x, cr.chunk.getChunkBlockCoordY() - pos.y, cr.chunk.getChunkBlockCoordZ() - pos.z);
 				cr.doChunkQuery(rs2);
 			});
 			RenderUtilities.popDebugGroup();

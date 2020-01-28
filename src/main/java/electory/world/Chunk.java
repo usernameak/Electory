@@ -24,11 +24,11 @@ import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
 
 public class Chunk {
-	private short blockArray[] = new short[16 * 256 * 16];
-	private short lightArray[] = new short[16 * 256 * 16];
-	private Object metaArray[] = new Object[16 * 256 * 16];
-	private byte biomeArray[] = new byte[16 * 16];
-	private short heightMap[] = new short[16 * 16];
+	private short blockArray[] = new short[World.CHUNK_SIZE * World.CHUNK_SIZE * World.CHUNK_SIZE];
+	private short lightArray[] = new short[World.CHUNK_SIZE * World.CHUNK_SIZE * World.CHUNK_SIZE];
+	private Object metaArray[] = new Object[World.CHUNK_SIZE * World.CHUNK_SIZE * World.CHUNK_SIZE];
+	private byte biomeArray[] = new byte[World.CHUNK_SIZE * World.CHUNK_SIZE];
+	private short heightMap[] = new short[World.CHUNK_SIZE * World.CHUNK_SIZE];
 
 	// private SortedMap<Integer, ChunkPosition> scheduledBlockUpdates = new
 	// TreeMap<>(); // TODO:
@@ -37,20 +37,22 @@ public class Chunk {
 
 	public final World world;
 
-	private int chunkX, chunkZ;
+	private int chunkX, chunkY, chunkZ;
 
 	public boolean isPopulated = false;
 
 	public final ReadWriteLock renderLock = new ReentrantReadWriteLock();
 
-	public Chunk(World world, int chunkX, int chunkZ) {
+	public Chunk(World world, int chunkX, int chunkY, int chunkZ) {
 		this.world = world;
 		this.chunkX = chunkX;
+		this.chunkY = chunkY;
 		this.chunkZ = chunkZ;
 	}
 
 	public void tryPopulateWithNeighbours(IChunkProvider provider) {
-		if (!isPopulated
+		// for()
+		/*if (!isPopulated
 				&& provider.isChunkLoaded(chunkX + 1, chunkZ + 1)
 				&& provider.isChunkLoaded(chunkX, chunkZ + 1)
 				&& provider.isChunkLoaded(chunkX + 1, chunkZ)) {
@@ -76,12 +78,12 @@ public class Chunk {
 				&& provider.isChunkLoaded(chunkX - 1, chunkZ)
 				&& provider.isChunkLoaded(chunkX, chunkZ - 1)) {
 			provider.populate(null, chunkX - 1, chunkZ - 1);
-		}
+		}*/
 	}
 
 	public void buildHeightMap() {
-		for (int x = 0; x < 16; x++) {
-			for (int z = 0; z < 16; z++) {
+		for (int x = 0; x < World.CHUNK_SIZE; x++) {
+			for (int z = 0; z < World.CHUNK_SIZE; z++) {
 				int y;
 				for (y = 255; y >= 0; y--) {
 					Block block = getBlockAt(x, y, z);
@@ -91,80 +93,86 @@ public class Chunk {
 				}
 
 				// System.out.println(y);
-				heightMap[x * 16 + z] = (short) y;
+				heightMap[x * World.CHUNK_SIZE + z] = (short) y;
 			}
 		}
 	}
 
 	public short getHeightAt(int x, int z) {
-		if (x < 0 || z < 0 || x >= 16 || z >= 16) {
+		if (x < 0 || z < 0 || x >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return 0;
 		}
-		return heightMap[x * 16 + z];
+		return heightMap[x * World.CHUNK_SIZE + z];
 	}
 
 	public BiomeGenBase getBiomeAt(int x, int z) {
-		if (x < 0 || z < 0 || x >= 16 || z >= 16) {
+		if (x < 0 || z < 0 || x >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return null;
 		}
-		return BiomeGenBase.biomeList[biomeArray[x * 16 + z]];
+		return BiomeGenBase.biomeList[biomeArray[x * World.CHUNK_SIZE + z]];
 	}
 
 	public void setBiomeAt(int x, int z, BiomeGenBase biome) {
-		if (x < 0 || z < 0 || x >= 16 || z >= 16) {
+		if (x < 0 || z < 0 || x >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return;
 		}
 
 		Lock lock = renderLock.writeLock();
 		lock.lock();
 		try {
-			biomeArray[x * 16 + z] = (byte) biome.biomeID;
+			biomeArray[x * World.CHUNK_SIZE + z] = (byte) biome.biomeID;
 		} finally {
 			lock.unlock();
 		}
 	}
 
 	public Block getBlockAt(int x, int y, int z) {
-		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
+		if (x < 0 || y < 0 || z < 0 || x >= World.CHUNK_SIZE || y >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return null;
 		}
-		return world.blockIdRegistry.getBlockById(blockArray[x + y * 16 + z * 16 * 256]);
+		return world.blockIdRegistry.getBlockById(blockArray[x + y * World.CHUNK_SIZE + z * World.CHUNK_SIZE * World.CHUNK_SIZE]);
 	}
 
 	public Block getWorldBlockFast(int x, int y, int z) {
 		int cx = x - getChunkBlockCoordX();
+		int cy = y - getChunkBlockCoordY();
 		int cz = z - getChunkBlockCoordZ();
-		if (cx < 0 || y < 0 || cz < 0 || cx >= 16 || y >= 256 || cz >= 16) {
+		if (cx < 0 || cy < 0 || cz < 0 || cx >= World.CHUNK_SIZE || cy >= World.CHUNK_SIZE || cz >= World.CHUNK_SIZE) {
 			return world.getBlockAt(x, y, z);
 		}
-		return world.blockIdRegistry.getBlockById(blockArray[cx + y * 16 + cz * 16 * 256]);
+		return world.blockIdRegistry.getBlockById(blockArray[cx + cy * World.CHUNK_SIZE + cz * World.CHUNK_SIZE * World.CHUNK_SIZE]);
 	}
 
 	public int getSunLightLevelAt(int x, int y, int z) {
-		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
+		if (x < 0 || y < 0 || z < 0 || x >= World.CHUNK_SIZE || y >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return 0xF;
 		}
 
-		return (byte) (lightArray[x + y * 16 + z * 16 * 256] & 0xF);
+		return (byte) (lightArray[x + y * World.CHUNK_SIZE + z * World.CHUNK_SIZE * World.CHUNK_SIZE] & 0xF);
 	}
 
 	public int getWorldSunLightLevelFast(int x, int y, int z) {
 		int cx = x - getChunkBlockCoordX();
+		int cy = y - getChunkBlockCoordY();
 		int cz = z - getChunkBlockCoordZ();
-		if (cx < 0 || y < 0 || cz < 0 || cx >= 16 || y >= 256 || cz >= 16) {
+		if (cx < 0 || cy < 0 || cz < 0 || cx >= World.CHUNK_SIZE || cy >= World.CHUNK_SIZE || cz >= World.CHUNK_SIZE) {
 			return world.getSunLightLevelAt(x, y, z);
 		}
-		return (byte) (lightArray[cx + y * 16 + cz * 16 * 256] & 0xF);
+		return (byte) (lightArray[cx + cy * World.CHUNK_SIZE + cz * World.CHUNK_SIZE * World.CHUNK_SIZE] & 0xF);
 	}
 
 	public void setSunLightLevelAt(int x, int y, int z, int val) {
-		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
+		if (x < 0 || y < 0 || z < 0 || x >= World.CHUNK_SIZE || y >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return;
 		}
 		Lock lock = renderLock.writeLock();
 		lock.lock();
 		try {
-			lightArray[x + y * 16 + z * 16 * 256] = (short) ((lightArray[x + y * 16 + z * 16 * 256] & 0xFFF0) | val);
+			lightArray[x
+					+ y * World.CHUNK_SIZE
+					+ z
+							* World.CHUNK_SIZE
+							* World.CHUNK_SIZE] = (short) ((lightArray[x + y * World.CHUNK_SIZE + z * World.CHUNK_SIZE * World.CHUNK_SIZE] & 0xFFF0) | val);
 		} finally {
 			lock.unlock();
 		}
@@ -172,50 +180,51 @@ public class Chunk {
 
 	public void setWorldSunLightLevelFast(int x, int y, int z, int val) {
 		int cx = x - getChunkBlockCoordX();
+		int cy = y - getChunkBlockCoordY();
 		int cz = z - getChunkBlockCoordZ();
-		if (cx < 0 || y < 0 || cz < 0 || cx >= 16 || y >= 256 || cz >= 16) {
+		if (cx < 0 || cy < 0 || cz < 0 || cx >= World.CHUNK_SIZE || cy >= World.CHUNK_SIZE || cz >= World.CHUNK_SIZE) {
 			world.setSunLightLevelAt(x, y, z, val);
 			return;
 		}
-		setSunLightLevelAt(cx, y, cz, val);
+		setSunLightLevelAt(cx, cy, cz, val);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getBlockMetadataAt(int x, int y, int z) {
-		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
+		if (x < 0 || y < 0 || z < 0 || x >= World.CHUNK_SIZE || y >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return null;
 		}
-		return (T) metaArray[x + y * 16 + z * 16 * 256];
+		return (T) metaArray[x + y * World.CHUNK_SIZE + z * World.CHUNK_SIZE * World.CHUNK_SIZE];
 	}
 
 	public void setBlockMetadataAt(int x, int y, int z, Object meta) {
-		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
+		if (x < 0 || y < 0 || z < 0 || x >= World.CHUNK_SIZE || y >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return;
 		}
 		Lock lock = renderLock.writeLock();
 		lock.lock();
 		try {
-			metaArray[x + y * 16 + z * 16 * 256] = meta;
+			metaArray[x + y * World.CHUNK_SIZE + z * World.CHUNK_SIZE * World.CHUNK_SIZE] = meta;
 		} finally {
 			lock.unlock();
 		}
 	}
 
 	public void setBlockWithMetadataAt(int x, int y, int z, Block block, Object meta, int flags) {
-		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
+		if (x < 0 || y < 0 || z < 0 || x >= World.CHUNK_SIZE || y >= World.CHUNK_SIZE || z >= World.CHUNK_SIZE) {
 			return;
 		}
 		Lock lock = renderLock.writeLock();
 		lock.lock();
 		try {
-			blockArray[x + y * 16 + z * 16 * 256] = (short) world.blockIdRegistry.getBlockId(block);
-			metaArray[x + y * 16 + z * 16 * 256] = meta;
+			blockArray[x + y * World.CHUNK_SIZE + z * World.CHUNK_SIZE * World.CHUNK_SIZE] = (short) world.blockIdRegistry.getBlockId(block);
+			metaArray[x + y * World.CHUNK_SIZE + z * World.CHUNK_SIZE * World.CHUNK_SIZE] = meta;
 			if (block != null && block.isSolid()) {
-				if (heightMap[x * 16 + z] < y) {
-					heightMap[x * 16 + z] = (short) y;
+				if (heightMap[x * World.CHUNK_SIZE + z] < y) {
+					heightMap[x * World.CHUNK_SIZE + z] = (short) y;
 				}
 			} else {
-				if (heightMap[x * 16 + z] == y) {
+				if (heightMap[x * World.CHUNK_SIZE + z] == y) {
 					int h = y - 1;
 					for (; h >= 0; h--) {
 						Block b = getBlockAt(x, h, z);
@@ -226,7 +235,7 @@ public class Chunk {
 					if (h < 0) {
 						h = 0;
 					}
-					heightMap[x * 16 + z] = (short) h;
+					heightMap[x * World.CHUNK_SIZE + z] = (short) h;
 				}
 			}
 		} finally {
@@ -238,23 +247,34 @@ public class Chunk {
 		if ((flags & World.FLAG_SKIP_RENDER_UPDATE) == 0) {
 			scheduleChunkUpdate();
 			if (x == 0) {
-				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkZ);
+				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkY, chunkZ);
 				if (nearChunk != null) {
 					nearChunk.scheduleChunkUpdate();
 				}
-			} else if (x == 15) {
-				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX + 1, chunkZ);
+			} else if (x == World.CHUNK_SIZE - 1) {
+				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX + 1, chunkY, chunkZ);
+				if (nearChunk != null) {
+					nearChunk.scheduleChunkUpdate();
+				}
+			}
+			if (y == 0) {
+				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY - 1, chunkZ);
+				if (nearChunk != null) {
+					nearChunk.scheduleChunkUpdate();
+				}
+			} else if (y == World.CHUNK_SIZE - 1) {
+				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY + 1, chunkZ);
 				if (nearChunk != null) {
 					nearChunk.scheduleChunkUpdate();
 				}
 			}
 			if (z == 0) {
-				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ - 1);
+				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY, chunkZ - 1);
 				if (nearChunk != null) {
 					nearChunk.scheduleChunkUpdate();
 				}
-			} else if (z == 15) {
-				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ + 1);
+			} else if (z == World.CHUNK_SIZE - 1) {
+				Chunk nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY, chunkZ + 1);
 				if (nearChunk != null) {
 					nearChunk.scheduleChunkUpdate();
 				}
@@ -284,47 +304,59 @@ public class Chunk {
 	}
 
 	public void notifyNeighbourChunks() {
-		Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkZ);
+		Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkY, chunkZ);
 		if (nearChunk != null) {
 			nearChunk.scheduleChunkUpdate();
 		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX + 1, chunkZ);
+		nearChunk = world.getChunkFromChunkCoord(chunkX + 1, chunkY, chunkZ);
 		if (nearChunk != null) {
 			nearChunk.scheduleChunkUpdate();
 		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ - 1);
+		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY - 1, chunkZ);
 		if (nearChunk != null) {
 			nearChunk.scheduleChunkUpdate();
 		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ + 1);
+		 nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY + 1, chunkZ);
+		if (nearChunk != null) {
+			nearChunk.scheduleChunkUpdate();
+		}
+		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY, chunkZ - 1);
+		if (nearChunk != null) {
+			nearChunk.scheduleChunkUpdate();
+		}
+		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY, chunkZ + 1);
 		if (nearChunk != null) {
 			nearChunk.scheduleChunkUpdate();
 		}
 	}
-	
+	/*
 	public Lock getNeighbourWriteLock() {
 		Set<Lock> locks = new HashSet<>();
-		Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkZ);
+		Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkY, chunkZ);
 		if (nearChunk != null) {
 			locks.add(nearChunk.renderLock.writeLock());
 		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX + 1, chunkZ);
+		nearChunk = world.getChunkFromChunkCoord(chunkX + 1, chunkY, chunkZ);
 		if (nearChunk != null) {
 			locks.add(nearChunk.renderLock.writeLock());
 		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ - 1);
+		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY, chunkZ - 1);
 		if (nearChunk != null) {
 			locks.add(nearChunk.renderLock.writeLock());
 		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ + 1);
+		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkY, chunkZ + 1);
 		if (nearChunk != null) {
 			locks.add(nearChunk.renderLock.writeLock());
 		}
 		return new MultiLock(locks);
 	}
-
+*/
 	public int getChunkX() {
 		return chunkX;
+	}
+
+	public int getChunkY() {
+		return chunkY;
 	}
 
 	public int getChunkZ() {
@@ -332,22 +364,26 @@ public class Chunk {
 	}
 
 	public int getChunkBlockCoordX() {
-		return chunkX << 4;
+		return chunkX << World.CHUNK_BITSHIFT_SIZE;
+	}
+
+	public int getChunkBlockCoordY() {
+		return chunkY << World.CHUNK_BITSHIFT_SIZE;
 	}
 
 	public int getChunkBlockCoordZ() {
-		return chunkZ << 4;
+		return chunkZ << World.CHUNK_BITSHIFT_SIZE;
 	}
 
 	private void recalculateSkyLight(Queue<WorldPosition> bfsSkyQueue) {
-		while (!bfsSkyQueue.isEmpty()) {
+		/*while (!bfsSkyQueue.isEmpty()) {
 			WorldPosition pos = bfsSkyQueue.poll();
 
 			for (EnumSide side : EnumSide.VALID_DIRECTIONS) {
-				if (pos.y + side.offsetY < 0 || pos.y + side.offsetY >= 256) {
+				/*if (pos.y + side.offsetY < 0 || pos.y + side.offsetY >= World.CHUNK_SIZE) {
 					continue;
-				}
-
+				}*/
+/*
 				Block block = getWorldBlockFast(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ);
 				int curLightLevel = getWorldSunLightLevelFast(pos.x, pos.y, pos.z);
 
@@ -380,37 +416,39 @@ public class Chunk {
 					}
 				}
 			}
-		}
+		}*/
 	}
 
 	public void recalculateSkyLight() {
-		Queue<WorldPosition> bfsSkyQueue = new LinkedList<>();
-		for (int x = getChunkBlockCoordX(); x < getChunkBlockCoordX() + 16; x++) {
-			for (int z = getChunkBlockCoordZ(); z < getChunkBlockCoordZ() + 16; z++) {
-				Block block = getWorldBlockFast(x, 255, z);
+		/*Queue<WorldPosition> bfsSkyQueue = new LinkedList<>();
+		int y = getChunkBlockCoordY() + World.CHUNK_SIZE - 1;
+		for (int x = getChunkBlockCoordX(); x < getChunkBlockCoordX() + World.CHUNK_SIZE; x++) {
+			for (int z = getChunkBlockCoordZ(); z < getChunkBlockCoordZ() + World.CHUNK_SIZE; z++) {
+				Block block = getWorldBlockFast(x, y, z);
 				if (block != null) {
 					int opacity = block.getSkyLightOpacity();
 					if (opacity == 15) {
 						continue;
 					}
-					setWorldSunLightLevelFast(x, 255, z, 15 - opacity);
+					//setWorldSunLightLevelFast(x, y, z, 15 - opacity);
 				} else {
-					setWorldSunLightLevelFast(x, 255, z, 15);
+					//setWorldSunLightLevelFast(x, y, z, 15);
 				}
-				bfsSkyQueue.add(new WorldPosition(x, 255, z));
+				bfsSkyQueue.add(new WorldPosition(x, y, z));
 			}
 		}
-		recalculateSkyLight(bfsSkyQueue);
+		recalculateSkyLight(bfsSkyQueue);*/
 	}
 
 	public void recalculateSkyLightForBlock(int x, int y, int z) {
-		Queue<WorldPosition> bfsSkyQueue = new LinkedList<>();
+		/*Queue<WorldPosition> bfsSkyQueue = new LinkedList<>();
 		int wx = x + getChunkBlockCoordX();
+		int wy = y + getChunkBlockCoordX();
 		int wz = z + getChunkBlockCoordZ();
 		for (EnumSide side : EnumSide.VALID_DIRECTIONS) {
-			bfsSkyQueue.add(new WorldPosition(wx + side.offsetX, y + side.offsetY, wz + side.offsetZ));
+			bfsSkyQueue.add(new WorldPosition(wx + side.offsetX, wy + side.offsetY, wz + side.offsetZ));
 		}
-		recalculateSkyLight(bfsSkyQueue);
+		recalculateSkyLight(bfsSkyQueue);*/
 	}
 
 	private CompoundTag writeMetaArray() {

@@ -48,7 +48,12 @@ public abstract class World implements IChunkSaveStatusHandler {
 	public static final int FLAG_SKIP_LIGHT_UPDATE = 2;
 	public static final int FLAG_SKIP_UPDATE = FLAG_SKIP_LIGHT_UPDATE | FLAG_SKIP_RENDER_UPDATE;
 
-	public static final int CHUNKLOAD_DISTANCE = 8;
+	public static final int CHUNK_BITSHIFT_SIZE = 5;
+	public static final int CHUNK_COORD_BITMASK = 0x1F;
+	public static final int CHUNK_SIZE = 32;
+	public static final float CHUNK_SIZE_FLT = 32.0f;
+
+	public static final int CHUNKLOAD_DISTANCE = 4;
 	public static final int CHUNKLOAD_DISTANCE2 = CHUNKLOAD_DISTANCE * 2;
 
 	public IChunkProvider generationChunkProvider = new ChunkGenerator(this, seed);
@@ -66,23 +71,35 @@ public abstract class World implements IChunkSaveStatusHandler {
 	}
 
 	public Block getBlockAt(int x, int y, int z) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
-		return chunk == null ? null : chunk.getBlockAt(x & 0xF, y, z & 0xF);
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
+		return chunk == null ? null
+				: chunk.getBlockAt(	x & World.CHUNK_COORD_BITMASK,
+									y & World.CHUNK_COORD_BITMASK,
+									z & World.CHUNK_COORD_BITMASK);
 	}
 
 	public void setBlockAt(int x, int y, int z, Block block) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
 		if (chunk != null) {
-			chunk.setBlockAt(x & 0xF, y, z & 0xF, block);
+			chunk.setBlockAt(	x & World.CHUNK_COORD_BITMASK,
+								y & World.CHUNK_COORD_BITMASK,
+								z & World.CHUNK_COORD_BITMASK,
+								block);
 		}
 	}
 
-	public Chunk getChunkFromChunkCoord(int x, int z) {
-		return chunkProvider.provideChunk(x, z);
+	public Chunk getChunkFromChunkCoord(int x, int y, int z) {
+		return chunkProvider.provideChunk(x, y, z);
 	}
 
-	public Chunk getChunkFromWorldCoord(int x, int z) {
-		return chunkProvider.provideChunk(x >> 4, z >> 4);
+	public Chunk getChunkFromWorldCoord(int x, int y, int z) {
+		return chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+											y >> World.CHUNK_BITSHIFT_SIZE,
+											z >> World.CHUNK_BITSHIFT_SIZE);
 	}
 
 	public void addEntity(Entity entity) {
@@ -193,16 +210,19 @@ public abstract class World implements IChunkSaveStatusHandler {
 	private void chunkLoadingTick() {
 		chunkProvider.update();
 		generationChunkProvider.update();
-		
+
 		HashLongSet chunksToLoad = HashLongSets.newMutableSet();
 		for (EntityPlayer player : getPlayers()) {
 			Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f)
 					: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
-			int startX = (((int) ppos.x) >> 4) - CHUNKLOAD_DISTANCE;
-			int startZ = (((int) ppos.z) >> 4) - CHUNKLOAD_DISTANCE;
-			for (int x = startX; x < startX + CHUNKLOAD_DISTANCE2; x++) {
-				for (int z = startZ; z < startZ + CHUNKLOAD_DISTANCE2; z++) {
-					chunksToLoad.add(ChunkPosition.createLong(x, z));
+			int startX = (((int) ppos.x) >> World.CHUNK_BITSHIFT_SIZE) - CHUNKLOAD_DISTANCE;
+			int startY = (((int) ppos.y) >> World.CHUNK_BITSHIFT_SIZE) - CHUNKLOAD_DISTANCE;
+			int startZ = (((int) ppos.z) >> World.CHUNK_BITSHIFT_SIZE) - CHUNKLOAD_DISTANCE;
+			for (int x = startX; x <= startX + CHUNKLOAD_DISTANCE2; x++) {
+				for (int y = startY; y <= startY + CHUNKLOAD_DISTANCE2; y++) {
+					for (int z = startZ; z <= startZ + CHUNKLOAD_DISTANCE2; z++) {
+						chunksToLoad.add(ChunkPosition.createLong(x, y, z));
+					}
 				}
 			}
 		}
@@ -217,9 +237,11 @@ public abstract class World implements IChunkSaveStatusHandler {
 				needsLoadNext--;
 				if (it.moveNext()) {
 					long cpos = it.elem();
-					int cx = (int) (cpos & 4294967295L), cz = (int) ((cpos >> 32) & 4294967295L);
-					if (!chunkProvider.isLoading(cx, cz) && chunkProvider.canLoadChunk(cx, cz)) {
-						chunkProvider.loadChunk(cx, cz);
+					int cx = ChunkPosition.unpackLongX(cpos), cy = ChunkPosition.unpackLongY(cpos),
+							cz = ChunkPosition.unpackLongZ(cpos);
+					// System.out.println(cx + "_" + cy + "_" + cz);
+					if (!chunkProvider.isLoading(cx, cy, cz) && chunkProvider.canLoadChunk(cx, cy, cz)) {
+						chunkProvider.loadChunk(cx, cy, cz);
 					} else {
 						needsLoadNext++;
 					}
@@ -232,8 +254,11 @@ public abstract class World implements IChunkSaveStatusHandler {
 			LongCursor it = chunksToUnload.cursor();
 			if (it.moveNext()) {
 				long cpos = it.elem();
-				chunkProvider.unloadChunk(chunkProvider
-						.provideChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L)), null, true);
+				chunkProvider.unloadChunk(	chunkProvider.provideChunk(	ChunkPosition.unpackLongX(cpos),
+																		ChunkPosition.unpackLongY(cpos),
+																		ChunkPosition.unpackLongZ(cpos)),
+											null,
+											true);
 			}
 		}
 	}
@@ -325,25 +350,40 @@ public abstract class World implements IChunkSaveStatusHandler {
 	protected abstract EntityPlayer constructPlayer();
 
 	public int getSunLightLevelAt(int x, int y, int z) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
-		return chunk == null ? 0 : chunk.getSunLightLevelAt(x & 0xF, y, z & 0xF);
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
+		return chunk == null ? 0
+				: chunk.getSunLightLevelAt(	x & World.CHUNK_COORD_BITMASK,
+											y & World.CHUNK_COORD_BITMASK,
+											z & World.CHUNK_COORD_BITMASK);
 	}
 
 	public void setSunLightLevelAt(int x, int y, int z, int val) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
 		if (chunk != null) {
-			chunk.setSunLightLevelAt(x & 0xF, y, z & 0xF, val);
+			chunk.setSunLightLevelAt(	x & World.CHUNK_COORD_BITMASK,
+										y & World.CHUNK_COORD_BITMASK,
+										z & World.CHUNK_COORD_BITMASK,
+										val);
 		}
 	}
 
-	public BiomeGenBase getBiomeAt(int x, int z) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
-		return chunk == null ? BiomeGenBase.plains : chunk.getBiomeAt(x & 0xF, z & 0xF);
+	public BiomeGenBase getBiomeAt(int x, int y, int z) {
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
+		return chunk == null ? BiomeGenBase.plains
+				: chunk.getBiomeAt(x & World.CHUNK_COORD_BITMASK, z & World.CHUNK_COORD_BITMASK);
 	}
 
-	public short getHeightAt(int x, int z) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
-		return chunk == null ? 0 : chunk.getHeightAt(x & 0xF, z & 0xF);
+	public short getHeightAt(int x, int y, int z) {
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
+		return chunk == null ? 0 : chunk.getHeightAt(x & World.CHUNK_COORD_BITMASK, z & World.CHUNK_COORD_BITMASK);
 	}
 
 	@Override
@@ -373,21 +413,38 @@ public abstract class World implements IChunkSaveStatusHandler {
 	}
 
 	public <T> T getBlockMetadataAt(int x, int y, int z) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
-		return chunk == null ? null : chunk.getBlockMetadataAt(x & 0xF, y, z & 0xF);
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
+		return chunk == null ? null
+				: chunk.getBlockMetadataAt(	x & World.CHUNK_COORD_BITMASK,
+											y & World.CHUNK_COORD_BITMASK,
+											z & World.CHUNK_COORD_BITMASK);
 	}
 
 	public void setBlockMetadataAt(int x, int y, int z, Object meta) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
 		if (chunk != null) {
-			chunk.setBlockMetadataAt(x & 0xF, y, z & 0xF, meta);
+			chunk.setBlockMetadataAt(	x & World.CHUNK_COORD_BITMASK,
+										y & World.CHUNK_COORD_BITMASK,
+										z & World.CHUNK_COORD_BITMASK,
+										meta);
 		}
 	}
 
 	public void setBlockWithMetadataAt(int x, int y, int z, Block block, Object meta, int flags) {
-		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
+		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
+													y >> World.CHUNK_BITSHIFT_SIZE,
+													z >> World.CHUNK_BITSHIFT_SIZE);
 		if (chunk != null) {
-			chunk.setBlockWithMetadataAt(x & 0xF, y, z & 0xF, block, meta, flags);
+			chunk.setBlockWithMetadataAt(	x & World.CHUNK_COORD_BITMASK,
+											y & World.CHUNK_COORD_BITMASK,
+											z & World.CHUNK_COORD_BITMASK,
+											block,
+											meta,
+											flags);
 		}
 	}
 }

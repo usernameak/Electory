@@ -110,7 +110,7 @@ public class GuiInGame extends GuiScreen {
 				tc.fontRenderer
 						.drawText(	rs,
 									"biome: "
-											+ tc.world.getBiomeAt((int) Math.floor(pos.x), (int) Math.floor(pos.z))
+											+ tc.world.getBiomeAt((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z))
 													.toString(),
 									2,
 									34);

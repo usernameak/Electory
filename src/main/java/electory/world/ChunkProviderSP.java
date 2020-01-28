@@ -39,21 +39,21 @@ public class ChunkProviderSP implements IChunkProvider {
 	}
 
 	@Override
-	public boolean isLoading(int cx, int cy) {
-		return loadingChunks.contains(new ChunkPosition(cx, cy));
+	public boolean isLoading(int cx, int cy, int cz) {
+		return loadingChunks.contains(new ChunkPosition(cx, cy, cz));
 	}
 
 	@Override
-	public void loadChunk(int cx, int cy) {
+	public void loadChunk(int cx, int cy, int cz) {
 		ElectoryProfiler.INSTANCE.begin("chunkload");
-		loadingChunks.add(new ChunkPosition(cx, cy));
+		loadingChunks.add(new ChunkPosition(cx, cy, cz));
 		genExecutor.execute(new Runnable() {
 			@Override
 			public void run() {
-				File chunkFile = new File(world.getChunkSaveDir(), "c_" + cx + "_" + cy + ".sav.gz");
+				File chunkFile = new File(world.getChunkSaveDir(), "c_" + cx + "_" + cy + "_" + cz + ".sav.gz");
 
 				if (chunkFile.isFile()) {
-					Chunk chunk = new Chunk(world, cx, cy);
+					Chunk chunk = new Chunk(world, cx, cy, cz);
 					try {
 						BufferedDataInputStream bdis = new BufferedDataInputStream(
 								new GZIPInputStream(new FileInputStream(chunkFile)));
@@ -65,7 +65,7 @@ public class ChunkProviderSP implements IChunkProvider {
 					}
 					chunksToLoad.add(chunk);
 				} else {
-					Chunk chunk = world.generationChunkProvider.loadChunkSynchronously(cx, cy);
+					Chunk chunk = world.generationChunkProvider.loadChunkSynchronously(cx, cy, cz);
 
 					chunksToLoad.add(chunk);
 				}
@@ -92,28 +92,28 @@ public class ChunkProviderSP implements IChunkProvider {
 	private void flush() {
 		Chunk chunkToLoad = null;
 		while ((chunkToLoad = chunksToLoad.poll()) != null) {
-			loadedChunks.put(ChunkPosition.createLong(chunkToLoad.getChunkX(), chunkToLoad.getChunkZ()), chunkToLoad);
+			loadedChunks.put(ChunkPosition.createLong(chunkToLoad.getChunkX(), chunkToLoad.getChunkY(), chunkToLoad.getChunkZ()), chunkToLoad);
 
 			chunkToLoad.notifyNeighbourChunks();
 
 			chunkToLoad.tryPopulateWithNeighbours(this);
 
-			loadingChunks.remove(new ChunkPosition(chunkToLoad.getChunkX(), chunkToLoad.getChunkZ()));
+			loadingChunks.remove(new ChunkPosition(chunkToLoad.getChunkX(), chunkToLoad.getChunkY(), chunkToLoad.getChunkZ()));
 		}
 	}
 
 	@Override
-	public boolean canLoadChunk(int cx, int cy) {
-		if (savingChunks.containsKey(new ChunkPosition(cx, cy))) {
+	public boolean canLoadChunk(int cx, int cy, int cz) {
+		if (savingChunks.containsKey(new ChunkPosition(cx, cy, cz))) {
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public void populate(IChunkProvider saveProvider, int cx, int cy) {
-		this.world.generationChunkProvider.populate(this, cx, cy);
-		provideChunk(cx, cy).isPopulated = true;
+	public void populate(IChunkProvider saveProvider, int cx, int cy, int cz) {
+		this.world.generationChunkProvider.populate(this, cx, cy, cz);
+		provideChunk(cx, cy, cz).isPopulated = true;
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class ChunkProviderSP implements IChunkProvider {
 
 			public void run() {
 				File chunkFile = new File(world.getChunkSaveDir(),
-						"c_" + chunk.getChunkX() + "_" + chunk.getChunkZ() + ".sav.gz");
+						"c_" + chunk.getChunkX() + "_" + chunk.getChunkY() + "_" + chunk.getChunkZ() + ".sav.gz");
 				try {
 					BufferedDataOutputStream bdos = new BufferedDataOutputStream(
 							new GZIPOutputStream(new FileOutputStream(chunkFile)));
@@ -135,10 +135,10 @@ public class ChunkProviderSP implements IChunkProvider {
 					throw new CrashException(e);
 				}
 				statusHandler.chunkSaved(chunk);
-				savingChunks.remove(new ChunkPosition(chunk.getChunkX(), chunk.getChunkZ()));
+				savingChunks.remove(new ChunkPosition(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ()));
 			}
 		};
-		savingChunks.put(new ChunkPosition(chunk.getChunkX(), chunk.getChunkZ()), thread);
+		savingChunks.put(new ChunkPosition(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ()), thread);
 		thread.start();
 	}
 
@@ -159,8 +159,8 @@ public class ChunkProviderSP implements IChunkProvider {
 	}
 
 	@Override
-	public boolean isChunkLoaded(int x, int z) {
-		return loadedChunks.containsKey(ChunkPosition.createLong(x, z));
+	public boolean isChunkLoaded(int x, int y, int z) {
+		return loadedChunks.containsKey(ChunkPosition.createLong(x, y, z));
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class ChunkProviderSP implements IChunkProvider {
 			if (it != null) {
 				it.remove();
 			} else {
-				loadedChunks.remove(ChunkPosition.createLong(chunk.getChunkX(), chunk.getChunkZ()));
+				loadedChunks.remove(ChunkPosition.createLong(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ()));
 			}
 
 			save(world, chunk);
@@ -184,8 +184,8 @@ public class ChunkProviderSP implements IChunkProvider {
 	}
 
 	@Override
-	public Chunk provideChunk(int cx, int cy) {
-		return loadedChunks.get(ChunkPosition.createLong(cx, cy));
+	public Chunk provideChunk(int cx, int cy, int cz) {
+		return loadedChunks.get(ChunkPosition.createLong(cx, cy, cz));
 	}
 
 	@Override
@@ -199,7 +199,7 @@ public class ChunkProviderSP implements IChunkProvider {
 	}
 
 	@Override
-	public Chunk loadChunkSynchronously(int cx, int cy) {
+	public Chunk loadChunkSynchronously(int cx, int cy, int cz) {
 		throw new UnsupportedOperationException();
 	}
 }

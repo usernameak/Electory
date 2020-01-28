@@ -27,11 +27,14 @@ public class WorldSP extends World {
 	protected boolean checkSpawnAreaLoaded() {
 		if (TinyCraft.getInstance().player == null) {
 			if (playerToSpawn == null) {
-				if (chunkProvider.isChunkLoaded((int) Math.floor(spawnPoint.x) >> 4,
-												(int) Math.floor(spawnPoint.z) >> 4)) {
+				if (chunkProvider.isChunkLoaded((int) Math.floor(spawnPoint.x) >> World.CHUNK_BITSHIFT_SIZE,
+												(int) Math.floor(spawnPoint.y) >> World.CHUNK_BITSHIFT_SIZE,
+												(int) Math.floor(spawnPoint.z) >> World.CHUNK_BITSHIFT_SIZE)) {
 					EntityPlayer player = new EntityPlayerClient(this);
 					player.setPosition(	spawnPoint.x + 0.5f,
-										getHeightAt((int) Math.floor(spawnPoint.x), (int) Math.floor(spawnPoint.z))
+										getHeightAt((int) Math.floor(spawnPoint.x),
+													(int) Math.floor(spawnPoint.y),
+													(int) Math.floor(spawnPoint.z))
 												+ 1.0f,
 										spawnPoint.z + 0.5f,
 										false);
@@ -41,7 +44,9 @@ public class WorldSP extends World {
 				}
 			} else {
 				Vector3d spawnPos = playerToSpawn.getInterpolatedPosition(1.0f);
-				if (chunkProvider.isChunkLoaded((int) Math.floor(spawnPos.x) >> 4, (int) Math.floor(spawnPos.z) >> 4)) {
+				if (chunkProvider.isChunkLoaded((int) Math.floor(spawnPos.x) >> World.CHUNK_BITSHIFT_SIZE,
+												(int) Math.floor(spawnPos.y) >> World.CHUNK_BITSHIFT_SIZE,
+												(int) Math.floor(spawnPos.z) >> World.CHUNK_BITSHIFT_SIZE)) {
 					TinyCraft.getInstance().setPlayer(playerToSpawn);
 					addEntity(playerToSpawn);
 					playerToSpawn = null;
@@ -51,7 +56,7 @@ public class WorldSP extends World {
 		}
 		return TinyCraft.getInstance().player != null;
 	}
-	
+
 	@Override
 	public File getWorldSaveDir() {
 		File dir = new File(TinyCraft.getInstance().getUserDataDir(), "universes/" + worldName);

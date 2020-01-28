@@ -24,85 +24,93 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public void populate(IChunkProvider provider, int x, int z) {
+	public void populate(IChunkProvider provider, int x, int y, int z) {
 
 	}
 
 	@Override
-	public Chunk loadChunkSynchronously(int cx, int cy) {
+	public Chunk loadChunkSynchronously(int cx, int cy, int cz) {
 		VoronoiGenerator gen = new VoronoiGenerator(seed ^ 0x1337L, 128);
 		PerlinGenerator pgen = new PerlinGenerator(seed ^ 0xCAFEBABE, 8, 3, 0.5);
 		PerlinGenerator rgen = new PerlinGenerator(seed ^ 0xDEADBEEF, 6, 2, 0.5);
 
-		byte[] chunkData = new byte[32768];
-		byte[] chunkDataExt = new byte[32768];
-		final byte[] biomeData = new byte[0x100];
-		
-		int[][] pArr = new int[31][31];
+		short[] chunkData = new short[World.CHUNK_SIZE * World.CHUNK_SIZE * World.CHUNK_SIZE];
+		final byte[] biomeData = new byte[World.CHUNK_SIZE * World.CHUNK_SIZE];
 
-		for (int i = 0; i < 31; i++) {
-			for (int j = 0; j < 31; j++) {
-				int ii = i - 8;
-				int jj = j - 8;
-				int x = (cx << 4) + ii;
-				int y = (cy << 4) + jj;
+		int[][] pArr = new int[World.CHUNK_SIZE + World.CHUNK_SIZE - 1][World.CHUNK_SIZE + World.CHUNK_SIZE - 1];
 
-				double val1 = pgen.generate(x / 64.0, y / 64.0);
+		for (int i = 0; i < World.CHUNK_SIZE + World.CHUNK_SIZE - 1; i++) {
+			for (int j = 0; j < World.CHUNK_SIZE + World.CHUNK_SIZE - 1; j++) {
+				int ii = i - World.CHUNK_SIZE / 2;
+				int jj = j - World.CHUNK_SIZE / 2;
+				int x = (cx << World.CHUNK_BITSHIFT_SIZE) + ii;
+				int z = (cz << World.CHUNK_BITSHIFT_SIZE) + jj;
+
+				double val1 = pgen.generate(x / 64.0, z / 64.0);
 				double val1c = val1;
 				if (val1c > 1)
 					val1c = 1;
 				else if (val1c < 0)
 					val1c = 0;
-				double val = gen.generate(x, y, (int) (val1 * 256) - 128);
+				double val = gen.generate(x, z, (int) (val1 * 256) - 128);
 				pArr[i][j] = val < 0.5 ? 64 : 32;
 			}
 		}
 		int[][] psums = MathUtils.doPartialSums(pArr);
-		
+
 		int sandId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("sand"));
 		int grassId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("grass"));
 		int waterId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("water"));
+		
+		int cMinY = cy << World.CHUNK_BITSHIFT_SIZE;
+		int cMaxY = cMinY + World.CHUNK_SIZE;
+		// System.out.println(cMinY);
 
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				int x = (cx << 4) | i;
-				int y = (cy << 4) | j;
-				
-				int totalBiomeHeightVal = MathUtils.getRectangleSum(psums, i, j, 16, 16) / 256;
+		for (int i = 0; i < World.CHUNK_SIZE; i++) {
+			for (int j = 0; j < World.CHUNK_SIZE; j++) {
+				int x = (cx << World.CHUNK_BITSHIFT_SIZE) | i;
+				int z = (cz << World.CHUNK_BITSHIFT_SIZE) | j;
 
-				double relief = rgen.generate(x / 64.0, y / 64.0);
+				int totalBiomeHeightVal = MathUtils.getRectangleSum(psums, i, j, World.CHUNK_SIZE, World.CHUNK_SIZE)
+						/ (World.CHUNK_SIZE * World.CHUNK_SIZE);
+
+				double relief = rgen.generate(x / 64.0, z / 64.0);
 
 				int heightOffset = (int) (relief * 16);
 
-				int maxZ = (int) (heightOffset + totalBiomeHeightVal);
+				int maxY = (int) (heightOffset + totalBiomeHeightVal);
+				// System.out.println(maxY);
 
-				for (int z = 0; z < maxZ; z++) {
-					(z >= 128 ? chunkDataExt : chunkData)[i << 11
-							| j << 7
-							| (z & 0x7F)] = maxZ < 64 ? (byte) sandId : (byte) grassId;
+				for (int y = cMinY; y < maxY && y < cMaxY; y++) {
+					int y1 = y - cMinY;
+					
+					chunkData[(i << World.CHUNK_BITSHIFT_SIZE << World.CHUNK_BITSHIFT_SIZE)
+							| (j << World.CHUNK_BITSHIFT_SIZE)
+							| (y1)] = maxY < 64 ? (short) sandId : (short) grassId;
 				}
-				for(int z = maxZ; z < 64; z++) {
-					(z >= 128 ? chunkDataExt : chunkData)[i << 11
-					          							| j << 7
-					          							| (z & 0x7F)] = (byte) waterId;
-				}
+				/*for (int y = maxY; y < 64; y++) {
+					chunkData[(i << World.CHUNK_BITSHIFT_SIZE << World.CHUNK_BITSHIFT_SIZE)
+							| (j << World.CHUNK_BITSHIFT_SIZE)
+							| (z)] = (byte) waterId;
+				}*/
 			}
 		}
 
-		Chunk chunk = new Chunk(world, cx, cy);
+		Chunk chunk = new Chunk(world, cx, cy, cz);
 
-		for (int i = 0; i < 16; i++) {
-			for (int j = 0; j < 16; j++) {
-				for (int z = 0; z < 256; z++) {
+		for (int i = 0; i < World.CHUNK_SIZE; i++) {
+			for (int j = 0; j < World.CHUNK_SIZE; j++) {
+				for (int z = 0; z < World.CHUNK_SIZE; z++) {
 					chunk.setBlockAt(	i,
 										z,
 										j,
-										world.blockIdRegistry.getBlockById((z >= 128 ? chunkDataExt : chunkData)[i << 11
-												| j << 7
-												| (z & 0x7F)]),
+										world.blockIdRegistry
+												.getBlockById(chunkData[(i << World.CHUNK_BITSHIFT_SIZE << World.CHUNK_BITSHIFT_SIZE)
+														| (j << World.CHUNK_BITSHIFT_SIZE)
+														| (z)]),
 										World.FLAG_SKIP_UPDATE);
 				}
-				chunk.setBiomeAt(i, j, BiomeGenBase.biomeList[biomeData[j << 4 | i]]);
+				chunk.setBiomeAt(i, j, BiomeGenBase.biomeList[biomeData[j << World.CHUNK_BITSHIFT_SIZE | i]]);
 			}
 		}
 
@@ -117,7 +125,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public boolean canLoadChunk(int cx, int cy) {
+	public boolean canLoadChunk(int cx, int cy, int cz) {
 		return true;
 	}
 
@@ -130,7 +138,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public Chunk provideChunk(int cx, int cy) {
+	public Chunk provideChunk(int cx, int cy, int cz) {
 		return null;
 	}
 
@@ -140,7 +148,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public boolean isChunkLoaded(int x, int z) {
+	public boolean isChunkLoaded(int x, int y, int z) {
 		return true; // don't ask wtf
 	}
 
@@ -158,7 +166,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public void loadChunk(int cx, int cy) {
+	public void loadChunk(int cx, int cy, int cz) {
 		throw new UnsupportedOperationException();
 	}
 }

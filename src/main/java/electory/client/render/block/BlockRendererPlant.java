@@ -13,35 +13,35 @@ import electory.world.World;
 
 public class BlockRendererPlant implements IBlockRenderer {
 
-	public int getTriangleCount(World world, Block block, ChunkRenderer renderer, int x, int y, int z, int cx, int cz) {
+	public int getTriangleCount(World world, Block block, ChunkRenderer renderer, int x, int y, int z, int cx, int cy, int cz) {
 		return 8;
 	}
 
-	public void getTriangles(World world, Block block, ChunkRenderer renderer, int x, int y, int z, int cx, int cz,
+	public void getTriangles(World world, Block block, ChunkRenderer renderer, int x, int y, int z, int cx, int cy, int cz,
 			TriangleBuffer buffer) {
 		int skyLightLevel = renderer.getChunk().getWorldSunLightLevelFast(x, y, z);
 		buffer.setColor(ChunkRenderer.lightColors[skyLightLevel]);
 		IAtlasSprite sprite = block.getAtlasSprite(world, x, y, z, EnumSide.SOUTH);
 
-		buffer.addQuadVertexWithUV(cx, y, cz, sprite.getMinU(), sprite.getMaxV());
-		buffer.addQuadVertexWithUV(cx + 1, y, cz + 1, sprite.getMaxU(), sprite.getMaxV());
-		buffer.addQuadVertexWithUV(cx + 1, y + 1, cz + 1, sprite.getMaxU(), sprite.getMinV());
-		buffer.addQuadVertexWithUV(cx, y + 1, cz, sprite.getMinU(), sprite.getMinV());
+		buffer.addQuadVertexWithUV(cx, cy, cz, sprite.getMinU(), sprite.getMaxV());
+		buffer.addQuadVertexWithUV(cx + 1, cy, cz + 1, sprite.getMaxU(), sprite.getMaxV());
+		buffer.addQuadVertexWithUV(cx + 1, cy + 1, cz + 1, sprite.getMaxU(), sprite.getMinV());
+		buffer.addQuadVertexWithUV(cx, cy + 1, cz, sprite.getMinU(), sprite.getMinV());
 
-		buffer.addQuadVertexWithUV(cx, y + 1, cz, sprite.getMinU(), sprite.getMinV());
-		buffer.addQuadVertexWithUV(cx + 1, y + 1, cz + 1, sprite.getMaxU(), sprite.getMinV());
-		buffer.addQuadVertexWithUV(cx + 1, y, cz + 1, sprite.getMaxU(), sprite.getMaxV());
-		buffer.addQuadVertexWithUV(cx, y, cz, sprite.getMinU(), sprite.getMaxV());
+		buffer.addQuadVertexWithUV(cx, cy + 1, cz, sprite.getMinU(), sprite.getMinV());
+		buffer.addQuadVertexWithUV(cx + 1, cy + 1, cz + 1, sprite.getMaxU(), sprite.getMinV());
+		buffer.addQuadVertexWithUV(cx + 1, cy, cz + 1, sprite.getMaxU(), sprite.getMaxV());
+		buffer.addQuadVertexWithUV(cx, cy, cz, sprite.getMinU(), sprite.getMaxV());
 
-		buffer.addQuadVertexWithUV(cx + 1, y + 1, cz, sprite.getMinU(), sprite.getMinV());
-		buffer.addQuadVertexWithUV(cx, y + 1, cz + 1, sprite.getMaxU(), sprite.getMinV());
-		buffer.addQuadVertexWithUV(cx, y, cz + 1, sprite.getMaxU(), sprite.getMaxV());
-		buffer.addQuadVertexWithUV(cx + 1, y, cz, sprite.getMinU(), sprite.getMaxV());
+		buffer.addQuadVertexWithUV(cx + 1, cy + 1, cz, sprite.getMinU(), sprite.getMinV());
+		buffer.addQuadVertexWithUV(cx, cy + 1, cz + 1, sprite.getMaxU(), sprite.getMinV());
+		buffer.addQuadVertexWithUV(cx, cy, cz + 1, sprite.getMaxU(), sprite.getMaxV());
+		buffer.addQuadVertexWithUV(cx + 1, cy, cz, sprite.getMinU(), sprite.getMaxV());
 
-		buffer.addQuadVertexWithUV(cx + 1, y, cz, sprite.getMinU(), sprite.getMaxV());
-		buffer.addQuadVertexWithUV(cx, y, cz + 1, sprite.getMaxU(), sprite.getMaxV());
-		buffer.addQuadVertexWithUV(cx, y + 1, cz + 1, sprite.getMaxU(), sprite.getMinV());
-		buffer.addQuadVertexWithUV(cx + 1, y + 1, cz, sprite.getMinU(), sprite.getMinV());
+		buffer.addQuadVertexWithUV(cx + 1, cy, cz, sprite.getMinU(), sprite.getMaxV());
+		buffer.addQuadVertexWithUV(cx, cy, cz + 1, sprite.getMaxU(), sprite.getMaxV());
+		buffer.addQuadVertexWithUV(cx, cy + 1, cz + 1, sprite.getMaxU(), sprite.getMinV());
+		buffer.addQuadVertexWithUV(cx + 1, cy + 1, cz, sprite.getMinU(), sprite.getMinV());
 	}
 
 	@Override

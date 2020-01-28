@@ -100,7 +100,9 @@ public abstract class Entity {
 	}
 
 	public void moveClipped(double xofs, double yofs, double zofs) {
-		if (!world.chunkProvider.isChunkLoaded(((int) newX) >> 4, ((int) newZ) >> 4)) {
+		if (!world.chunkProvider.isChunkLoaded(	((int) newX) >> World.CHUNK_BITSHIFT_SIZE,
+												((int) newY) >> World.CHUNK_BITSHIFT_SIZE,
+												((int) newZ) >> World.CHUNK_BITSHIFT_SIZE)) {
 			return;
 		}
 

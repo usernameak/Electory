@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.NVConditionalRender;
 
 import electory.block.Block;
 import electory.client.TinyCraft;
@@ -20,6 +19,7 @@ import electory.client.render.shader.ShaderManager;
 import electory.client.render.texture.TextureManager;
 import electory.profiling.ElectoryProfiler;
 import electory.world.Chunk;
+import electory.world.World;
 
 public class ChunkRenderer {
 	private int[] vbos = new int[WorldRenderer.VBO_COUNT];
@@ -83,63 +83,63 @@ public class ChunkRenderer {
 		TriangleBuffer buf = Tessellator.instance.getBuffer();
 		/*
 		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 0f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 0f, World.CHUNK_SIZE_FLT);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, World.CHUNK_SIZE_FLT);
 		 * 
 		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 256f, World.CHUNK_SIZE_FLT);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, World.CHUNK_SIZE_FLT);
 		 * 
 		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 0f, 0);
 		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
 		 * 
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, World.CHUNK_SIZE_FLT);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 256f, World.CHUNK_SIZE_FLT);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 0f, World.CHUNK_SIZE_FLT);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, World.CHUNK_SIZE_FLT);
 		 * 
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 256f, 0 + 16.0f);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0 + 16.0f);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + 16.0f, 0f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 256f, 0);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 256f, World.CHUNK_SIZE_FLT);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 0f, World.CHUNK_SIZE_FLT);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX() + World.CHUNK_SIZE_FLT, 0f, 0);
 		 * 
 		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, 0 + 16.0f);
-		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0 + 16.0f);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 256f, World.CHUNK_SIZE_FLT);
+		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, World.CHUNK_SIZE_FLT);
 		 * buf.addQuadVertex(getChunk().getChunkBlockCoordX(), 0f, 0);
 		 */
 		buf.addQuadVertex(0, 0f, 0);
-		buf.addQuadVertex(0 + 16.0f, 0f, 0);
-		buf.addQuadVertex(0 + 16.0f, 0f, 0 + 16.0f);
-		buf.addQuadVertex(0, 0f, 0 + 16.0f);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, 0f, 0);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, 0f, World.CHUNK_SIZE_FLT);
+		buf.addQuadVertex(0, 0f, World.CHUNK_SIZE_FLT);
 
-		buf.addQuadVertex(0, 256f, 0);
-		buf.addQuadVertex(0 + 16.0f, 256f, 0);
-		buf.addQuadVertex(0 + 16.0f, 256f, 0 + 16.0f);
-		buf.addQuadVertex(0, 256f, 0 + 16.0f);
+		buf.addQuadVertex(0, World.CHUNK_SIZE_FLT, 0);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT, 0);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT);
+		buf.addQuadVertex(0, World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT);
 
-		buf.addQuadVertex(0, 256f, 0);
-		buf.addQuadVertex(0 + 16.0f, 256f, 0);
-		buf.addQuadVertex(0 + 16.0f, 0f, 0);
+		buf.addQuadVertex(0, World.CHUNK_SIZE_FLT, 0);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT, 0);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, 0f, 0);
 		buf.addQuadVertex(0, 0f, 0);
 
-		buf.addQuadVertex(0, 256f, 0 + 16.0f);
-		buf.addQuadVertex(0 + 16.0f, 256f, 0 + 16.0f);
-		buf.addQuadVertex(0 + 16.0f, 0f, 0 + 16.0f);
-		buf.addQuadVertex(0, 0f, 0 + 16.0f);
+		buf.addQuadVertex(0, World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, 0f, World.CHUNK_SIZE_FLT);
+		buf.addQuadVertex(0, 0f, World.CHUNK_SIZE_FLT);
 
-		buf.addQuadVertex(0 + 16.0f, 256f, 0);
-		buf.addQuadVertex(0 + 16.0f, 256f, 0 + 16.0f);
-		buf.addQuadVertex(0 + 16.0f, 0f, 0 + 16.0f);
-		buf.addQuadVertex(0 + 16.0f, 0f, 0);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT, 0);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, 0f, World.CHUNK_SIZE_FLT);
+		buf.addQuadVertex(World.CHUNK_SIZE_FLT, 0f, 0);
 
-		buf.addQuadVertex(0, 256f, 0);
-		buf.addQuadVertex(0, 256f, 0 + 16.0f);
-		buf.addQuadVertex(0, 0f, 0 + 16.0f);
+		buf.addQuadVertex(0, World.CHUNK_SIZE_FLT, 0);
+		buf.addQuadVertex(0, World.CHUNK_SIZE_FLT, World.CHUNK_SIZE_FLT);
+		buf.addQuadVertex(0, 0f, World.CHUNK_SIZE_FLT);
 		buf.addQuadVertex(0, 0f, 0);
 		Tessellator.instance.draw();
 		GL11.glEnable(GL11.GL_CULL_FACE);
@@ -177,9 +177,9 @@ public class ChunkRenderer {
 							for (int i = 0; i < vbos.length; i++) {
 								TriangleBuffer qb = new TriangleBuffer();
 								int tricount = 0;
-								for (int x = 0; x < 16; x++) {
-									for (int y = 0; y < 256; y++) {
-										for (int z = 0; z < 16; z++) {
+								for (int x = 0; x < World.CHUNK_SIZE; x++) {
+									for (int y = 0; y < World.CHUNK_SIZE; y++) {
+										for (int z = 0; z < World.CHUNK_SIZE; z++) {
 											Block block = chunk.getBlockAt(x, y, z);
 											if (block != null && block.shouldRenderInVBO(i)) {
 												tricount += block.getRenderer()
@@ -187,9 +187,10 @@ public class ChunkRenderer {
 																			block,
 																			ChunkRenderer.this,
 																			chunk.getChunkBlockCoordX() + x,
-																			y,
+																			chunk.getChunkBlockCoordY() + y,
 																			chunk.getChunkBlockCoordZ() + z,
 																			x,
+																			y,
 																			z);
 											}
 										}
@@ -197,9 +198,9 @@ public class ChunkRenderer {
 								}
 								triangleCounts[i] = tricount;
 								qb.allocate(tricount);
-								for (int x = 0; x < 16; x++) {
-									for (int y = 0; y < 256; y++) {
-										for (int z = 0; z < 16; z++) {
+								for (int x = 0; x < World.CHUNK_SIZE; x++) {
+									for (int y = 0; y < World.CHUNK_SIZE; y++) {
+										for (int z = 0; z < World.CHUNK_SIZE; z++) {
 											Block block = chunk.getBlockAt(x, y, z);
 											if (block != null && block.shouldRenderInVBO(i)) {
 												qb.setColor(lightColors[chunk.getSunLightLevelAt(x, y, z)]);
@@ -208,9 +209,10 @@ public class ChunkRenderer {
 																		block,
 																		ChunkRenderer.this,
 																		chunk.getChunkBlockCoordX() + x,
-																		y,
+																		chunk.getChunkBlockCoordY() + y,
 																		chunk.getChunkBlockCoordZ() + z,
 																		x,
+																		y,
 																		z,
 																		qb);
 											}
