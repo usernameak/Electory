@@ -2,13 +2,15 @@ package electory.world.gen;
 
 import java.util.Collection;
 import java.util.Iterator;
-
-import com.koloboke.collect.map.LongObjMap;
+import java.util.Map;
 
 import electory.block.Block;
 import electory.math.MathUtils;
 import electory.world.BiomeGenBase;
 import electory.world.Chunk;
+import electory.world.ChunkColumn;
+import electory.world.ChunkPosition;
+import electory.world.ColumnPosition;
 import electory.world.IChunkProvider;
 import electory.world.IChunkSaveStatusHandler;
 import electory.world.World;
@@ -113,7 +115,7 @@ public class ChunkGenerator implements IChunkProvider {
 				chunk.setBiomeAt(i, j, BiomeGenBase.biomeList[biomeData[j << World.CHUNK_BITSHIFT_SIZE | i]]);
 			}
 		}
-
+		
 		chunk.recalculateSkyLight();
 		chunk.buildHeightMap();
 
@@ -130,7 +132,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public void waitUntilAllChunksSaved() {
+	public void waitUntilAllSaved() {
 	}
 
 	@Override
@@ -157,16 +159,61 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public void coldUnloadAllChunks() {
+	public void coldUnloadAll() {
 	}
 
 	@Override
-	public LongObjMap<Chunk> getLoadedChunkMap() {
+	public Map<ChunkPosition, Chunk> getLoadedChunkMap() {
 		return null;
 	}
 
 	@Override
 	public void loadChunk(int cx, int cy, int cz) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ChunkColumn provideColumn(int cx, int cz) {
+		return null;
+	}
+
+	@Override
+	public void save(ChunkColumn chunkColumn) {
+		
+	}
+
+	@Override
+	public boolean canLoadColumn(int cx, int cz) {
+		return true;
+	}
+
+	@Override
+	public Collection<ChunkColumn> getAllLoadedColumns() {
+		return null;
+	}
+
+	@Override
+	public Map<ColumnPosition, ChunkColumn> getLoadedColumnMap() {
+		return null;
+	}
+
+	@Override
+	public boolean isColumnLoaded(int x, int z) {
+		return true;
+	}
+
+	@Override
+	public void unloadColumn(ChunkColumn chunk, Iterator<ChunkColumn> it, boolean doSave) {
+		
+	}
+
+	@Override
+	public ChunkColumn loadColumnSynchronously(int cx, int cz) {
+		return new ChunkColumn(world, cx, cz);
+	}
+	
+	@Override
+	public void loadColumn(int cx, int cz) {
 		throw new UnsupportedOperationException();
 	}
 }

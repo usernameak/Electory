@@ -14,8 +14,6 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import com.koloboke.collect.LongCursor;
-import com.koloboke.collect.set.hash.HashLongSet;
-import com.koloboke.collect.set.hash.HashLongSets;
 
 import electory.block.Block;
 import electory.client.TinyCraft;
@@ -211,7 +209,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 		chunkProvider.update();
 		generationChunkProvider.update();
 
-		HashLongSet chunksToLoad = HashLongSets.newMutableSet();
+		HashSet<ChunkPosition> chunksToLoad = new HashSet<>();
+		HashSet<ColumnPosition> columnsToLoad = new HashSet<>();
+		
 		for (EntityPlayer player : getPlayers()) {
 			Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f)
 					: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
@@ -221,24 +221,46 @@ public abstract class World implements IChunkSaveStatusHandler {
 			for (int x = startX; x <= startX + CHUNKLOAD_DISTANCE2; x++) {
 				for (int y = startY; y <= startY + CHUNKLOAD_DISTANCE2; y++) {
 					for (int z = startZ; z <= startZ + CHUNKLOAD_DISTANCE2; z++) {
-						chunksToLoad.add(ChunkPosition.createLong(x, y, z));
+						chunksToLoad.add(new ChunkPosition(x, y, z));
+						columnsToLoad.add(new ColumnPosition(x, z));
 					}
 				}
 			}
 		}
-		HashLongSet chunksToUnload = HashLongSets.newMutableSet(chunkProvider.getLoadedChunkMap().keySet());
+		HashSet<ChunkPosition> chunksToUnload = new HashSet<>(chunkProvider.getLoadedChunkMap().keySet());
+		HashSet<ColumnPosition> columnsToUnload = new HashSet<>(chunkProvider.getLoadedColumnMap().keySet());
 		chunksToUnload.removeAll(chunksToLoad);
+		columnsToUnload.removeAll(columnsToLoad);
 
 		chunksToLoad.removeAll(chunkProvider.getLoadedChunkMap().keySet());
+		columnsToLoad.removeAll(chunkProvider.getLoadedColumnMap().keySet());
 		{
-			LongCursor it = chunksToLoad.cursor();
+			Iterator<ColumnPosition> it = columnsToLoad.iterator();
 			int needsLoadNext = Integer.MAX_VALUE;
 			while (!checkSpawnAreaLoaded() || needsLoadNext > 0) {
 				needsLoadNext--;
-				if (it.moveNext()) {
-					long cpos = it.elem();
-					int cx = ChunkPosition.unpackLongX(cpos), cy = ChunkPosition.unpackLongY(cpos),
-							cz = ChunkPosition.unpackLongZ(cpos);
+				if (it.hasNext()) {
+					ColumnPosition cpos = it.next();
+					int cx = cpos.x, cz = cpos.z;
+					// System.out.println(cx + "_" + cy + "_" + cz);
+					if (!chunkProvider.isColumnLoading(cx, cz) && chunkProvider.canLoadColumn(cx, cz)) {
+						chunkProvider.loadColumn(cx, cz);
+					} else {
+						needsLoadNext++;
+					}
+				} else {
+					break;
+				}
+			}
+		}
+		{
+			Iterator<ChunkPosition> it = chunksToLoad.iterator();
+			int needsLoadNext = Integer.MAX_VALUE;
+			while (!checkSpawnAreaLoaded() || needsLoadNext > 0) {
+				needsLoadNext--;
+				if (it.hasNext()) {
+					ChunkPosition cpos = it.next();
+					int cx = cpos.x, cy = cpos.y, cz = cpos.z;
 					// System.out.println(cx + "_" + cy + "_" + cz);
 					if (!chunkProvider.isLoading(cx, cy, cz) && chunkProvider.canLoadChunk(cx, cy, cz)) {
 						chunkProvider.loadChunk(cx, cy, cz);
@@ -251,14 +273,18 @@ public abstract class World implements IChunkSaveStatusHandler {
 			}
 		}
 		{
-			LongCursor it = chunksToUnload.cursor();
-			if (it.moveNext()) {
-				long cpos = it.elem();
-				chunkProvider.unloadChunk(	chunkProvider.provideChunk(	ChunkPosition.unpackLongX(cpos),
-																		ChunkPosition.unpackLongY(cpos),
-																		ChunkPosition.unpackLongZ(cpos)),
-											null,
-											true);
+			Iterator<ChunkPosition> it = chunksToUnload.iterator();
+			if (it.hasNext()) {
+				ChunkPosition cpos = it.next();
+				chunkProvider.unloadChunk(chunkProvider.provideChunk(cpos.x, cpos.y, cpos.z), null, true);
+			}
+		}
+
+		{
+			Iterator<ColumnPosition> it = columnsToUnload.iterator();
+			if (it.hasNext()) {
+				ColumnPosition cpos = it.next();
+				chunkProvider.unloadColumn(chunkProvider.provideColumn(cpos.x, cpos.z), null, true);
 			}
 		}
 	}
@@ -313,7 +339,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 			entities.clear();
 			chunkProvider.reset();
 			generationChunkProvider = null;
-			chunkProvider.coldUnloadAllChunks();
+			chunkProvider.coldUnloadAll();
 			TinyCraft.getInstance().player = null;
 			{
 				CompoundTag tag = (CompoundTag) NBTUtil.readTag(new File(getWorldSaveDir(), "world_info.sav"));
@@ -379,9 +405,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 				: chunk.getBiomeAt(x & World.CHUNK_COORD_BITMASK, z & World.CHUNK_COORD_BITMASK);
 	}
 
-	public short getHeightAt(int x, int y, int z) {
-		Chunk chunk = chunkProvider.provideChunk(	x >> World.CHUNK_BITSHIFT_SIZE,
-													y >> World.CHUNK_BITSHIFT_SIZE,
+	public int getHeightAt(int x, int z) {
+		ChunkColumn chunk = chunkProvider.provideColumn(	x >> World.CHUNK_BITSHIFT_SIZE,
+													
 													z >> World.CHUNK_BITSHIFT_SIZE);
 		return chunk == null ? 0 : chunk.getHeightAt(x & World.CHUNK_COORD_BITMASK, z & World.CHUNK_COORD_BITMASK);
 	}
@@ -394,7 +420,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 	public void unload() {
 		try {
 			save();
-			chunkProvider.waitUntilAllChunksSaved();
+			chunkProvider.waitUntilAllSaved();
 			Iterator<Chunk> it = chunkProvider.getAllLoadedChunks().iterator();
 			while (it.hasNext()) {
 				Chunk chunk = it.next();

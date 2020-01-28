@@ -3,8 +3,8 @@ package electory.world;
 import lombok.Data;
 
 @Data
-public class ChunkPosition {
-	public final int x, y, z;
+public class ColumnPosition {
+	public final int x, z;
 /*
 	public static long createLong(int x, int y, int z) {
 		long xx = ((long) x) & 0x1FFFFF | ((long) x) >>> 63 << 21;

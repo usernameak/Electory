@@ -283,7 +283,7 @@ public class WorldRenderer {
 			world.getEntities().stream().forEach(e -> {
 				WorldRenderState rs2 = new WorldRenderState(renderState);
 				Vector3d epos = e.getInterpolatedPosition(renderPartialTicks);
-				rs2.modelMatrix.translate(epos.x - pos.x, epos.y, epos.z - pos.z);
+				rs2.modelMatrix.translate(epos.x - pos.x, epos.y - pos.y, epos.z - pos.z);
 				EntityRenderer.getRendererFromEntity(e).renderEntity(e, renderPartialTicks, rs2);
 			});
 			RenderUtilities.popDebugGroup();
@@ -300,7 +300,7 @@ public class WorldRenderer {
 					cr.beginConditionalRender();
 				WorldRenderState rs2 = new WorldRenderState(renderState);
 				rs2.modelMatrix
-						.translate(cr.chunk.getChunkBlockCoordX() - pos.x, 0f, cr.chunk.getChunkBlockCoordZ() - pos.z);
+						.translate(cr.chunk.getChunkBlockCoordX() - pos.x, cr.chunk.getChunkBlockCoordY() - pos.y, cr.chunk.getChunkBlockCoordZ() - pos.z);
 				cr.render(	processRenderStateForPass(pass, rs2),
 							chunkUpdateExecutor,
 							getRenderPassShader(pass),
@@ -326,7 +326,7 @@ public class WorldRenderer {
 						cr.beginConditionalRender();
 					WorldRenderState rs2 = new WorldRenderState(renderState);
 					rs2.modelMatrix.translate(	cr.chunk.getChunkBlockCoordX() - pos.x,
-												0f,
+					                          	cr.chunk.getChunkBlockCoordY() - pos.y,
 												cr.chunk.getChunkBlockCoordZ() - pos.z);
 					cr.render(	processRenderStateForPass(pass, rs2),
 								chunkUpdateExecutor,

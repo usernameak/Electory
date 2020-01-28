@@ -33,7 +33,6 @@ public class WorldSP extends World {
 					EntityPlayer player = new EntityPlayerClient(this);
 					player.setPosition(	spawnPoint.x + 0.5f,
 										getHeightAt((int) Math.floor(spawnPoint.x),
-													(int) Math.floor(spawnPoint.y),
 													(int) Math.floor(spawnPoint.z))
 												+ 1.0f,
 										spawnPoint.z + 0.5f,
