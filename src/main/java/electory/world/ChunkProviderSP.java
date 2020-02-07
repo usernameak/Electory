@@ -12,8 +12,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -30,7 +31,7 @@ public class ChunkProviderSP implements IChunkProvider {
 	private World world;
 	private Map<ChunkPosition, Thread> savingChunks = new ConcurrentHashMap<>();
 	private LongObjMap<Chunk> loadedChunks = HashLongObjMaps.newMutableMap();
-	private Executor genExecutor = Executors.newSingleThreadExecutor();
+	private ExecutorService genExecutor = Executors.newSingleThreadExecutor();
 	private Queue<Chunk> chunksToLoad = new ConcurrentLinkedQueue<>();
 	private Set<ChunkPosition> loadingChunks = new HashSet<>();
 
@@ -201,5 +202,17 @@ public class ChunkProviderSP implements IChunkProvider {
 	@Override
 	public Chunk loadChunkSynchronously(int cx, int cy) {
 		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public void dispose() {
+		genExecutor.shutdown();
+		try {
+			if (!genExecutor.awaitTermination(1L, TimeUnit.SECONDS)) {
+				return;
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

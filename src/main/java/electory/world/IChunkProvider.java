@@ -40,4 +40,6 @@ public interface IChunkProvider {
 	void coldUnloadAllChunks();
 
 	Chunk loadChunkSynchronously(int cx, int cy);
+	
+	default void dispose() {}
 }

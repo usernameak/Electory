@@ -1,7 +1,7 @@
 package electory.world;
 
-public enum BiomeGenBase {
-	plains, extremeHills, extremeHillsEdge, forest, forestHills, ocean/* {
+public enum EnumWorldBiome {
+	plains(64, 72), ocean(32, 48), plateau(96, 128)/* {
 		{
 			fillerBlock = Block.blockGravel;
 			topBlock = Block.blockSand;
@@ -16,9 +16,13 @@ public enum BiomeGenBase {
 	public int biomeID;
 	/*public Block fillerBlock;
 	public Block topBlock;*/
+	public int minHeight;
+	public int maxHeight;
 
-	private BiomeGenBase() {
+	private EnumWorldBiome(int minHeight, int maxHeight) {
 		this.biomeID = ordinal();
+		this.minHeight = minHeight;
+		this.maxHeight = maxHeight;
 		/*this.fillerBlock = Block.blockDirt;
 		this.topBlock = Block.blockGrass;*/
 	}
@@ -27,5 +31,5 @@ public enum BiomeGenBase {
 		return new BasicHeightMapGenerator(new ScaledNoise(new FBM(8, seed), 1f / 32, 1f / 32), 64, 72, 64, 72);
 	}
 */
-	public static BiomeGenBase[] biomeList = BiomeGenBase.values();
+	public static EnumWorldBiome[] biomeList = EnumWorldBiome.values();
 }

@@ -1,10 +1,12 @@
 package electory.block;
 
+import electory.client.TinyCraft;
 import electory.client.render.IAtlasSprite;
 import electory.client.render.IAtlasSpriteManager;
 import electory.client.render.block.IBlockRenderer;
 import electory.client.render.world.WorldRenderer;
 import electory.entity.EntityPlayer;
+import electory.event.RegisterBlocksEvent;
 import electory.item.Item;
 import electory.item.ItemBlock;
 import electory.math.AABB;
@@ -140,13 +142,14 @@ public class Block implements IRegistriable {
 
 	}
 
-	static {
-		REGISTRY.register("cobblestone", new Block().setSpriteName("/img/blocks/cobblestone.png"));
+	public static void registerBlocks() {
+		/*REGISTRY.register("cobblestone", new Block().setSpriteName("/img/blocks/cobblestone.png"));
+		*/
 		REGISTRY.register("grass", new BlockGrass());
-		REGISTRY.register("planks", new Block().setSpriteName("/img/blocks/planks.png"));
-		REGISTRY.register("dirt", new Block().setSpriteName("/img/blocks/dirt.png"));
-		REGISTRY.register("rootstone", new Block().setSpriteName("/img/blocks/rootstone.png").setBreakable(false));
-		REGISTRY.register("glass", new Block().setSpriteName("/img/blocks/glass.png").setSolid(false));
+		/*REGISTRY.register("planks", new Block().setSpriteName("/img/blocks/planks.png"));
+		REGISTRY.register("dirt", new Block().setSpriteName("/img/blocks/dirt.png"));*/
+		// REGISTRY.register("rootstone", new Block().setSpriteName("/img/blocks/rootstone.png").setBreakable(false));
+		// REGISTRY.register("glass", new Block().setSpriteName("/img/blocks/glass.png").setSolid(false));
 		REGISTRY.register("log", new BlockLog());
 		REGISTRY.register("leaves", new Block().setSpriteName("/img/blocks/leaves.png"));
 		REGISTRY.register(	"water",
@@ -154,12 +157,17 @@ public class Block implements IRegistriable {
 										.setSolid(false)
 										.setLiquid(true)
 										.setImpassable(false));
+		/*
 		REGISTRY.register("sand", new Block().setSpriteName("/img/blocks/sand.png").setSound(SOUND_SAND));
+		*/
+		/*
 		REGISTRY.register("stone", new Block().setSpriteName("/img/blocks/stone.png"));
-		REGISTRY.register("gravel", new Block().setSpriteName("/img/blocks/gravel.png"));
+		REGISTRY.register("gravel", new Block().setSpriteName("/img/blocks/gravel.png"));*/
 		REGISTRY.register("tallgrass", new BlockTallGrass().setSpriteName("/img/blocks/tallgrass.png").setSolid(false).setImpassable(false));
 		REGISTRY.register("sapling", new BlockSapling().setSpriteName("/img/blocks/sapling.png").setSolid(false).setImpassable(false));
 		REGISTRY.register("sandstone", new Block().setSpriteName("/img/blocks/sandstone.png"));
+		
+		TinyCraft.getInstance().eventRegistry.emit(new RegisterBlocksEvent());
 		
 		for(Block block : REGISTRY.getAllBlocks()) {
 			Item.REGISTRY.register(block.getRegistryName(), new ItemBlock(block));

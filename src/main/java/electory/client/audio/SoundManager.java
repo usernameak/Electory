@@ -113,6 +113,7 @@ public class SoundManager {
 
 	public void update() {
 		streaming.values().forEach(ISound::update);
+		streaming.values().stream().filter(ISound::isEndOfStream).forEach(ISound::destroy);
 		streaming.values().removeIf(ISound::isEndOfStream);
 	}
 

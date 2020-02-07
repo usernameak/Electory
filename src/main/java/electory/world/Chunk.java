@@ -103,14 +103,14 @@ public class Chunk {
 		return heightMap[x * 16 + z];
 	}
 
-	public BiomeGenBase getBiomeAt(int x, int z) {
+	public EnumWorldBiome getBiomeAt(int x, int z) {
 		if (x < 0 || z < 0 || x >= 16 || z >= 16) {
 			return null;
 		}
-		return BiomeGenBase.biomeList[biomeArray[x * 16 + z]];
+		return EnumWorldBiome.biomeList[biomeArray[x * 16 + z]];
 	}
 
-	public void setBiomeAt(int x, int z, BiomeGenBase biome) {
+	public void setBiomeAt(int x, int z, EnumWorldBiome biome) {
 		if (x < 0 || z < 0 || x >= 16 || z >= 16) {
 			return;
 		}

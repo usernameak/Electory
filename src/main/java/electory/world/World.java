@@ -336,9 +336,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 		}
 	}
 
-	public BiomeGenBase getBiomeAt(int x, int z) {
+	public EnumWorldBiome getBiomeAt(int x, int z) {
 		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
-		return chunk == null ? BiomeGenBase.plains : chunk.getBiomeAt(x & 0xF, z & 0xF);
+		return chunk == null ? EnumWorldBiome.plains : chunk.getBiomeAt(x & 0xF, z & 0xF);
 	}
 
 	public short getHeightAt(int x, int z) {
@@ -360,6 +360,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 				Chunk chunk = it.next();
 				chunkProvider.unloadChunk(chunk, it, false);
 			}
+			chunkProvider.dispose();
 			entities.clear();
 		} catch (IOException e) {
 			throw new CrashException(e);
