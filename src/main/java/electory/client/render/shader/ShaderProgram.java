@@ -11,6 +11,7 @@ public class ShaderProgram {
 		for (int shader : shaders) {
 			GL20.glAttachShader(handle, shader);
 		}
+		bindAttributes();
 		GL20.glLinkProgram(handle);
 		if (GL20.glGetProgrami(handle, GL20.GL_LINK_STATUS) != GL11.GL_TRUE) {
 			ShaderCompileException ex = new ShaderCompileException(
@@ -18,6 +19,10 @@ public class ShaderProgram {
 			GL20.glDeleteProgram(handle);
 			throw ex;
 		}
+	}
+	
+	protected void bindAttributes() {
+		
 	}
 	
 	public void use() {
