@@ -271,7 +271,9 @@ public class ChunkRenderer {
 		shader.bindTexture(TextureManager.TERRAIN_TEXTURE);
 		shader.loadRenderState(rs);
 		ARBVertexArrayObject.glBindVertexArray(vaos[vbo]);
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, triangleCounts[vbo] * 3);
+		if (triangleCounts[vbo] == 0) {
+			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, triangleCounts[vbo] * 3);
+		}
 		ARBVertexArrayObject.glBindVertexArray(0);
 		
 		/*GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbos[vbo]);
