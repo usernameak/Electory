@@ -141,4 +141,9 @@ public class GuiRootContainer extends GuiWidget implements IRelayoutable {
 	public void relayout(int width, int height) {
 		// child.relayout();
 	}
+
+	@Override
+	public void handleTextInputEvent(String text) {
+		child.handleTextInputEvent(text);
+	}
 }

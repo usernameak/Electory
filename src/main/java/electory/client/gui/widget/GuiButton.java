@@ -36,4 +36,10 @@ public class GuiButton extends GuiWidget {
 	@Override
 	public void relayout(int width, int height) {
 	}
+
+	@Override
+	public void handleTextInputEvent(String text) {
+		// TODO Auto-generated method stub
+		
+	}
 }

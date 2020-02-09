@@ -11,14 +11,19 @@ public class EntityPlayerClient extends EntityPlayer {
 	public EntityPlayerClient(World world) {
 		super(world);
 	}
-
+	
 	@Override
-	public Vector3f getAcceleration() {
-		return super.getAcceleration()
-				.add(	0f,
-						TinyCraft.getInstance().currentGui == null
-								&& GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS
-								&& (onGround || isUnderwater) ? (isUnderwater ? 0.128f : 0.512f) : 0f,
-						0f);
+	public void update() {
+		if(TinyCraft.getInstance().currentGui == null) {
+			if(GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS) {
+				if(onGround || isUnderwater || fly) {
+					velocity.y += isUnderwater ? 0.128f : 0.512f; 
+				}
+			}
+		}
+		if(fly) {
+			velocity.y *= 0.5f;
+		}
+		super.update();
 	}
 }

@@ -22,6 +22,7 @@ import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCharCallbackI;
 import org.lwjgl.glfw.GLFWCursorPosCallbackI;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
@@ -146,12 +147,12 @@ public class TinyCraft {
 	public static String getVersion() {
 		return version;
 	}
-	
+
 	public void initEvents() {
 		eventRegistry.registerEventType(new EventType("init", ElectoryInitEvent.class));
 		eventRegistry.registerEventType(new EventType("register_blocks", RegisterBlocksEvent.class));
 		eventRegistry.registerEventType(new EventType("key_event", KeyEvent.class));
-		
+
 		eventRegistry.registerHandler(this);
 	}
 
@@ -316,8 +317,19 @@ public class TinyCraft {
 		GLFW.glfwSetKeyCallback(window, new GLFWKeyCallbackI() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
+				// System.out.println("key " + key + " scancode" + scancode + " action " +
+				// action + " mods " + mods);
 				KeyEvent event = new KeyEvent(key, action != GLFW.GLFW_RELEASE);
 				eventRegistry.emit(event);
+			}
+		});
+
+		GLFW.glfwSetCharCallback(window, new GLFWCharCallbackI() {
+
+			@Override
+			public void invoke(long window, int codepoint) {
+				if (currentGui != null)
+					currentGui.handleTextInputEvent(String.valueOf((char) codepoint));
 			}
 		});
 

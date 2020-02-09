@@ -34,4 +34,10 @@ public class GuiSpacer extends GuiWidget {
 		// nothing
 	}
 
+	@Override
+	public void handleTextInputEvent(String text) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

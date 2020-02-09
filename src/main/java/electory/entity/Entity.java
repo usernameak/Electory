@@ -67,8 +67,9 @@ public abstract class Entity {
 
 		isUnderwater = world.isAABBWithinLiquid(getAABB());
 
-		Vector3f affectedVel = getAcceleration();
-		velocity.add(affectedVel);
+		if(hasGravity()) {
+			velocity.y -= 0.0981f;
+		}
 /*
 		if (onGround && velocity.y < 0) {
 			velocity.y = 0f;
@@ -104,10 +105,6 @@ public abstract class Entity {
 
 	public void setVelocity(float x, float y, float z) {
 		velocity.set(x, y, z);
-	}
-
-	public Vector3f getAcceleration() {
-		return new Vector3f(0f, (hasGravity()) ? (isUnderwater ? -0.0981f : -0.0981f) : 0f, 0f);
 	}
 
 	public void moveClipped(double xofs, double yofs, double zofs) {

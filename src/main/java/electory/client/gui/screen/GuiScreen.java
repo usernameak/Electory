@@ -29,6 +29,12 @@ public abstract class GuiScreen extends Gui {
 	public void handleMouseEvent(MouseEvent event) {
 		
 	}
+	
+	@Override
+	public void handleTextInputEvent(String text) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public void closeGuiScreen() {
 	}

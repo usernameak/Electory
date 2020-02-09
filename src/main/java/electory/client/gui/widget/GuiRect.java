@@ -48,4 +48,9 @@ public class GuiRect extends GuiWidget {
 	@Override
 	public void relayout(int width, int height) {
 	}
+
+	@Override
+	public void handleTextInputEvent(String text) {
+
+	}
 }
