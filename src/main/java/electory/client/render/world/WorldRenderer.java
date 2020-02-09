@@ -17,6 +17,8 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTPackedDepthStencil;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.NVCopyImage;
 
 import electory.client.TinyCraft;
@@ -134,9 +136,10 @@ public class WorldRenderer {
 			}
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			IntBuffer drawbuffers = BufferUtils.createIntBuffer(2);
+			IntBuffer drawbuffers = BufferUtils.createIntBuffer(3);
 			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT1_EXT);
+			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT);
 			drawbuffers.flip();
 			ARBDrawBuffers.glDrawBuffersARB(drawbuffers);
 			ShaderManager.waterProgram.use();
@@ -159,6 +162,11 @@ public class WorldRenderer {
 			 * ShaderManager.terrainProgram.setLightMatrix(lightMatrix);
 			 */
 		/* } */else if (pass == RENDERPASS_BASE) {
+			IntBuffer drawbuffers = BufferUtils.createIntBuffer(2);
+			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
+			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT);
+			drawbuffers.flip();
+			ARBDrawBuffers.glDrawBuffersARB(drawbuffers);
 			/*
 			 * ShaderManager.terrainProgram.bindTextureDepthShadow(
 			 * "/dynamic/framebuffer_world_sunspace_depth.png"); Matrix4d lightMatrix = new
@@ -433,7 +441,25 @@ public class WorldRenderer {
 											TinyCraft.getInstance().textureManager
 													.getTextureUnit("/dynamic/framebuffer_world_watermask.png"),
 											0);
+		
 
+		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_position.png");
+		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_position.png",
+																	width,
+																	height,
+																	GL30.GL_RGBA32F,
+																	GL11.GL_RGBA,
+																	GL11.GL_FLOAT);
+
+
+		EXTFramebufferObject
+				.glFramebufferTexture2DEXT(	EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
+											EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT,
+											GL11.GL_TEXTURE_2D,
+											TinyCraft.getInstance().textureManager
+													.getTextureUnit("/dynamic/framebuffer_world_position.png"),
+											0);
+		
 		/*
 		 * TinyCraft.getInstance().textureManager.disposeTexture(
 		 * "/dynamic/framebuffer_world_depth_shadow.png");

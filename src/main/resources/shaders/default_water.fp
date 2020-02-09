@@ -16,4 +16,5 @@ void main() {
 	gl_FragData[0] = fc;
 	vec3 waterPos = waterPositionOffset.xzy + vPosition.xzy;
 	gl_FragData[1] = vec4(voronoi(waterPos * 3.0 + 76.45798) * 0.1, 1.0, voronoi(waterPos * 3.0) * 0.1, 1.0);
+	gl_FragData[2] = vPosition;
 }
