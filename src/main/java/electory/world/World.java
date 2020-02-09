@@ -105,9 +105,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 				EntityBlockParticle particle = new EntityBlockParticle(this,
 						oldBlock.getAtlasSprite(EnumSide.getOrientation(random.nextInt(6))));
 				particle.setPosition(x + 0.5f, y + 0.5f, z + 0.5f, false);
-				particle.setVelocity(	random.nextFloat() * 0.1f - 0.05f,
-										random.nextFloat() * 0.1f - 0.05f,
-										random.nextFloat() * 0.1f - 0.05f);
+				particle.setVelocity(	random.nextFloat() * 2.f - 1.f,
+										random.nextFloat() * .5f,
+										random.nextFloat() * 2.f - 1.f);
 				addEntity(particle);
 			}
 		}
