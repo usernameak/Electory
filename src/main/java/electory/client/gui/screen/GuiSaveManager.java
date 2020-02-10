@@ -105,6 +105,7 @@ public class GuiSaveManager extends GuiWidgetScreen implements IActionListener {
 				throw new CrashException(e);
 			}
 		} else if (widget == quitButton) {
+			tc.openGui(null);
 			tc.openGui(new GuiMainMenu(tc));
 		}
 	}

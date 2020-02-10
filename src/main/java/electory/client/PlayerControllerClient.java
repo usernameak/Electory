@@ -19,15 +19,16 @@ public class PlayerControllerClient implements IPlayerController {
 
 	@Override
 	public void doMovement(EntityPlayer player, Vector3f movementVector) {
-		if(TinyCraft.getInstance().currentGui != null) {
+		if (TinyCraft.getInstance().currentGui != null) {
 			return;
 		}
-		
+
 		Matrix4x3f movementMatrix = new Matrix4x3f();
 
 		movementMatrix.rotate((float) deg2rad(-player.yaw), 0.0f, 1.0f, 0.0f);
 
-		// float movementSpeed = player.isUnderwater ? 0.25f : (player.onGround ? 0.3f : 0.2f);
+		// float movementSpeed = player.isUnderwater ? 0.25f : (player.onGround ? 0.3f :
+		// 0.2f);
 
 		if (GLFW.glfwGetKey(TinyCraft.getInstance().window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
 			movementVector.add(0.0f, 0.0f, 1.0f);
@@ -46,7 +47,7 @@ public class PlayerControllerClient implements IPlayerController {
 		}
 
 		if (movementVector.lengthSquared() != 0f) {
-			movementVector.normalize();//.mul(movementSpeed);
+			movementVector.normalize();// .mul(movementSpeed);
 		}
 
 		movementMatrix.transformDirection(movementVector);
@@ -66,9 +67,7 @@ public class PlayerControllerClient implements IPlayerController {
 				Vector3d pos = player.getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks);
 				pos.add(0f, player.getEyeHeight(), 0f);
 
-				Ray ray = new Ray(new Vector3d(pos.x, pos.y, pos.z), new Vector3d(0f, 0f, 1f))
-						.rotate(new AxisAngle4f((float) deg2rad(-player.pitch), 1f, 0f, 0f))
-						.rotate(new AxisAngle4f((float) deg2rad(-player.yaw), 0f, 1f, 0f));
+				Ray ray = new Ray(new Vector3d(pos.x, pos.y, pos.z), new Vector3d(0f, 0f, 1f)).rotate(new AxisAngle4f((float) deg2rad(-player.pitch), 1f, 0f, 0f)).rotate(new AxisAngle4f((float) deg2rad(-player.yaw), 0f, 1f, 0f));
 
 				int x1 = (int) Math.floor(pos.x - 5);
 				int y1 = (int) Math.floor(pos.y - 5);
@@ -85,8 +84,7 @@ public class PlayerControllerClient implements IPlayerController {
 						for (int z = z1; z <= z2; z++) {
 							Block block = player.world.getBlockAt(x, y, z);
 							if (block != null && !block.isLiquid()) {
-								AABBIntersectionResult res = ray
-										.intersectsAABB(block.getAABB(player.world, x, y, z, false));
+								AABBIntersectionResult res = ray.intersectsAABB(block.getAABB(player.world, x, y, z, false));
 								if (res.hasHit && res.distance < tres.distance) {
 									tres = res;
 									tx = x;

@@ -282,16 +282,10 @@ public class TinyCraft {
 				GLFW.glfwSetWindowMonitor(window, 0L, 0, 0, 800, 500, 0);
 			} else {
 				GLFWVidMode mode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-				GLFW.glfwSetWindowMonitor(	window,
-											GLFW.glfwGetPrimaryMonitor(),
-											0,
-											0,
-											mode.width(),
-											mode.height(),
-											mode.refreshRate());
+				GLFW.glfwSetWindowMonitor(window, GLFW.glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(),
+						mode.refreshRate());
 			}
-		} else if (event.getKey() == GLFW.GLFW_KEY_C
-				&& GLFW.glfwGetKey(window, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS
+		} else if (event.getKey() == GLFW.GLFW_KEY_C && GLFW.glfwGetKey(window, GLFW.GLFW_KEY_F3) == GLFW.GLFW_PRESS
 				&& event.isKeyState()) {
 			throw new CrashException("Debug crash.");
 		}
@@ -426,14 +420,12 @@ public class TinyCraft {
 			soundManager.stopMusic("ingame_music");
 			hadWorld = false;
 		} else if (!hadWorld && world != null) {
-			soundManager.play(	"ingame_music",
-								new AudioSource("mus/cassette_1_chord_1.xm").setAmbient(true).setStreaming(true));
+			soundManager.play("ingame_music",
+					new AudioSource("mus/cassette_1_chord_1.xm").setAmbient(true).setStreaming(true));
 			hadWorld = true;
 		}
 
-		if (GLFW.GLFW_FALSE == GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_FOCUSED)
-				&& world != null
-				&& player != null
+		if (GLFW.GLFW_FALSE == GLFW.glfwGetWindowAttrib(window, GLFW.GLFW_FOCUSED) && world != null && player != null
 				&& currentGui == null) {
 			if (lastMillis + 500L < System.currentTimeMillis()) {
 				openGui(new GuiPause(this));
@@ -563,12 +555,8 @@ public class TinyCraft {
 		}
 		double width = image.getWidth() * ratio;
 		double height = image.getHeight() * ratio;
-		g.drawImage(image,
-					(int) ((scaledIcon.getWidth() - width) / 2),
-					(int) ((scaledIcon.getHeight() - height) / 2),
-					(int) (width),
-					(int) (height),
-					null);
+		g.drawImage(image, (int) ((scaledIcon.getWidth() - width) / 2), (int) ((scaledIcon.getHeight() - height) / 2),
+				(int) (width), (int) (height), null);
 		g.dispose();
 
 		byte[] imageBuffer = new byte[dimension * dimension * 4];

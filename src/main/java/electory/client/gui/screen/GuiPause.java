@@ -71,7 +71,7 @@ public class GuiPause extends GuiWidgetScreen implements IActionListener {
 			}
 			return;
 		} else if (widget == optionsButton) {
-			// TODO
+			tc.openGui(new GuiOptions(tc, false));
 		} else if (widget == saveAndQuitButton) {
 			tc.world.unload();
 			tc.setPlayer(null);

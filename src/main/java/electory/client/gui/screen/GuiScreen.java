@@ -32,8 +32,6 @@ public abstract class GuiScreen extends Gui {
 	
 	@Override
 	public void handleTextInputEvent(String text) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void closeGuiScreen() {

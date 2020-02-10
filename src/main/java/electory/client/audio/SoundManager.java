@@ -123,7 +123,7 @@ public class SoundManager {
 		
 		URL url = getClass().getResource(realPath);
 
-		AudioDecoder decoder;
+		AudioDecoder decoder = null;
 		String upath = url.getPath();
 		String ext = upath.substring(upath.lastIndexOf('.') + 1);
 		try {
@@ -131,6 +131,7 @@ public class SoundManager {
 		} catch (Exception e) {
 			// failed to find decoder. fail
 			TinyCraft.getInstance().logger.severe("failed to initialize audio decoder for format ." + ext);
+			return;
 		}
 
 		int source = AL10.alGenSources();

@@ -43,10 +43,7 @@ public abstract class GuiWidgetScreen extends GuiScreen {
 			ItemStack stack = tc.player.stackOnCursor;
 			if (stack.item != null && stack.count > 0) {
 				stack.item.getRenderer().render(stack, new GuiRenderState(rs2));
-				tc.fontRenderer.drawText(	rs2,
-											String.valueOf(stack.count),
-											30 - tc.fontRenderer.getTextWidth(String.valueOf(stack.count)),
-											30 - FontRenderer.CHAR_HEIGHT);
+				tc.fontRenderer.drawText(rs2, String.valueOf(stack.count), 30 - tc.fontRenderer.getTextWidth(String.valueOf(stack.count)), 30 - FontRenderer.CHAR_HEIGHT);
 			}
 
 		}

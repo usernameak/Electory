@@ -14,20 +14,20 @@ public class GuiRect extends GuiWidget {
 
 	public GuiRect(TinyCraft tc, int width, int height) {
 		super(tc);
-		this.width  = width;
+		this.width = width;
 		this.height = height;
 	}
-	
+
 	@Override
 	public int getWidth() {
 		return width + 10;
 	}
-	
+
 	@Override
 	public int getHeight() {
 		return height + 10;
 	}
-	
+
 	@Override
 	public void renderGui(GuiRenderState rs) {
 		ShaderManager.solidProgram.use();
@@ -42,7 +42,6 @@ public class GuiRect extends GuiWidget {
 		Tessellator.instance.draw();
 		Tessellator.instance.getBuffer().setColor(0xFFFFFFFF);
 		GL11.glDisable(GL11.GL_BLEND);
-		
 	}
 
 	@Override

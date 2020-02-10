@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import electory.client.TinyCraft;
 import electory.client.audio.AudioSource;
 import electory.client.event.KeyEvent;
+import electory.client.gui.GuiRenderState;
 import electory.client.gui.IActionListener;
 import electory.client.gui.widget.GuiColumnLayout;
 import electory.client.gui.widget.GuiMenuButton;
@@ -15,7 +16,6 @@ import electory.client.gui.widget.GuiRootContainer.Position;
 import electory.client.gui.widget.GuiWidget;
 
 public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
-
 	public GuiMainMenu(TinyCraft tc) {
 		super(tc);
 	}
@@ -37,13 +37,13 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 	}
 
 	protected GuiMenuButton spButton;
+	protected GuiMenuButton oButton;
 	protected GuiMenuButton quitButton;
 
 	@Override
 	public void openGuiScreen() {
 		super.openGuiScreen();
-		tc.soundManager.play(	"main_menu_music",
-								new AudioSource("mus/main_menu_1.xm").setAmbient(true).setStreaming(true));
+		tc.soundManager.play("main_menu_music", new AudioSource("mus/main_menu_1.xm").setAmbient(true).setStreaming(true));
 	}
 
 	@Override
@@ -57,6 +57,8 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 		GuiColumnLayout layout = new GuiColumnLayout(tc, 5);
 		spButton = new GuiMenuButton(tc, "Singleplayer", 200, this);
 		layout.add(spButton);
+		oButton = new GuiMenuButton(tc, "Options", 200, this);
+		layout.add(oButton);
 		quitButton = new GuiMenuButton(tc, "Quit game", 200, this);
 		layout.add(quitButton);
 		GuiRootContainer rootContainer = new GuiRootContainer(tc, layout);
@@ -72,6 +74,14 @@ public class GuiMainMenu extends GuiWidgetScreen implements IActionListener {
 			tc.openGui(new GuiSaveManager(tc));
 		} else if (widget == quitButton) {
 			tc.shutdown();
+		} else if (widget == oButton) {
+			tc.openGui(new GuiOptions(tc, true));
 		}
+	}
+	
+	@Override
+	public void renderGui(GuiRenderState rs) {
+		super.renderGui(rs);
+		tc.fontRenderer.drawText(rs, "ELECTORY", 10, 10);
 	}
 }

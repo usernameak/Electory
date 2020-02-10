@@ -7,7 +7,6 @@ import electory.utils.IMetaSerializable;
 import electory.utils.MetaSerializer;
 
 public class ItemStack implements IMetaSerializable {
-
 	public Item item;
 	public int count;
 	public Object meta;
@@ -31,10 +30,7 @@ public class ItemStack implements IMetaSerializable {
 	}
 
 	public boolean transfer(ItemStack other, int amount) {
-		if (this.count < amount
-				|| (other.count > 0
-						&& ((other.item != null && other.item != this.item)
-								|| !Objects.equals(other.meta, this.meta)))) {
+		if (this.count < amount || (other.count > 0 && ((other.item != null && other.item != this.item) || !Objects.equals(other.meta, this.meta)))) {
 			return false;
 		}
 		other.item = this.item;

@@ -38,10 +38,8 @@ public class FontRenderer {
 			float cy = ch * (c / 16);
 			Tessellator.instance.getBuffer().addQuadVertexWithUV(x + i * CHAR_WIDTH, y + 0, 0, cx, cy);
 			Tessellator.instance.getBuffer().addQuadVertexWithUV(x + i * CHAR_WIDTH, y + CHAR_HEIGHT, 0, cx, cy + ch);
-			Tessellator.instance.getBuffer().addQuadVertexWithUV(x + i * CHAR_WIDTH + CHAR_WIDTH, y + CHAR_HEIGHT, 0,
-					cx + cw, cy + ch);
-			Tessellator.instance.getBuffer().addQuadVertexWithUV(x + i * CHAR_WIDTH + CHAR_WIDTH, y + 0, 0, cx + cw,
-					cy);
+			Tessellator.instance.getBuffer().addQuadVertexWithUV(x + i * CHAR_WIDTH + CHAR_WIDTH, y + CHAR_HEIGHT, 0, cx + cw, cy + ch);
+			Tessellator.instance.getBuffer().addQuadVertexWithUV(x + i * CHAR_WIDTH + CHAR_WIDTH, y + 0, 0, cx + cw, cy);
 		}
 		Tessellator.instance.draw();
 	}

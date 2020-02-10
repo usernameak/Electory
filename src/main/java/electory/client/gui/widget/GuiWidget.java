@@ -26,12 +26,10 @@ public abstract class GuiWidget extends Gui implements IRelayoutable {
 	public abstract int getHeight();
 	
 	@Override
-	public void handleMouseEvent(MouseEvent event) {
-		
+	public void handleMouseEvent(MouseEvent event) {	
 	}
 	
 	@Override
 	public void handleKeyEvent(KeyEvent event) {
-		
 	}
 }

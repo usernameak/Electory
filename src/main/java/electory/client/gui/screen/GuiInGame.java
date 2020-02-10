@@ -40,14 +40,10 @@ public class GuiInGame extends GuiScreen {
 		GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ZERO);
 
 		Tessellator.instance.getBuffer().setColor(0xFFFFFFFF);
-		Tessellator.instance.getBuffer()
-				.addQuadVertexWithUV(rs.scaler.getWidth() / 2 - 2f, rs.scaler.getHeight() / 2 - 2f, 0f, 0f, 0f);
-		Tessellator.instance.getBuffer()
-				.addQuadVertexWithUV(rs.scaler.getWidth() / 2 - 2f, rs.scaler.getHeight() / 2 + 3f, 0f, 0f, 1f);
-		Tessellator.instance.getBuffer()
-				.addQuadVertexWithUV(rs.scaler.getWidth() / 2 + 3f, rs.scaler.getHeight() / 2 + 3f, 0f, 1f, 1f);
-		Tessellator.instance.getBuffer()
-				.addQuadVertexWithUV(rs.scaler.getWidth() / 2 + 3f, rs.scaler.getHeight() / 2 - 2f, 0f, 1f, 0f);
+		Tessellator.instance.getBuffer().addQuadVertexWithUV(rs.scaler.getWidth() / 2 - 2f, rs.scaler.getHeight() / 2 - 2f, 0f, 0f, 0f);
+		Tessellator.instance.getBuffer().addQuadVertexWithUV(rs.scaler.getWidth() / 2 - 2f, rs.scaler.getHeight() / 2 + 3f, 0f, 0f, 1f);
+		Tessellator.instance.getBuffer().addQuadVertexWithUV(rs.scaler.getWidth() / 2 + 3f, rs.scaler.getHeight() / 2 + 3f, 0f, 1f, 1f);
+		Tessellator.instance.getBuffer().addQuadVertexWithUV(rs.scaler.getWidth() / 2 + 3f, rs.scaler.getHeight() / 2 - 2f, 0f, 1f, 0f);
 		Tessellator.instance.draw();
 		GL11.glDisable(GL11.GL_BLEND);
 
@@ -71,12 +67,9 @@ public class GuiInGame extends GuiScreen {
 
 			if (stack.item != null && stack.count > 0) {
 				stack.item.getRenderer().render(stack, new GuiRenderState(rs2));
-				tc.fontRenderer.drawText(	rs2,
-											String.valueOf(stack.count),
-											30 - tc.fontRenderer.getTextWidth(String.valueOf(stack.count)),
-											30 - FontRenderer.CHAR_HEIGHT);
+				tc.fontRenderer.drawText(rs2, String.valueOf(stack.count), 30 - tc.fontRenderer.getTextWidth(String.valueOf(stack.count)), 30 - FontRenderer.CHAR_HEIGHT);
 			}
-
+			
 			ShaderManager.defaultProgram.loadRenderState(rs2);
 
 			if (tc.player.inventory.getSelectedSlot() == i) {
@@ -87,6 +80,7 @@ public class GuiInGame extends GuiScreen {
 				Tessellator.instance.getBuffer().addQuadVertexWithUV(37f, -5f, 0f, 1f, 0f);
 				Tessellator.instance.draw();
 			}
+			
 		}
 
 		tc.fontRenderer.drawText(rs, "Electory " + TinyCraft.getVersion(), 2, 2);
@@ -97,23 +91,9 @@ public class GuiInGame extends GuiScreen {
 		}
 		if (tc.player != null) {
 			Vector3d pos = tc.player.getInterpolatedPosition(0f);
-			tc.fontRenderer.drawText(	rs,
-										"x: "
-												+ (int) Math.floor(pos.x)
-												+ ", y: "
-												+ (int) Math.floor(pos.y)
-												+ ", z: "
-												+ (int) Math.floor(pos.z),
-										2,
-										26);
+			tc.fontRenderer.drawText(rs, "x: " + (int) Math.floor(pos.x) + ", y: " + (int) Math.floor(pos.y) + ", z: " + (int) Math.floor(pos.z), 2, 26);
 			if (tc.world != null) {
-				tc.fontRenderer
-						.drawText(	rs,
-									"biome: "
-											+ tc.world.getBiomeAt((int) Math.floor(pos.x), (int) Math.floor(pos.z))
-													.toString(),
-									2,
-									34);
+				tc.fontRenderer.drawText(rs, "biome: " + tc.world.getBiomeAt((int) Math.floor(pos.x), (int) Math.floor(pos.z)).toString(), 2, 34);
 			}
 
 			Vector3f vel = new Vector3f(tc.player.getVelocity());
@@ -121,23 +101,12 @@ public class GuiInGame extends GuiScreen {
 			tc.player.playerController.doMovement(tc.player, svel);
 			vel.add(svel);
 
-			tc.fontRenderer.drawText(	rs,
-										"vel: "
-												+ String.format("%.3f", vel.length())
-												+ " (x: "
-												+ String.format("%.3f", vel.x)
-												+ ", y: "
-												+ String.format("%.3f", vel.y)
-												+ ", z: "
-												+ String.format("%.3f", vel.z)
-												+ ")",
-										2,
-										42);
+			tc.fontRenderer.drawText(rs, "vel: " + String.format("%.3f", vel.length()) + " (x: " + String.format("%.3f", vel.x) + ", y: " + String.format("%.3f", vel.y) + ", z: " + String.format("%.3f", vel.z) + ")", 2, 42);
 
 			tc.fontRenderer.drawText(rs, "snd: " + tc.soundManager.numPlayingSounds(), 2, 58);
 		}
 		int y = 66;
-		for(Map.Entry<String, Long> entry : ElectoryProfiler.INSTANCE.getTimes().entrySet()) {
+		for (Map.Entry<String, Long> entry : ElectoryProfiler.INSTANCE.getTimes().entrySet()) {
 			tc.fontRenderer.drawText(rs, String.format("%-20s: %dns", entry.getKey(), entry.getValue()), 2, y);
 			y += 8;
 		}
@@ -150,8 +119,7 @@ public class GuiInGame extends GuiScreen {
 				int i = event.getKey() - GLFW.GLFW_KEY_1;
 				tc.player.inventory.setSelectedSlot(i);
 			} else if (event.getKey() == GLFW.GLFW_KEY_F12) {
-				TinyCraft.getInstance().worldRenderer.wireframeEnabled = !TinyCraft
-						.getInstance().worldRenderer.wireframeEnabled;
+				TinyCraft.getInstance().worldRenderer.wireframeEnabled = !TinyCraft.getInstance().worldRenderer.wireframeEnabled;
 			} else if (event.getKey() == GLFW.GLFW_KEY_F2) {
 				try {
 					TinyCraft.getInstance().world.save();
@@ -187,7 +155,7 @@ public class GuiInGame extends GuiScreen {
 	@Override
 	public void handleTextInputEvent(String text) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

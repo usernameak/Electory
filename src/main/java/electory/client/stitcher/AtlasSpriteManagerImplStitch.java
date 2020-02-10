@@ -59,10 +59,10 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
 		}
 
 	}
-	
+
 	public String textureName;
 
-	private Map<String, StitchedAtlasSprite> sprites = new HashMap<>();	
+	private Map<String, StitchedAtlasSprite> sprites = new HashMap<>();
 
 	public AtlasSpriteManagerImplStitch(String textureName) {
 		super();
@@ -89,14 +89,13 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
 			StitchedAtlasSprite sprite = entry.getValue();
 
 			URL url = getClass().getResource(name);
-			if(url == null) {
+			if (url == null) {
 				url = getClass().getResource("/img/missing_texture.png");
 			}
 			BufferedImage img = ImageIO.read(url);
 
 			if (img.getWidth() != img.getHeight()) {
-				throw new RuntimeException(
-						"Could not stitch image " + name + " because its width is not equal to height");
+				throw new RuntimeException("Could not stitch image " + name + " because its width is not equal to height");
 			}
 
 			if (img.getWidth() == 0 || (img.getWidth() & (img.getWidth() - 1)) != 0) {
@@ -141,11 +140,11 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
 				int tileSlot = firstFreeSlot;
 				tile.x = tileSlot % nn * tile.side;
 				tile.y = tileSlot / nn * tile.side;
-				/*System.out.println("x " + tile.x);
-				System.out.println("y " + tile.y);
-				System.out.println("side " + tile.side);
-				System.out.println("slot " + tileSlot);
-				System.out.println("=================");*/
+				/*
+				 * System.out.println("x " + tile.x); System.out.println("y " + tile.y);
+				 * System.out.println("side " + tile.side); System.out.println("slot " +
+				 * tileSlot); System.out.println("=================");
+				 */
 				slots[tileSlot] = true;
 				for (int i = tileSlot + 1; i < slots.length; i++) {
 					if (!slots[i]) {
@@ -154,35 +153,35 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
 					}
 				}
 			}
-			
+
 			boolean[] newSlots = new boolean[slots.length * 4];
-			
-			for(int i = 0; i < slots.length; i++) {
+
+			for (int i = 0; i < slots.length; i++) {
 				boolean oldSlot = slots[i];
-				
-				int slotX = (int)(i % nn * 2);
-                int slotY = (int)(i / nn * 2);
 
-                int newNN = nn * 2;
+				int slotX = (int) (i % nn * 2);
+				int slotY = (int) (i / nn * 2);
 
-                newSlots[slotX + slotY * newNN] = oldSlot;
-                newSlots[slotX + 1 + slotY * newNN] = oldSlot;
-                newSlots[slotX + (slotY + 1) * newNN] = oldSlot;
-                newSlots[slotX + 1 + (slotY + 1) * newNN] = oldSlot;
+				int newNN = nn * 2;
+
+				newSlots[slotX + slotY * newNN] = oldSlot;
+				newSlots[slotX + 1 + slotY * newNN] = oldSlot;
+				newSlots[slotX + (slotY + 1) * newNN] = oldSlot;
+				newSlots[slotX + 1 + (slotY + 1) * newNN] = oldSlot;
 			}
 
-            int ffslotX = (int)(firstFreeSlot % nn * 2);
-            int ffslotY = (int)(firstFreeSlot / nn * 2);
+			int ffslotX = (int) (firstFreeSlot % nn * 2);
+			int ffslotY = (int) (firstFreeSlot / nn * 2);
 
-            nn *= 2;
+			nn *= 2;
 
-            firstFreeSlot = ffslotX + ffslotY * nn;
+			firstFreeSlot = ffslotX + ffslotY * nn;
 
-            slots = newSlots;
+			slots = newSlots;
 		}
-		
+
 		int atlasHeight = totalArea <= (atlasSide * atlasSide / 2) ? atlasSide / 2 : atlasSide;
-		
+
 		BufferedImage outImg = new BufferedImage(atlasSide, atlasHeight, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D gr = outImg.createGraphics();
 
@@ -191,17 +190,17 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
 				break;
 
 			List<StitcherTile> tiles = tileGroups.get(g);
-			
+
 			for (StitcherTile tile : tiles) {
 				gr.drawImage(tile.image, tile.x, tile.y, null);
 				tile.sprite.x = tile.x;
-                tile.sprite.y = tile.y;
-                tile.sprite.side = tile.side;
-                tile.sprite.atlasWidth = atlasSide;
-                tile.sprite.atlasHeight = atlasHeight;
+				tile.sprite.y = tile.y;
+				tile.sprite.side = tile.side;
+				tile.sprite.atlasWidth = atlasSide;
+				tile.sprite.atlasHeight = atlasHeight;
 			}
 		}
-		
+
 		ImageIO.write(outImg, "png", new File("test1902.png"));
 		TinyCraft.getInstance().textureManager.loadTexture(textureName, outImg);
 		TinyCraft.getInstance().logger.info("Stitched " + outImg.getWidth() + "x" + outImg.getHeight() + " atlas '" + textureName + "'");
