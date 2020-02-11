@@ -7,50 +7,59 @@ import electory.client.render.block.IBlockRenderer;
 import electory.client.render.world.WorldRenderer;
 import electory.entity.EntityPlayer;
 import electory.event.RegisterBlocksEvent;
-import electory.item.Item;
-import electory.item.ItemBlock;
 import electory.math.AABB;
 import electory.utils.EnumSide;
-import electory.utils.IRegistriable;
-import electory.utils.NamedRegistry;
+import electory.utils.GlobalUnitRegistry;
+import electory.utils.IUnit;
+import electory.utils.Unit;
 import electory.world.World;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-public class Block implements IRegistriable {
-	/*
-	 * public static Block blockCobblestone; public static Block blockGrass; public
-	 * static Block blockPlanks; public static Block blockDirt; public static Block
-	 * blockRootStone; public static Block blockGlass; public static Block blockLog;
-	 * public static Block blockLeaves; public static Block blockWater; public
-	 * static Block blockSand; public static Block blockStone; public static Block
-	 * blockGravel; public static Block blockTallGrass; public static Block
-	 * blockSapling; public static Block blockSandstone;
-	 */
-
-	public static final NamedRegistry<Block> REGISTRY = new NamedRegistry<>();
-
+public class Block implements IUnit {
 	@Setter
 	@Accessors(chain = true)
 	private String spriteName;
-
-	private boolean breakable = true;
-	private boolean solid = true;
-	private boolean liquid = false;
-	private boolean impassable = true;
-	private BlockSound sound = SOUND_WOOD;
+	
+	public int blockID;
+	public int blockSubID;
+	public String anyName = "block.null.name";
+	public boolean breakable = true;
+	public boolean solid = true;
+	public boolean liquid = false;
+	public boolean impassable = true;
+	public BlockSound sound = SOUND_WOOD;
 
 	protected IAtlasSprite blockSprite;
 
 	public static final BlockSound SOUND_WOOD = new BlockSound("sfx/break/wood1.ogg");
 	public static final BlockSound SOUND_SAND = new BlockSound("sfx/break/sand1.ogg");
-
+	public static final Block grassBlock = new BlockGrass(1);
+	public static final Block blockLog = new BlockLog(2);
+	public static final Block blockLeaves = new Block(3).setSpriteName("/img/blocks/leaves.png");
+	public static final Block blockWater = new BlockWater(4).setSpriteName("/img/blocks/water.png").setSolid(false).setLiquid(true).setImpassable(false);
+	public static final Block blockTallGrass = new BlockTallGrass(5).setSpriteName("/img/blocks/tallgrass.png").setSolid(false).setImpassable(false);
+	public static final Block blockSapling = new BlockSapling(6).setSpriteName("/img/blocks/sapling.png").setSolid(false).setImpassable(false);
+	public static final Block blockSandstone = new Block(7).setSpriteName("/img/blocks/sandstone.png");
+	
+	public Block(int par1) {
+		GlobalUnitRegistry.registerUnit(new Unit(this.blockID = par1, this.blockSubID = 0), this);
+	}
+	
+	public Block(int par1, int par2) {
+		GlobalUnitRegistry.registerUnit(new Unit(this.blockID = par1, this.blockSubID = par2), this);
+	}
+	
+	public static void registerBlocks() {
+		TinyCraft.getInstance().eventRegistry.emit(new RegisterBlocksEvent());
+	}
+	
 	public IBlockRenderer getRenderer() {
 		return doesBlockAffectAO() ? IBlockRenderer.cubeAO : IBlockRenderer.cube;
 	}
 
 	public IAtlasSprite getAtlasSprite() {
-		return blockSprite;
+		return this.blockSprite;
 	}
 
 	public IAtlasSprite getAtlasSprite(EnumSide side) {
@@ -62,15 +71,20 @@ public class Block implements IRegistriable {
 	}
 
 	public void registerAtlasSprites(IAtlasSpriteManager manager) {
-		blockSprite = manager.registerSprite(spriteName);
+		this.blockSprite = manager.registerSprite(spriteName);
 	}
 
 	public boolean isSolidOnSide(EnumSide side) {
-		return isSolid();
+		return this.isSolid();
 	}
 
+	public Block setAnyName(String anyName) {
+		this.anyName = anyName;
+		return this;
+	}
+	
 	public boolean isSolid() {
-		return solid;
+		return this.solid;
 	}
 
 	public Block setSolid(boolean solid) {
@@ -79,7 +93,7 @@ public class Block implements IRegistriable {
 	}
 
 	public boolean isLiquid() {
-		return liquid;
+		return this.liquid;
 	}
 
 	public Block setLiquid(boolean liquid) {
@@ -88,7 +102,7 @@ public class Block implements IRegistriable {
 	}
 
 	public boolean isBreakable() {
-		return breakable;
+		return this.breakable;
 	}
 
 	public Block setBreakable(boolean breakable) {
@@ -97,16 +111,12 @@ public class Block implements IRegistriable {
 	}
 
 	public boolean isImpassable() {
-		return impassable;
+		return this.impassable;
 	}
 
 	public Block setImpassable(boolean impassable) {
 		this.impassable = impassable;
 		return this;
-	}
-
-	public Block() {
-
 	}
 
 	public AABB getAABB(World world, int x, int y, int z, boolean isSimulating) {
@@ -122,11 +132,11 @@ public class Block implements IRegistriable {
 	}
 
 	public boolean doesBlockAffectAO() {
-		return isSolid();
+		return this.isSolid();
 	}
 
 	public BlockSound getSound() {
-		return sound;
+		return this.sound;
 	}
 
 	public Block setSound(BlockSound sound) {
@@ -142,88 +152,7 @@ public class Block implements IRegistriable {
 
 	}
 
-	public static void registerBlocks() {
-		/*
-		 * REGISTRY.register("cobblestone", new
-		 * Block().setSpriteName("/img/blocks/cobblestone.png"));
-		 */
-		REGISTRY.register("grass", new BlockGrass());
-		/*
-		 * REGISTRY.register("planks", new
-		 * Block().setSpriteName("/img/blocks/planks.png")); REGISTRY.register("dirt",
-		 * new Block().setSpriteName("/img/blocks/dirt.png"));
-		 */
-		// REGISTRY.register("rootstone", new
-		// Block().setSpriteName("/img/blocks/rootstone.png").setBreakable(false));
-		// REGISTRY.register("glass", new
-		// Block().setSpriteName("/img/blocks/glass.png").setSolid(false));
-		REGISTRY.register("log", new BlockLog());
-		REGISTRY.register("leaves", new Block().setSpriteName("/img/blocks/leaves.png"));
-		REGISTRY.register("water", new BlockWater().setSpriteName("/img/blocks/water.png").setSolid(false).setLiquid(true).setImpassable(false));
-		/*
-		 * REGISTRY.register("sand", new
-		 * Block().setSpriteName("/img/blocks/sand.png").setSound(SOUND_SAND));
-		 */
-		/*
-		 * REGISTRY.register("stone", new
-		 * Block().setSpriteName("/img/blocks/stone.png")); REGISTRY.register("gravel",
-		 * new Block().setSpriteName("/img/blocks/gravel.png"));
-		 */
-		REGISTRY.register("tallgrass", new BlockTallGrass().setSpriteName("/img/blocks/tallgrass.png").setSolid(false).setImpassable(false));
-		REGISTRY.register("sapling", new BlockSapling().setSpriteName("/img/blocks/sapling.png").setSolid(false).setImpassable(false));
-		REGISTRY.register("sandstone", new Block().setSpriteName("/img/blocks/sandstone.png"));
-
-		TinyCraft.getInstance().eventRegistry.emit(new RegisterBlocksEvent());
-
-		for (Block block : REGISTRY.getAllBlocks()) {
-			Item.REGISTRY.register(block.getRegistryName(), new ItemBlock(block));
-		}
-
-		/*
-		 * blockCobblestone = ; blockGrass = new BlockGrass(2);
-		 */
-		/*
-		 * blockPlanks = ; blockDirt = new
-		 * Block(4).setSpriteName("/img/blocks/dirt.png"); blockRootStone = new
-		 * Block(5).setSpriteName("/img/blocks/rootstone.png").setBreakable(false);
-		 * blockGlass = new
-		 * Block(6).setSpriteName("/img/blocks/glass.png").setSolid(false); blockLog =
-		 * new BlockLog(7);
-		 */
-		/*
-		 * blockLeaves = new Block(8).setSpriteName("/img/blocks/leaves.png");
-		 * blockWater = new BlockWater(9).setSpriteName("/img/blocks/water.png")
-		 * .setSolid(false) .setLiquid(true) .setImpassable(false);
-		 */
-		// blockSand = new
-		// Block(10).setSpriteName("/img/blocks/sand.png").setSound(SOUND_SAND);
-		/*
-		 * blockStone = new Block(11).setSpriteName("/img/blocks/stone.png");
-		 * blockGravel = new Block(12).setSpriteName("/img/blocks/gravel.png");
-		 * blockTallGrass = new
-		 * BlockTallGrass(13).setSpriteName("/img/blocks/tallgrass.png")
-		 * .setSolid(false) .setImpassable(false);
-		 */
-		/*
-		 * blockSapling = new BlockSapling(14).setSpriteName("/img/blocks/sapling.png")
-		 * .setSolid(false) .setImpassable(false); blockSandstone = new
-		 * Block(15).setSpriteName("/img/blocks/sandstone.png");
-		 */
-	}
-
 	public boolean canBeReplaced() {
 		return false;
-	}
-
-	private String registryName;
-
-	@Override
-	public void setRegistryName(String name) {
-		this.registryName = name;
-	}
-
-	@Override
-	public String getRegistryName() {
-		return registryName;
 	}
 }

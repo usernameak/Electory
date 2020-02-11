@@ -38,43 +38,34 @@ public class GuiRootContainer extends GuiWidget implements IRelayoutable {
 		BOTTOM_LEFT {
 			@Override
 			public void align(GuiRenderState rs, ResolutionScaler scaler, GuiRootContainer container) {
-				rs.modelMatrix.translate(	container.horizontalGap,
-											scaler.getHeight() - container.child.getHeight() - container.verticalGap,
-											0);
+				rs.modelMatrix.translate(container.horizontalGap, scaler.getHeight() - container.child.getHeight() - container.verticalGap, 0);
 			}
 
 			@Override
 			public Point getPosition(ResolutionScaler scaler, GuiRootContainer container) {
-				return new Point(container.horizontalGap,
-						scaler.getHeight() - container.child.getHeight() - container.verticalGap);
+				return new Point(container.horizontalGap, scaler.getHeight() - container.child.getHeight() - container.verticalGap);
 			}
 		},
 		BOTTOM_RIGHT {
 			@Override
 			public void align(GuiRenderState rs, ResolutionScaler scaler, GuiRootContainer container) {
-				rs.modelMatrix.translate(	scaler.getWidth() - container.child.getWidth() - container.horizontalGap,
-											scaler.getHeight() - container.child.getHeight() - container.verticalGap,
-											0);
+				rs.modelMatrix.translate(scaler.getWidth() - container.child.getWidth() - container.horizontalGap, scaler.getHeight() - container.child.getHeight() - container.verticalGap, 0);
 			}
 
 			@Override
 			public Point getPosition(ResolutionScaler scaler, GuiRootContainer container) {
-				return new Point(scaler.getWidth() - container.child.getWidth() - container.horizontalGap,
-						scaler.getHeight() - container.child.getHeight() - container.verticalGap);
+				return new Point(scaler.getWidth() - container.child.getWidth() - container.horizontalGap, scaler.getHeight() - container.child.getHeight() - container.verticalGap);
 			}
 		},
 		CENTER {
 			@Override
 			public void align(GuiRenderState rs, ResolutionScaler scaler, GuiRootContainer container) {
-				rs.modelMatrix.translate(	(scaler.getWidth() - container.child.getWidth()) / 2,
-											(scaler.getHeight() - container.child.getHeight()) / 2,
-											0);
+				rs.modelMatrix.translate((scaler.getWidth() - container.child.getWidth()) / 2, (scaler.getHeight() - container.child.getHeight()) / 2, 0);
 			}
 
 			@Override
 			public Point getPosition(ResolutionScaler scaler, GuiRootContainer container) {
-				return new Point((scaler.getWidth() - container.child.getWidth()) / 2,
-						(scaler.getHeight() - container.child.getHeight()) / 2);
+				return new Point((scaler.getWidth() - container.child.getWidth()) / 2, (scaler.getHeight() - container.child.getHeight()) / 2);
 			}
 
 		};

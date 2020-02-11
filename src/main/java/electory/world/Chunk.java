@@ -15,16 +15,18 @@ import electory.block.Block;
 import electory.client.render.world.ChunkRenderer;
 import electory.nbt.ByteArrayTag;
 import electory.nbt.CompoundTag;
+import electory.nbt.IntArrayTag;
 import electory.nbt.ShortArrayTag;
 import electory.nbt.Tag;
 import electory.utils.EnumSide;
+import electory.utils.GlobalUnitRegistry;
 import electory.utils.MetaSerializer;
 import electory.utils.MultiLock;
 import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
 
 public class Chunk {
-	private short blockArray[] = new short[16 * 256 * 16];
+	private int blockArray[] = new int[16 * 256 * 16];
 	private short lightArray[] = new short[16 * 256 * 16];
 	private Object metaArray[] = new Object[16 * 256 * 16];
 	private byte biomeArray[] = new byte[16 * 16];
@@ -50,31 +52,19 @@ public class Chunk {
 	}
 
 	public void tryPopulateWithNeighbours(IChunkProvider provider) {
-		if (!isPopulated
-				&& provider.isChunkLoaded(chunkX + 1, chunkZ + 1)
-				&& provider.isChunkLoaded(chunkX, chunkZ + 1)
-				&& provider.isChunkLoaded(chunkX + 1, chunkZ)) {
+		if (!isPopulated && provider.isChunkLoaded(chunkX + 1, chunkZ + 1) && provider.isChunkLoaded(chunkX, chunkZ + 1) && provider.isChunkLoaded(chunkX + 1, chunkZ)) {
 			provider.populate(null, chunkX, chunkZ);
 		}
 
-		if (provider.isChunkLoaded(chunkX - 1, chunkZ)
-				&& !provider.provideChunk(chunkX - 1, chunkZ).isPopulated
-				&& provider.isChunkLoaded(chunkX, chunkZ + 1)
-				&& provider.isChunkLoaded(chunkX - 1, chunkZ + 1)) {
+		if (provider.isChunkLoaded(chunkX - 1, chunkZ) && !provider.provideChunk(chunkX - 1, chunkZ).isPopulated && provider.isChunkLoaded(chunkX, chunkZ + 1) && provider.isChunkLoaded(chunkX - 1, chunkZ + 1)) {
 			provider.populate(null, chunkX - 1, chunkZ);
 		}
 
-		if (provider.isChunkLoaded(chunkX, chunkZ - 1)
-				&& !provider.provideChunk(chunkX, chunkZ - 1).isPopulated
-				&& provider.isChunkLoaded(chunkX + 1, chunkZ)
-				&& provider.isChunkLoaded(chunkX + 1, chunkZ - 1)) {
+		if (provider.isChunkLoaded(chunkX, chunkZ - 1) && !provider.provideChunk(chunkX, chunkZ - 1).isPopulated && provider.isChunkLoaded(chunkX + 1, chunkZ) && provider.isChunkLoaded(chunkX + 1, chunkZ - 1)) {
 			provider.populate(null, chunkX, chunkZ - 1);
 		}
 
-		if (provider.isChunkLoaded(chunkX - 1, chunkZ - 1)
-				&& !provider.provideChunk(chunkX - 1, chunkZ - 1).isPopulated
-				&& provider.isChunkLoaded(chunkX - 1, chunkZ)
-				&& provider.isChunkLoaded(chunkX, chunkZ - 1)) {
+		if (provider.isChunkLoaded(chunkX - 1, chunkZ - 1) && !provider.provideChunk(chunkX - 1, chunkZ - 1).isPopulated && provider.isChunkLoaded(chunkX - 1, chunkZ) && provider.isChunkLoaded(chunkX, chunkZ - 1)) {
 			provider.populate(null, chunkX - 1, chunkZ - 1);
 		}
 	}
@@ -128,7 +118,7 @@ public class Chunk {
 		if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
 			return null;
 		}
-		return world.blockIdRegistry.getBlockById(blockArray[x + y * 16 + z * 16 * 256]);
+		return (Block) GlobalUnitRegistry.getIUnitWithID(blockArray[x + y * 16 + z * 16 * 256]);
 	}
 
 	public Block getWorldBlockFast(int x, int y, int z) {
@@ -137,7 +127,7 @@ public class Chunk {
 		if (cx < 0 || y < 0 || cz < 0 || cx >= 16 || y >= 256 || cz >= 16) {
 			return world.getBlockAt(x, y, z);
 		}
-		return world.blockIdRegistry.getBlockById(blockArray[cx + y * 16 + cz * 16 * 256]);
+		return (Block) GlobalUnitRegistry.getIUnitWithID(blockArray[cx + y * 16 + cz * 16 * 256]);
 	}
 
 	public int getSunLightLevelAt(int x, int y, int z) {
@@ -208,7 +198,7 @@ public class Chunk {
 		Lock lock = renderLock.writeLock();
 		lock.lock();
 		try {
-			blockArray[x + y * 16 + z * 16 * 256] = (short) world.blockIdRegistry.getBlockId(block);
+			blockArray[x + y * 16 + z * 16 * 256] = block.blockID;
 			metaArray[x + y * 16 + z * 16 * 256] = meta;
 			if (block != null && block.isSolid()) {
 				if (heightMap[x * 16 + z] < y) {
@@ -301,7 +291,7 @@ public class Chunk {
 			nearChunk.scheduleChunkUpdate();
 		}
 	}
-	
+
 	public Lock getNeighbourWriteLock() {
 		Set<Lock> locks = new HashSet<>();
 		Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkZ);
@@ -351,31 +341,22 @@ public class Chunk {
 				Block block = getWorldBlockFast(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ);
 				int curLightLevel = getWorldSunLightLevelFast(pos.x, pos.y, pos.z);
 
-				if ((block == null || block.getSkyLightOpacity() == 0)
-						&& curLightLevel == 15
-						&& side == EnumSide.DOWN) {
+				if ((block == null || block.getSkyLightOpacity() == 0) && curLightLevel == 15 && side == EnumSide.DOWN) {
 					setWorldSunLightLevelFast(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ, 15);
-					bfsSkyQueue
-							.add(new WorldPosition(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ));
+					bfsSkyQueue.add(new WorldPosition(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ));
 				} else {
 					int opacity = block == null ? 0 : block.getSkyLightOpacity();
 					opacity = opacity <= 0 ? 1 : opacity;
 
-					int oldLightLevel = getWorldSunLightLevelFast(	pos.x + side.offsetX,
-																	pos.y + side.offsetY,
-																	pos.z + side.offsetZ);
+					int oldLightLevel = getWorldSunLightLevelFast(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ);
 
 					if (oldLightLevel < curLightLevel - 1) {
 
 						int newLightLevel = curLightLevel - opacity;
 						newLightLevel = newLightLevel < 0 ? 0 : newLightLevel;
-						setWorldSunLightLevelFast(	pos.x + side.offsetX,
-													pos.y + side.offsetY,
-													pos.z + side.offsetZ,
-													newLightLevel);
+						setWorldSunLightLevelFast(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ, newLightLevel);
 						if (newLightLevel > 0) {
-							bfsSkyQueue.add(new WorldPosition(pos.x + side.offsetX, pos.y + side.offsetY,
-									pos.z + side.offsetZ));
+							bfsSkyQueue.add(new WorldPosition(pos.x + side.offsetX, pos.y + side.offsetY, pos.z + side.offsetZ));
 						}
 					}
 				}
@@ -426,14 +407,13 @@ public class Chunk {
 	private void readMetaArray(CompoundTag tag) {
 		Arrays.fill(metaArray, null);
 		for (Map.Entry<String, Tag<?>> entry : tag) {
-			metaArray[Integer.parseInt(entry.getKey())] = MetaSerializer
-					.deserializeObject((CompoundTag) entry.getValue());
+			metaArray[Integer.parseInt(entry.getKey())] = MetaSerializer.deserializeObject((CompoundTag) entry.getValue());
 		}
 	}
 
 	public void writeChunkData(ArrayDataOutput dos) throws IOException {
 		CompoundTag tag = new CompoundTag();
-		tag.put("blockArray", new ShortArrayTag(blockArray));
+		tag.put("blockArray", new IntArrayTag(blockArray));
 		tag.put("lightArray", new ShortArrayTag(lightArray));
 		tag.put("biomeArray", new ByteArrayTag(biomeArray));
 		tag.put("heightMap", new ShortArrayTag(heightMap));
@@ -444,7 +424,7 @@ public class Chunk {
 
 	public void readChunkData(ArrayDataInput dis) throws IOException {
 		CompoundTag tag = (CompoundTag) Tag.deserialize(dis, 0);
-		blockArray = ((ShortArrayTag) tag.get("blockArray")).getValue();
+		blockArray = ((IntArrayTag) tag.get("blockArray")).getValue();
 		lightArray = ((ShortArrayTag) tag.get("lightArray")).getValue();
 		biomeArray = ((ByteArrayTag) tag.get("biomeArray")).getValue();
 		heightMap = ((ShortArrayTag) tag.get("heightMap")).getValue();

@@ -8,9 +8,8 @@ import electory.utils.EnumSide;
 import electory.world.World;
 
 public class BlockLog extends Block {
-
-	public BlockLog() {
-		super();
+	public BlockLog(int par1) {
+		super(par1);
 		setSpriteName("/img/blocks/log_side.png");
 	}
 

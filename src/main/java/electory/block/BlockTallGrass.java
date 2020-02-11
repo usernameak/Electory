@@ -3,9 +3,8 @@ package electory.block;
 import electory.client.render.block.IBlockRenderer;
 
 public class BlockTallGrass extends Block {
-
-	public BlockTallGrass() {
-		super();
+	public BlockTallGrass(int par1) {
+		super(par1);
 	}
 	
 	@Override

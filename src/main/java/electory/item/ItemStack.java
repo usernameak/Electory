@@ -81,5 +81,4 @@ public class ItemStack implements IMetaSerializable {
 			meta = null;
 		}
 	}
-
 }

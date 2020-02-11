@@ -24,7 +24,6 @@ import electory.entity.Entity;
 import electory.entity.EntityMap;
 import electory.entity.EntityPlayer;
 import electory.entity.particle.EntityBlockParticle;
-import electory.item.Item;
 import electory.item.ItemBlock;
 import electory.item.ItemStack;
 import electory.math.AABB;
@@ -53,8 +52,6 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public IChunkProvider generationChunkProvider = new ChunkGenerator(this, seed);
 	public IChunkProvider chunkProvider = new ChunkProviderSP(this);
-
-	public BlockIDRegistry blockIdRegistry = new BlockIDRegistry();
 
 	protected EntityPlayer playerToSpawn = null;
 
@@ -91,10 +88,8 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public void breakBlockByPlayer(EntityPlayer player, int x, int y, int z) {
 		Block block = getBlockAt(x, y, z);
-
 		breakBlockWithParticles(x, y, z);
-
-		player.inventory.giveItem(new ItemStack(Item.REGISTRY.get(block.getRegistryName())));
+		player.inventory.giveItem(new ItemStack(block));
 	}
 
 	public void breakBlockWithParticles(int x, int y, int z) {
@@ -102,12 +97,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 		setBlockAt(x, y, z, null);
 		if (oldBlock != null) {
 			for (int i = 0; i < 8; i++) {
-				EntityBlockParticle particle = new EntityBlockParticle(this,
-						oldBlock.getAtlasSprite(EnumSide.getOrientation(random.nextInt(6))));
+				EntityBlockParticle particle = new EntityBlockParticle(this, oldBlock.getAtlasSprite(EnumSide.getOrientation(random.nextInt(6))));
 				particle.setPosition(x + 0.5f, y + 0.5f, z + 0.5f, false);
-				particle.setVelocity(	random.nextFloat() * 0.1f - 0.05f,
-										random.nextFloat() * 0.1f - 0.05f,
-										random.nextFloat() * 0.1f - 0.05f);
+				particle.setVelocity(random.nextFloat() * 0.1f - 0.05f, random.nextFloat() * 0.1f - 0.05f, random.nextFloat() * 0.1f - 0.05f);
 				addEntity(particle);
 			}
 		}
@@ -118,19 +110,13 @@ public abstract class World implements IChunkSaveStatusHandler {
 	public void interactWithBlock(EntityPlayer player, int x, int y, int z, EnumSide side) {
 		if (!this.getBlockAt(x, y, z).interactWithBlock(player, this, x, y, z, side)) {
 			ItemStack stack = player.inventory.getStackInSlot(player.inventory.getSelectedSlot());
-			if (stack.item != null && stack.item instanceof ItemBlock) {
+			if (stack.item != null && stack.item instanceof Block) {
 				Block block = ((ItemBlock) stack.item).getBlock();
 				AABB blockAABB = block.getAABB(this, x + side.offsetX, y + side.offsetY, z + side.offsetZ, true);
-				if (entities.stream()
-						.noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
+				if (entities.stream().noneMatch(entity -> !entity.canBlockPlacedInto() && entity.getAABB().intersects(blockAABB))) {
 					if (stack.remove(1)) {
 						setBlockAt(x + side.offsetX, y + side.offsetY, z + side.offsetZ, block);
-						block.blockPlacedByPlayer(	player,
-													this,
-													x + side.offsetX,
-													y + side.offsetY,
-													z + side.offsetZ,
-													EnumSide.getOrientation(EnumSide.OPPOSITES[side.ordinal()]));
+						block.blockPlacedByPlayer(player, this, x + side.offsetX, y + side.offsetY, z + side.offsetZ, EnumSide.getOrientation(EnumSide.OPPOSITES[side.ordinal()]));
 
 					}
 				}
@@ -193,11 +179,10 @@ public abstract class World implements IChunkSaveStatusHandler {
 	private void chunkLoadingTick() {
 		chunkProvider.update();
 		generationChunkProvider.update();
-		
+
 		HashLongSet chunksToLoad = HashLongSets.newMutableSet();
 		for (EntityPlayer player : getPlayers()) {
-			Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f)
-					: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
+			Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f) : (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
 			int startX = (((int) ppos.x) >> 4) - CHUNKLOAD_DISTANCE;
 			int startZ = (((int) ppos.z) >> 4) - CHUNKLOAD_DISTANCE;
 			for (int x = startX; x <= startX + CHUNKLOAD_DISTANCE2; x++) {
@@ -232,8 +217,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 			LongCursor it = chunksToUnload.cursor();
 			if (it.moveNext()) {
 				long cpos = it.elem();
-				chunkProvider.unloadChunk(chunkProvider
-						.provideChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L)), null, true);
+				chunkProvider.unloadChunk(chunkProvider.provideChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L)), null, true);
 			}
 		}
 	}
@@ -262,9 +246,6 @@ public abstract class World implements IChunkSaveStatusHandler {
 			tag.putDouble("spawn_x", spawnPoint.x);
 			tag.putDouble("spawn_y", spawnPoint.y);
 			tag.putDouble("spawn_z", spawnPoint.z);
-			CompoundTag rtag = new CompoundTag();
-			blockIdRegistry.save(rtag);
-			tag.put("block_registry", rtag);
 			NBTUtil.writeTag(tag, new File(getWorldSaveDir(), "world_info.sav"), false);
 		}
 		{
@@ -294,7 +275,6 @@ public abstract class World implements IChunkSaveStatusHandler {
 				CompoundTag tag = (CompoundTag) NBTUtil.readTag(new File(getWorldSaveDir(), "world_info.sav"));
 				seed = tag.getLong("seed");
 				spawnPoint.set(tag.getDouble("spawn_x"), tag.getDouble("spawn_y"), tag.getDouble("spawn_z"));
-				blockIdRegistry.load(tag.getCompoundTag("block_registry"));
 				generationChunkProvider = new ChunkGenerator(this, seed);
 			}
 			{
@@ -305,16 +285,14 @@ public abstract class World implements IChunkSaveStatusHandler {
 					int type = entityTag.getInt("type");
 					Class<? extends Entity> clazz = EntityMap.getEntityById(type);
 					try {
-						Entity entity = EntityPlayer.class.isAssignableFrom(clazz) ? constructPlayer()
-								: clazz.getConstructor(World.class).newInstance(this);
+						Entity entity = EntityPlayer.class.isAssignableFrom(clazz) ? constructPlayer() : clazz.getConstructor(World.class).newInstance(this);
 						entity.readEntityData(entityTag);
 						if (entity instanceof EntityPlayer) {
 							playerToSpawn = (EntityPlayer) entity;
 						} else {
 							addEntity(entity);
 						}
-					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-							| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 						e.printStackTrace();
 					}
 				}
@@ -368,9 +346,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 	}
 
 	public void playSFX(String path, float x, float y, float z, float radius, boolean loop) {
-		TinyCraft.getInstance().soundManager
-				.play(	"world;" + path,
-						new AudioSource(path).setPosition(new Vector3f(x, y, z)).setRadius(radius).setLooping(loop));
+		TinyCraft.getInstance().soundManager.play("world;" + path, new AudioSource(path).setPosition(new Vector3f(x, y, z)).setRadius(radius).setLooping(loop));
 	}
 
 	public <T> T getBlockMetadataAt(int x, int y, int z) {

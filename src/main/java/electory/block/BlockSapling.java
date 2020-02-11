@@ -4,8 +4,8 @@ import electory.client.render.block.IBlockRenderer;
 
 public class BlockSapling extends Block {
 
-	public BlockSapling() {
-		super();
+	public BlockSapling(int par1) {
+		super(par1);
 	}
 
 	@Override

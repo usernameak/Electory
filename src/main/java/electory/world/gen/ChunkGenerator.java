@@ -7,6 +7,7 @@ import com.koloboke.collect.map.LongObjMap;
 
 import electory.block.Block;
 import electory.math.MathUtils;
+import electory.utils.GlobalUnitRegistry;
 import electory.world.EnumWorldBiome;
 import electory.world.Chunk;
 import electory.world.IChunkProvider;
@@ -57,12 +58,12 @@ public class ChunkGenerator implements IChunkProvider {
 				double val = gen.generate(x, y, (int) (val1 * 256) - 128);
 				int biomeId = (int) (val * EnumWorldBiome.biomeList.length);
 				EnumWorldBiome biome = EnumWorldBiome.biomeList[biomeId];
-				pArrMin[i][j] = biome.minHeight;//val < 0.5 ? 32 : 64;
-				pArrMax[i][j] = biome.maxHeight;//val < 0.5 ? 48 : 72;
+				pArrMin[i][j] = biome.minHeight;// val < 0.5 ? 32 : 64;
+				pArrMax[i][j] = biome.maxHeight;// val < 0.5 ? 48 : 72;
 
 				// pArr[i][j] = (int) MathUtils.lerp(relief, minh, maxh);
-				
-				if(ii >= 0 && jj >= 0 && ii < 16 && jj < 16) {
+
+				if (ii >= 0 && jj >= 0 && ii < 16 && jj < 16) {
 					biomeData[jj << 4 | ii] = (byte) biomeId;
 				}
 			}
@@ -70,9 +71,9 @@ public class ChunkGenerator implements IChunkProvider {
 		int[][] psumsMin = MathUtils.doPartialSums(pArrMin);
 		int[][] psumsMax = MathUtils.doPartialSums(pArrMax);
 
-		int sandId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("sand"));
-		int grassId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("grass"));
-		int waterId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("water"));
+		int sandId = 5;
+		int grassId = Block.grassBlock.blockID;
+		int waterId = Block.blockWater.blockID;
 
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
@@ -100,11 +101,7 @@ public class ChunkGenerator implements IChunkProvider {
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
 				for (int z = 0; z < 256; z++) {
-					chunk.setBlockAt(	i,
-										z,
-										j,
-										world.blockIdRegistry.getBlockById(chunkData[i << 12 | j << 8 | (z & 0xFF)]),
-										World.FLAG_SKIP_UPDATE);
+					chunk.setBlockAt(i, z, j, (Block)GlobalUnitRegistry.getIUnitWithID(chunkData[i << 12 | j << 8 | (z & 0xFF)]), World.FLAG_SKIP_UPDATE);
 				}
 				chunk.setBiomeAt(i, j, EnumWorldBiome.biomeList[biomeData[j << 4 | i]]);
 			}

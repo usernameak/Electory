@@ -4,6 +4,7 @@ import org.luaj.vm2.LuaValue;
 
 public class LuaBlock extends Block {
 	public LuaBlock(LuaValue data) {
+		super(data.get("sprite_name").get("unit_id").toint(), data.get("unit_subid").toint());
 		LuaValue spriteName = data.get("sprite_name");
 		if (!spriteName.isnil()) {
 			setSpriteName(spriteName.tojstring());
