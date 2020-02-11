@@ -4,17 +4,13 @@ import java.util.Objects;
 
 import electory.nbt.CompoundTag;
 import electory.utils.IMetaSerializable;
-import electory.utils.IUnit;
 import electory.utils.MetaSerializer;
 
 public class ItemStack implements IMetaSerializable {
-	
-	public IUnit unit;
-	public int unitID;
-	public int unitMeta;
-	public int stackSize;
-	public int maxStackSize;
-	
+
+	public Item item;
+	public int count;
+	public Object meta;
 
 	public ItemStack() {
 		this(null, 0);
@@ -35,7 +31,10 @@ public class ItemStack implements IMetaSerializable {
 	}
 
 	public boolean transfer(ItemStack other, int amount) {
-		if (this.count < amount || (other.count > 0 && ((other.item != null && other.item != this.item) || !Objects.equals(other.meta, this.meta)))) {
+		if (this.count < amount
+				|| (other.count > 0
+						&& ((other.item != null && other.item != this.item)
+								|| !Objects.equals(other.meta, this.meta)))) {
 			return false;
 		}
 		other.item = this.item;
@@ -86,4 +85,5 @@ public class ItemStack implements IMetaSerializable {
 			meta = null;
 		}
 	}
+
 }

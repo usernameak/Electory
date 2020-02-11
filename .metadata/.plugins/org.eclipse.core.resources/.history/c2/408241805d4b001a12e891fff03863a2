@@ -1,0 +1,8 @@
+package electory.utils;
+
+import electory.client.TinyCraft;
+
+public class GuiUtil {
+	public static TinyCraft electory = TinyCraft.getInstance();
+	
+}

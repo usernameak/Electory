@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="electory.client.TinyCraft"/>
+<fullyQualifiedTypeName name="electory.client.render.shader.ShaderManager"/>
+<fullyQualifiedTypeName name="electory.client.render.Tessellator"/>
+<fullyQualifiedTypeName name="java.awt.Color"/>
+<fullyQualifiedTypeName name="lombok.AllArgsConstructor"/>
+<fullyQualifiedTypeName name="javax.lang.model.element.Name"/>
+<fullyQualifiedTypeName name="electory.client.gui.FontRenderer"/>
+<fullyQualifiedTypeName name="electory.utils.DrawUtil"/>
+</qualifiedTypeNameHistroy>

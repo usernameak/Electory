@@ -1,0 +1,1749 @@
+!SESSION 2020-02-09 18:21:24.755 -----------------------------------------------
+eclipse.buildId=4.10.0.I20181206-0815
+java.version=1.8.0_172
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ru_RU
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.ui 2 0 2020-02-09 18:21:36.497
+!MESSAGE Warnings while parsing the images from the 'org.eclipse.ui.commandImages' extension point.
+!SUBENTRY 1 org.eclipse.ui 2 0 2020-02-09 18:21:36.497
+!MESSAGE Cannot bind to an undefined command: plug-in='com.genuitec.eclipse.theming.ui', id='com.genuitec.myeclipse.help.darktheme.commandid'
+
+!ENTRY org.eclipse.egit.ui 2 0 2020-02-09 18:21:43.363
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\ppc'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.jdt.launching 4 107 2020-02-09 18:26:04.573
+!MESSAGE Launch configuration New_configuration references non-existing project electory.
+
+!ENTRY org.eclipse.jdt.launching 4 107 2020-02-09 18:26:30.220
+!MESSAGE Launch configuration New_configuration references non-existing project electory.
+
+!ENTRY org.eclipse.debug.core 4 125 2020-02-09 18:26:51.385
+!MESSAGE Error logged from Debug Core: 
+!STACK 1
+org.eclipse.core.runtime.CoreException: Launch configuration New_configuration references non-existing project electory.
+	at org.eclipse.jdt.launching.JavaRuntime.abort(JavaRuntime.java:1838)
+	at org.eclipse.jdt.launching.JavaRuntime.getJavaProject(JavaRuntime.java:1713)
+	at org.eclipse.jdt.launching.StandardClasspathProvider.computeUnresolvedClasspath(StandardClasspathProvider.java:46)
+	at org.eclipse.jdt.launching.StandardSourcePathProvider.computeUnresolvedClasspath(StandardSourcePathProvider.java:51)
+	at org.eclipse.jdt.launching.JavaRuntime.computeUnresolvedSourceLookupPath(JavaRuntime.java:1145)
+	at org.eclipse.jdt.launching.sourcelookup.containers.JavaSourcePathComputer.computeSourceContainers(JavaSourcePathComputer.java:60)
+	at org.eclipse.debug.internal.core.sourcelookup.SourcePathComputer.computeSourceContainers(SourcePathComputer.java:74)
+	at org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer.createSourceContainers(DefaultSourceContainer.java:120)
+	at org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer.getSourceContainers(CompositeSourceContainer.java:127)
+	at org.eclipse.debug.internal.ui.sourcelookup.SourceContainerViewer$ContentProvider.getChildren(SourceContainerViewer.java:64)
+	at org.eclipse.jface.viewers.AbstractTreeViewer.getRawChildren(AbstractTreeViewer.java:1422)
+	at org.eclipse.jface.viewers.TreeViewer.getRawChildren(TreeViewer.java:350)
+	at org.eclipse.jface.viewers.StructuredViewer.getFilteredChildren(StructuredViewer.java:903)
+	at org.eclipse.jface.viewers.AbstractTreeViewer.getSortedChildren(AbstractTreeViewer.java:621)
+	at org.eclipse.jface.viewers.AbstractTreeViewer.createChildren(AbstractTreeViewer.java:815)
+	at org.eclipse.jface.viewers.TreeViewer.createChildren(TreeViewer.java:604)
+	at org.eclipse.jface.viewers.AbstractTreeViewer.createChildren(AbstractTreeViewer.java:766)
+	at org.eclipse.jface.viewers.AbstractTreeViewer.handleTreeExpand(AbstractTreeViewer.java:1541)
+	at org.eclipse.jface.viewers.TreeViewer.handleTreeExpand(TreeViewer.java:889)
+	at org.eclipse.jface.viewers.AbstractTreeViewer$3.treeExpanded(AbstractTreeViewer.java:1553)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:136)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1079)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1064)
+	at org.eclipse.swt.widgets.Tree.wmNotifyChild(Tree.java:7529)
+	at org.eclipse.swt.widgets.Control.wmNotify(Control.java:5809)
+	at org.eclipse.swt.widgets.Composite.wmNotify(Composite.java:1989)
+	at org.eclipse.swt.widgets.Control.WM_NOTIFY(Control.java:5367)
+	at org.eclipse.swt.widgets.Control.windowProc(Control.java:4824)
+	at org.eclipse.swt.widgets.Display.windowProc(Display.java:4770)
+	at org.eclipse.swt.internal.win32.OS.CallWindowProc(Native Method)
+	at org.eclipse.swt.widgets.Tree.callWindowProc(Tree.java:1554)
+	at org.eclipse.swt.widgets.Tree.WM_LBUTTONDOWN(Tree.java:6430)
+	at org.eclipse.swt.widgets.Control.windowProc(Control.java:4804)
+	at org.eclipse.swt.widgets.Tree.windowProc(Tree.java:5962)
+	at org.eclipse.swt.widgets.Display.windowProc(Display.java:4770)
+	at org.eclipse.swt.internal.win32.OS.DispatchMessage(Native Method)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3545)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:822)
+	at org.eclipse.jface.window.Window.open(Window.java:798)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.open(LaunchConfigurationsDialog.java:1239)
+	at org.eclipse.debug.ui.DebugUITools.lambda$1(DebugUITools.java:630)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:72)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:636)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:574)
+	at org.eclipse.debug.ui.actions.OpenLaunchDialogAction.run(OpenLaunchDialogAction.java:85)
+	at org.eclipse.jface.action.Action.runWithEvent(Action.java:476)
+	at org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:568)
+	at org.eclipse.jface.action.ActionContributionItem.lambda$4(ActionContributionItem.java:400)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1173)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1062)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:636)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:563)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:151)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:155)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:137)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:107)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:595)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1501)
+!SUBENTRY 1 org.eclipse.jdt.launching 4 107 2020-02-09 18:26:51.385
+!MESSAGE Launch configuration New_configuration references non-existing project electory.
+
+!ENTRY org.eclipse.jdt.launching 4 107 2020-02-09 18:27:27.252
+!MESSAGE Launch configuration Client references non-existing project electory.
+
+!ENTRY org.eclipse.eclemma.ui 4 4 2020-02-09 18:27:39.607
+!MESSAGE Launch configuration Client references non-existing project electory.
+!STACK 1
+org.eclipse.core.runtime.CoreException: Launch configuration Client references non-existing project electory.
+	at org.eclipse.jdt.launching.JavaRuntime.abort(JavaRuntime.java:1838)
+	at org.eclipse.jdt.launching.JavaRuntime.getJavaProject(JavaRuntime.java:1713)
+	at org.eclipse.eclemma.core.launching.JavaApplicationLauncher.getOverallScope(JavaApplicationLauncher.java:33)
+	at org.eclipse.eclemma.core.ScopeUtils.getOverallScope(ScopeUtils.java:94)
+	at org.eclipse.eclemma.ui.launching.CoverageTab.initializeFrom(CoverageTab.java:109)
+	at org.eclipse.eclemma.ui.launching.CoverageTabGroup.initializeFrom(CoverageTabGroup.java:119)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupWrapper.initializeFrom(LaunchConfigurationTabGroupWrapper.java:204)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.displayInstanceTabs(LaunchConfigurationTabGroupViewer.java:875)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.lambda$4(LaunchConfigurationTabGroupViewer.java:736)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:72)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.inputChanged(LaunchConfigurationTabGroupViewer.java:751)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.setInput0(LaunchConfigurationTabGroupViewer.java:683)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.setInput(LaunchConfigurationTabGroupViewer.java:663)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.handleLaunchConfigurationSelectionChanged(LaunchConfigurationsDialog.java:1050)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog$4.selectionChanged(LaunchConfigurationsDialog.java:617)
+	at org.eclipse.jface.viewers.StructuredViewer$3.run(StructuredViewer.java:874)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.ui.internal.JFaceUtil.lambda$0(JFaceUtil.java:47)
+	at org.eclipse.jface.util.SafeRunnable.run(SafeRunnable.java:176)
+	at org.eclipse.jface.viewers.StructuredViewer.firePostSelectionChanged(StructuredViewer.java:871)
+	at org.eclipse.jface.viewers.StructuredViewer.setSelection(StructuredViewer.java:1720)
+	at org.eclipse.jface.viewers.TreeViewer.setSelection(TreeViewer.java:1084)
+	at org.eclipse.jface.viewers.Viewer.setSelection(Viewer.java:383)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.doInitialTreeSelection(LaunchConfigurationsDialog.java:662)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.initializeContent(LaunchConfigurationsDialog.java:1186)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.createContents(LaunchConfigurationsDialog.java:473)
+	at org.eclipse.jface.window.Window.create(Window.java:430)
+	at org.eclipse.jface.dialogs.Dialog.create(Dialog.java:1099)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.create(LaunchConfigurationsDialog.java:378)
+	at org.eclipse.jface.window.Window.open(Window.java:787)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.open(LaunchConfigurationsDialog.java:1239)
+	at org.eclipse.debug.ui.DebugUITools.lambda$1(DebugUITools.java:630)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:72)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:636)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:574)
+	at org.eclipse.debug.ui.actions.OpenLaunchDialogAction.run(OpenLaunchDialogAction.java:85)
+	at org.eclipse.jface.action.Action.runWithEvent(Action.java:476)
+	at org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:568)
+	at org.eclipse.jface.action.ActionContributionItem.lambda$4(ActionContributionItem.java:400)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1173)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1062)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:636)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:563)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:151)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:155)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:137)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:107)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:595)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1501)
+!SUBENTRY 1 org.eclipse.jdt.launching 4 107 2020-02-09 18:27:39.608
+!MESSAGE Launch configuration Client references non-existing project electory.
+
+!ENTRY org.eclipse.eclemma.ui 4 4 2020-02-09 18:27:56.416
+!MESSAGE Launch configuration Client references non-existing project electory.
+!STACK 1
+org.eclipse.core.runtime.CoreException: Launch configuration Client references non-existing project electory.
+	at org.eclipse.jdt.launching.JavaRuntime.abort(JavaRuntime.java:1838)
+	at org.eclipse.jdt.launching.JavaRuntime.getJavaProject(JavaRuntime.java:1713)
+	at org.eclipse.eclemma.core.launching.JavaApplicationLauncher.getOverallScope(JavaApplicationLauncher.java:33)
+	at org.eclipse.eclemma.core.ScopeUtils.getOverallScope(ScopeUtils.java:94)
+	at org.eclipse.eclemma.ui.launching.CoverageTab.initializeFrom(CoverageTab.java:109)
+	at org.eclipse.debug.ui.AbstractLaunchConfigurationTab.activated(AbstractLaunchConfigurationTab.java:457)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.handleTabSelected(LaunchConfigurationTabGroupViewer.java:1474)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.handleTabChange(LaunchConfigurationTabGroupViewer.java:451)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.access$5(LaunchConfigurationTabGroupViewer.java:435)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer$6.widgetSelected(LaunchConfigurationTabGroupViewer.java:412)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:252)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1079)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1064)
+	at org.eclipse.swt.widgets.Widget.notifyListeners(Widget.java:778)
+	at org.eclipse.swt.custom.CTabFolder.setSelection(CTabFolder.java:3194)
+	at org.eclipse.swt.custom.CTabFolder.onMouse(CTabFolder.java:1877)
+	at org.eclipse.swt.custom.CTabFolder.lambda$0(CTabFolder.java:331)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:822)
+	at org.eclipse.jface.window.Window.open(Window.java:798)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.open(LaunchConfigurationsDialog.java:1239)
+	at org.eclipse.debug.ui.DebugUITools.lambda$1(DebugUITools.java:630)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:72)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:636)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:574)
+	at org.eclipse.debug.ui.actions.OpenLaunchDialogAction.run(OpenLaunchDialogAction.java:85)
+	at org.eclipse.jface.action.Action.runWithEvent(Action.java:476)
+	at org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:568)
+	at org.eclipse.jface.action.ActionContributionItem.lambda$4(ActionContributionItem.java:400)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1173)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1062)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:636)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:563)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:151)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:155)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:137)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:107)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:595)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1501)
+!SUBENTRY 1 org.eclipse.jdt.launching 4 107 2020-02-09 18:27:56.416
+!MESSAGE Launch configuration Client references non-existing project electory.
+
+!ENTRY org.eclipse.eclemma.ui 4 4 2020-02-09 18:28:24.695
+!MESSAGE Launch configuration Client references non-existing project electory.
+!STACK 1
+org.eclipse.core.runtime.CoreException: Launch configuration Client references non-existing project electory.
+	at org.eclipse.jdt.launching.JavaRuntime.abort(JavaRuntime.java:1838)
+	at org.eclipse.jdt.launching.JavaRuntime.getJavaProject(JavaRuntime.java:1713)
+	at org.eclipse.eclemma.core.launching.JavaApplicationLauncher.getOverallScope(JavaApplicationLauncher.java:33)
+	at org.eclipse.eclemma.core.ScopeUtils.getOverallScope(ScopeUtils.java:94)
+	at org.eclipse.eclemma.ui.launching.CoverageTab.initializeFrom(CoverageTab.java:109)
+	at org.eclipse.debug.ui.AbstractLaunchConfigurationTab.activated(AbstractLaunchConfigurationTab.java:457)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.handleTabSelected(LaunchConfigurationTabGroupViewer.java:1474)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.handleTabChange(LaunchConfigurationTabGroupViewer.java:451)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.access$5(LaunchConfigurationTabGroupViewer.java:435)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer$6.widgetSelected(LaunchConfigurationTabGroupViewer.java:412)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:252)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1079)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1064)
+	at org.eclipse.swt.widgets.Widget.notifyListeners(Widget.java:778)
+	at org.eclipse.swt.custom.CTabFolder.setSelection(CTabFolder.java:3194)
+	at org.eclipse.swt.custom.CTabFolder.onMouse(CTabFolder.java:1877)
+	at org.eclipse.swt.custom.CTabFolder.lambda$0(CTabFolder.java:331)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:822)
+	at org.eclipse.jface.window.Window.open(Window.java:798)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.open(LaunchConfigurationsDialog.java:1239)
+	at org.eclipse.debug.ui.DebugUITools.lambda$1(DebugUITools.java:630)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:72)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:636)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:574)
+	at org.eclipse.debug.ui.actions.OpenLaunchDialogAction.run(OpenLaunchDialogAction.java:85)
+	at org.eclipse.jface.action.Action.runWithEvent(Action.java:476)
+	at org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:568)
+	at org.eclipse.jface.action.ActionContributionItem.lambda$4(ActionContributionItem.java:400)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1173)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1062)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:636)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:563)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:151)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:155)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:137)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:107)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:595)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1501)
+!SUBENTRY 1 org.eclipse.jdt.launching 4 107 2020-02-09 18:28:24.695
+!MESSAGE Launch configuration Client references non-existing project electory.
+
+!ENTRY org.eclipse.eclemma.ui 4 4 2020-02-09 18:28:32.883
+!MESSAGE Launch configuration Client references non-existing project electory.
+!STACK 1
+org.eclipse.core.runtime.CoreException: Launch configuration Client references non-existing project electory.
+	at org.eclipse.jdt.launching.JavaRuntime.abort(JavaRuntime.java:1838)
+	at org.eclipse.jdt.launching.JavaRuntime.getJavaProject(JavaRuntime.java:1713)
+	at org.eclipse.eclemma.core.launching.JavaApplicationLauncher.getOverallScope(JavaApplicationLauncher.java:33)
+	at org.eclipse.eclemma.core.ScopeUtils.getOverallScope(ScopeUtils.java:94)
+	at org.eclipse.eclemma.ui.launching.CoverageTab.initializeFrom(CoverageTab.java:109)
+	at org.eclipse.debug.ui.AbstractLaunchConfigurationTab.activated(AbstractLaunchConfigurationTab.java:457)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.handleTabSelected(LaunchConfigurationTabGroupViewer.java:1474)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.handleTabChange(LaunchConfigurationTabGroupViewer.java:451)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer.access$5(LaunchConfigurationTabGroupViewer.java:435)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTabGroupViewer$6.widgetSelected(LaunchConfigurationTabGroupViewer.java:412)
+	at org.eclipse.swt.widgets.TypedListener.handleEvent(TypedListener.java:252)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1079)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1064)
+	at org.eclipse.swt.widgets.Widget.notifyListeners(Widget.java:778)
+	at org.eclipse.swt.custom.CTabFolder.setSelection(CTabFolder.java:3194)
+	at org.eclipse.swt.custom.CTabFolder.onMouse(CTabFolder.java:1877)
+	at org.eclipse.swt.custom.CTabFolder.lambda$0(CTabFolder.java:331)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.jface.window.Window.runEventLoop(Window.java:822)
+	at org.eclipse.jface.window.Window.open(Window.java:798)
+	at org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog.open(LaunchConfigurationsDialog.java:1239)
+	at org.eclipse.debug.ui.DebugUITools.lambda$1(DebugUITools.java:630)
+	at org.eclipse.swt.custom.BusyIndicator.showWhile(BusyIndicator.java:72)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:636)
+	at org.eclipse.debug.ui.DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUITools.java:574)
+	at org.eclipse.debug.ui.actions.OpenLaunchDialogAction.run(OpenLaunchDialogAction.java:85)
+	at org.eclipse.jface.action.Action.runWithEvent(Action.java:476)
+	at org.eclipse.jface.action.ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:568)
+	at org.eclipse.jface.action.ActionContributionItem.lambda$4(ActionContributionItem.java:400)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:89)
+	at org.eclipse.swt.widgets.Display.sendEvent(Display.java:4131)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1055)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3944)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3547)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1173)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1062)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:156)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:636)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:339)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:563)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:151)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:155)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:137)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:107)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:400)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:659)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:595)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1501)
+!SUBENTRY 1 org.eclipse.jdt.launching 4 107 2020-02-09 18:28:32.884
+!MESSAGE Launch configuration Client references non-existing project electory.
+
+!ENTRY org.eclipse.jdt.launching 4 107 2020-02-09 18:33:56.695
+!MESSAGE Launch configuration Client references non-existing project electory.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:44:46.845
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:44:46.853
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:44:46.862
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:45:07.459
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:45:07.467
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:45:07.478
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.core.resources 4 368 2020-02-09 18:45:30.585
+!MESSAGE Variable references non-existent resource : ${workspace_loc:gamedir}
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:46:20.950
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:46:20.957
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:46:20.966
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+!SESSION 2020-02-09 18:47:29.188 -----------------------------------------------
+eclipse.buildId=4.10.0.I20181206-0815
+java.version=1.8.0_172
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ru_RU
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.egit.ui 2 0 2020-02-09 18:47:42.057
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\ppc'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:48:13.909
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:48:13.917
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:48:13.926
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:49:22.585
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:49:22.592
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:49:22.603
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:53:55.091
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:53:55.098
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:53:55.107
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:54:34.402
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:54:34.410
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:54:34.418
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:54:36.844
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:54:36.853
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 18:54:36.866
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+!SESSION 2020-02-09 19:04:55.953 -----------------------------------------------
+eclipse.buildId=4.10.0.I20181206-0815
+java.version=1.8.0_172
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ru_RU
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.egit.ui 2 0 2020-02-09 19:05:23.308
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\ppc'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:09:31.883
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:09:31.891
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:09:31.901
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:09:40.388
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:09:40.395
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:09:40.406
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:31:26.790
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:31:26.797
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:31:26.807
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:31:40.589
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:31:40.596
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:31:40.606
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 19:31:45.074
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.egit.core 4 0 2020-02-09 19:39:43.327
+!MESSAGE Pulling 1 repositories
+!SUBENTRY 1 org.eclipse.egit.core 4 0 2020-02-09 19:39:43.327
+!MESSAGE Checkout conflict with files: 
+src/main/java/electory/client/audio/SoundManager.java
+!STACK 0
+org.eclipse.jgit.api.errors.CheckoutConflictException: Checkout conflict with files: 
+src/main/java/electory/client/audio/SoundManager.java
+	at org.eclipse.jgit.api.MergeCommand.call(MergeCommand.java:437)
+	at org.eclipse.jgit.api.PullCommand.call(PullCommand.java:354)
+	at org.eclipse.egit.core.op.PullOperation$PullJob.run(PullOperation.java:256)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+Caused by: org.eclipse.jgit.errors.CheckoutConflictException: Checkout conflict with files: 
+src/main/java/electory/client/audio/SoundManager.java
+	at org.eclipse.jgit.dircache.DirCacheCheckout.doCheckout(DirCacheCheckout.java:516)
+	at org.eclipse.jgit.dircache.DirCacheCheckout.checkout(DirCacheCheckout.java:484)
+	at org.eclipse.jgit.api.MergeCommand.call(MergeCommand.java:304)
+	... 3 more
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:02.611
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:02.618
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:02.628
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.egit.core 4 0 2020-02-09 19:40:14.672
+!MESSAGE Pulling 1 repositories
+!SUBENTRY 1 org.eclipse.egit.core 4 0 2020-02-09 19:40:14.672
+!MESSAGE Checkout conflict with files: 
+src/main/java/electory/client/audio/SoundManager.java
+!STACK 0
+org.eclipse.jgit.api.errors.CheckoutConflictException: Checkout conflict with files: 
+src/main/java/electory/client/audio/SoundManager.java
+	at org.eclipse.jgit.api.MergeCommand.call(MergeCommand.java:437)
+	at org.eclipse.jgit.api.PullCommand.call(PullCommand.java:354)
+	at org.eclipse.egit.core.op.PullOperation$PullJob.run(PullOperation.java:256)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+Caused by: org.eclipse.jgit.errors.CheckoutConflictException: Checkout conflict with files: 
+src/main/java/electory/client/audio/SoundManager.java
+	at org.eclipse.jgit.dircache.DirCacheCheckout.doCheckout(DirCacheCheckout.java:516)
+	at org.eclipse.jgit.dircache.DirCacheCheckout.checkout(DirCacheCheckout.java:484)
+	at org.eclipse.jgit.api.MergeCommand.call(MergeCommand.java:304)
+	... 3 more
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:36.196
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:36.203
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:36.216
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:37.632
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:37.640
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:40:37.651
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:44:05.493
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:44:05.500
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:44:05.514
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:51:15.218
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:51:15.227
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:51:15.238
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:53:46.542
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:53:46.548
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:53:46.557
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:53:48.206
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:53:48.213
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:53:48.227
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:54:38.241
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:54:38.248
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:54:38.258
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:54:46.893
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:54:46.899
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:54:46.911
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:55:42.169
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:55:42.179
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:55:42.189
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:55:48.861
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:55:48.867
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:55:48.876
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:56:27.314
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:56:27.321
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:56:27.331
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:58:20.863
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:58:20.869
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:58:20.878
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:59:14.557
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:59:14.564
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 19:59:14.573
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:00:52.334
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:00:52.341
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:00:52.350
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:03:54.347
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:03:54.357
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:03:54.366
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:12:29.706
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:12:29.714
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:12:29.728
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:15:05.484
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:15:05.490
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:15:05.500
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:16:38.788
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:16:38.794
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:16:38.804
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:22:17.842
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:22:17.848
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:22:17.857
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:22:54.375
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:22:54.382
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:22:54.391
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:24:54.366
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:24:54.373
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:24:54.384
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:28:39.580
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:28:39.586
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:28:39.595
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:30:16.206
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:30:16.213
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:30:16.223
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:16.569
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:16.576
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:16.585
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:25.149
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:25.155
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:25.164
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:28.169
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:28.175
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:33:28.186
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:03.758
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:03.764
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:03.777
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:22.246
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:22.252
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:22.262
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:28.387
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:28.394
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:28.404
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:33.678
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:33.685
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:33.695
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:47.305
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:47.312
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:36:47.321
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:04.883
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:04.890
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:04.901
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:13.372
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:13.379
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:13.393
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:15.685
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:15.691
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:37:15.700
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:40:40.919
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:40:40.926
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:40:40.936
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:41:27.180
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:41:27.186
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:41:27.195
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:42:38.960
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:42:38.967
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:42:38.977
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:43:54.018
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:43:54.025
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:43:54.034
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:44:00.196
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:44:00.204
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:44:00.212
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:44:02.615
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:44:02.621
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:44:02.630
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:19.506
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:19.514
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:19.526
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:23.223
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:23.230
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:23.240
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:43.827
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:43.834
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:43.845
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:53.306
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:53.312
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:45:53.321
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:47:39.997
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:47:40.003
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:47:40.013
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 20:47:42.871
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 20:48:21.585
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:48:52.500
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:48:52.506
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:48:52.515
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:48:59.943
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:48:59.950
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:48:59.961
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 20:49:06.738
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:35.687
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:35.693
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:35.703
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:46.208
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:46.214
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:46.224
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:56.558
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:56.564
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:50:56.575
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 20:50:57.910
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:19.102
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:19.108
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:19.117
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:44.523
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:44.529
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:44.540
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:55.749
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:55.755
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:51:55.764
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:41.230
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:41.237
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:41.246
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:50.285
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:50.292
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:50.301
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:52.607
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:52.613
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:52:52.623
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 20:52:54.042
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 20:53:32.952
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:54:54.733
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:54:54.740
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:54:54.749
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 20:54:56.117
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 20:55:19.816
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:55:44.152
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:55:44.158
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:55:44.167
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:55:59.230
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:55:59.238
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:55:59.248
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:56:54.798
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:56:54.804
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 20:56:54.813
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:16.393
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:16.399
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:16.409
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:41.616
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:41.622
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:41.632
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:50.293
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:50.300
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:50.311
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:56.870
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:56.876
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:01:56.885
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:15.551
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:15.557
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:15.566
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:20.411
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:20.417
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:20.426
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:25.299
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:25.305
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:02:25.314
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 21:02:26.712
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:04:55.493
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:04:55.498
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:04:55.509
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:04:59.281
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:04:59.287
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:04:59.297
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:08.750
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:08.756
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:08.765
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:19.081
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:19.087
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:19.096
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:54.622
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:54.627
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:54.637
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:57.841
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:57.847
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:05:57.856
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:06:14.716
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:06:14.722
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:06:14.731
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:06:58.061
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:06:58.067
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:06:58.076
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:07:38.346
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:07:38.352
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:07:38.362
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:03.643
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:03.649
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:03.659
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:07.156
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:07.161
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:07.170
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:10.651
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:10.657
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:08:10.667
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.jdt.debug 2 0 2020-02-09 21:08:11.913
+!MESSAGE Unable to find location of java.lang.Thread.setName() in debuggee JVM, for type java.lang.Thread
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:10.821
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:10.827
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:10.836
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:30.348
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:30.354
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:30.363
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:42.979
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:42.985
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:11:42.995
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:12:10.463
+!MESSAGE Cannot get the revision information from the scm repository, proceeding with revision of dev : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:12:10.468
+!MESSAGE Cannot get the branch information from the git repository: 
+Error while executing command.
+
+!ENTRY org.eclipse.m2e.logback.appender 2 0 2020-02-09 21:12:10.477
+!MESSAGE Cannot get the branch information from the scm repository, proceeding with UNKNOWN_BRANCH : 
+Exception while executing SCM command.
+
+!ENTRY org.eclipse.core.jobs 2 2 2020-02-09 21:12:13.756
+!MESSAGE Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: org.eclipse.ecf.internal.provider.jslp.JSLPDiscoveryJob
+!SESSION 2020-02-09 21:57:02.552 -----------------------------------------------
+eclipse.buildId=4.10.0.I20181206-0815
+java.version=1.8.0_172
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ru_RU
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.egit.ui 2 0 2020-02-09 21:57:23.535
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\ppc'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.egit.ui 4 0 2020-02-09 21:57:48.693
+!MESSAGE Invalid project description.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Invalid project description.
+	at org.eclipse.core.internal.resources.Project.checkDescription(Project.java:173)
+	at org.eclipse.core.internal.resources.Project.assertCreateRequirements(Project.java:57)
+	at org.eclipse.core.internal.resources.Project.create(Project.java:267)
+	at org.eclipse.core.internal.resources.Project.create(Project.java:251)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createExistingProject(ProjectUtils.java:179)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.access$0(ProjectUtils.java:146)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils$1.run(ProjectUtils.java:104)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2295)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2317)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createProjects(ProjectUtils.java:138)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createProjects(ProjectUtils.java:62)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard.importProjects(GitImportWizard.java:256)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard.access$2(GitImportWizard.java:238)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard$4.run(GitImportWizard.java:208)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+Contains: OK
+Contains: G:\git\electory overlaps the workspace location: G:\git\electory
+!SUBENTRY 1 org.eclipse.core.resources 4 77 2020-02-09 21:57:48.695
+!MESSAGE Invalid project description.
+!SUBENTRY 2 unknown 0 0 2020-02-09 21:57:48.695
+!MESSAGE OK
+!SUBENTRY 2 org.eclipse.core.resources 4 77 2020-02-09 21:57:48.695
+!MESSAGE G:\git\electory overlaps the workspace location: G:\git\electory
+
+!ENTRY org.eclipse.egit.ui 4 0 2020-02-09 21:57:55.377
+!MESSAGE Invalid project description.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Invalid project description.
+	at org.eclipse.core.internal.resources.Project.checkDescription(Project.java:173)
+	at org.eclipse.core.internal.resources.Project.assertCreateRequirements(Project.java:57)
+	at org.eclipse.core.internal.resources.Project.create(Project.java:267)
+	at org.eclipse.core.internal.resources.Project.create(Project.java:251)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createExistingProject(ProjectUtils.java:179)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.access$0(ProjectUtils.java:146)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils$1.run(ProjectUtils.java:104)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2295)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2317)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createProjects(ProjectUtils.java:138)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createProjects(ProjectUtils.java:62)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard.importProjects(GitImportWizard.java:256)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard.access$2(GitImportWizard.java:238)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard$4.run(GitImportWizard.java:208)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+Contains: OK
+Contains: G:\git\electory overlaps the workspace location: G:\git\electory
+!SUBENTRY 1 org.eclipse.core.resources 4 77 2020-02-09 21:57:55.378
+!MESSAGE Invalid project description.
+!SUBENTRY 2 unknown 0 0 2020-02-09 21:57:55.378
+!MESSAGE OK
+!SUBENTRY 2 org.eclipse.core.resources 4 77 2020-02-09 21:57:55.378
+!MESSAGE G:\git\electory overlaps the workspace location: G:\git\electory
+
+!ENTRY org.eclipse.egit.ui 4 0 2020-02-09 21:59:15.504
+!MESSAGE Invalid project description.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Invalid project description.
+	at org.eclipse.core.internal.resources.Project.checkDescription(Project.java:173)
+	at org.eclipse.core.internal.resources.Project.assertCreateRequirements(Project.java:57)
+	at org.eclipse.core.internal.resources.Project.create(Project.java:267)
+	at org.eclipse.core.internal.resources.Project.create(Project.java:251)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createExistingProject(ProjectUtils.java:179)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.access$0(ProjectUtils.java:146)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils$1.run(ProjectUtils.java:104)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2295)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2317)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createProjects(ProjectUtils.java:138)
+	at org.eclipse.egit.ui.internal.clone.ProjectUtils.createProjects(ProjectUtils.java:62)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard.importProjects(GitImportWizard.java:256)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard.access$2(GitImportWizard.java:238)
+	at org.eclipse.egit.ui.internal.clone.GitImportWizard$4.run(GitImportWizard.java:208)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+Contains: OK
+Contains: G:\git\electory overlaps the workspace location: G:\git\electory
+!SUBENTRY 1 org.eclipse.core.resources 4 77 2020-02-09 21:59:15.504
+!MESSAGE Invalid project description.
+!SUBENTRY 2 unknown 0 0 2020-02-09 21:59:15.504
+!MESSAGE OK
+!SUBENTRY 2 org.eclipse.core.resources 4 77 2020-02-09 21:59:15.504
+!MESSAGE G:\git\electory overlaps the workspace location: G:\git\electory

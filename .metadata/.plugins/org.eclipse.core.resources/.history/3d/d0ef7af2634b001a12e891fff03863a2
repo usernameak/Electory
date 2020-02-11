@@ -1,0 +1,58 @@
+package electory.utils;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.lang.model.element.Name;
+import javax.swing.ListCellRenderer;
+
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.NativeMapped;
+
+public class LProperty<Type> implements NativeMapped, Name, Map, List, ListCellRenderer{
+	public boolean isActive;
+	public Type prop;
+	public Type origin;
+	public LProperty(boolean par1, Type par2, Type par3) {
+		this.isActive = par1;
+		this.prop = par2;
+		this.origin = par3;
+	}
+	
+	public Type getValue() {
+		return this.isActive ? this.prop : this.origin;
+	}
+	
+	public LProperty<Type> setActive(boolean par1) {
+		this.isActive = par1;
+		return this;
+	}
+	
+	public LProperty<Type> setProp(Type par1) {
+		this.prop = par1;
+		return this;
+	}
+	
+	public LProperty<Type> setOrigin(Type par1) {
+		this.origin = par1;
+		return this;
+	}
+
+	@Override
+	public Object fromNative(Object nativeValue, FromNativeContext context) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object toNative() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Class<?> nativeType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

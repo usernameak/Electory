@@ -1,0 +1,65 @@
+package electory.utils;
+
+import java.awt.Color;
+
+import electory.client.TinyCraft;
+import electory.client.render.IRenderState;
+import electory.client.render.Tessellator;
+import electory.client.render.shader.ShaderManager;
+
+public class DrawUtil {
+	public static TinyCraft electory = TinyCraft.getInstance();
+	
+	public static void bindTextureDefault(String par1) {
+		ShaderManager.defaultProgram.bindTexture(par1);
+	}
+	
+	public static void bindTextureWater(String par1) {
+		ShaderManager.waterProgram.bindTexture(par1);
+	}
+	
+	public static void bindTextureWorldComposite(WorldCompositeBindType par1, String par2) {
+		switch(par1) {
+			case DEPTH:
+				ShaderManager.worldCompositeProgram.bindTextureDepth(par2);
+				break;
+			case OPAQUEDEPTH:
+				ShaderManager.worldCompositeProgram.bindTextureOpaqueDepth(par2);
+				break;
+			case TEXTURE:
+				ShaderManager.worldCompositeProgram.bindTexture(par2);
+				break;
+			case WATERMASK:
+				ShaderManager.worldCompositeProgram.bindTextureWaterMask(par2);
+				break;
+		}
+	}
+	
+	public static void bindTextureTerrain(String par1) {
+		ShaderManager.terrainProgram.bindTexture(par1);
+	}
+	
+	public static void bindTextureSolid(String par1) {
+		ShaderManager.solidProgram.bindTexture(par1);
+	}
+	
+	public static void bindColor(Color par1) {
+		Tessellator t = Tessellator.instance;
+		t.getBuffer().setColor(par1.getRGB());
+	}
+	
+	public static void drawBox(IRenderState state, float x, float y, float x1, float y1) {
+		ShaderManager.defaultProgram.loadRenderState(state);
+		ShaderManager.defaultProgram.use();
+		Tessellator t = Tessellator.instance;
+		t.getBuffer().addQuadVertexWithUV(x, y, 0.0F, 0, 0);
+		t.getBuffer().addQuadVertexWithUV(x, y1, 0.0F, 0, 1);
+		t.getBuffer().addQuadVertexWithUV(x1, y1, 0.0F, 1, 1);
+		t.getBuffer().addQuadVertexWithUV(x1, y, 0.0F, 1, 0);
+		t.draw();
+	}
+	
+	public static enum WorldCompositeBindType {
+		TEXTURE, DEPTH, OPAQUEDEPTH, WATERMASK
+	}
+}

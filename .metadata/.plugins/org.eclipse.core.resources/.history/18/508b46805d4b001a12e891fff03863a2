@@ -1,0 +1,12 @@
+package electory.utils;
+
+import electory.client.TinyCraft;
+import electory.client.render.shader.ShaderManager;
+
+public class GuiUtil {
+	public static TinyCraft electory = TinyCraft.getInstance();
+	
+	public void bindTextureGui(String par1) {
+		ShaderManager.defaultProgram.bindTexture(par1);
+	}
+}

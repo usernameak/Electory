@@ -1,0 +1,36 @@
+package electory.utils;
+
+import electory.client.TinyCraft;
+import electory.client.render.shader.ShaderManager;
+
+public class DrawUtil {
+	public static TinyCraft electory = TinyCraft.getInstance();
+	
+	public static void bindTextureDefault(String par1) {
+		ShaderManager.defaultProgram.bindTexture(par1);
+	}
+	
+	public static void bindTextureWater(String par1) {
+		ShaderManager.waterProgram.bindTexture(par1);
+	}
+	
+	public static void bindTextureWorldComposite(String par1) {
+		ShaderManager.worldCompositeProgram.bindTexture(par1);
+	}
+	
+	public static void bindTextureTerrain(String par1) {
+		ShaderManager.terrainProgram.bindTexture(par1);
+	}
+	
+	public static void bindTextureSolid(String par1) {
+		ShaderManager.solidProgram.bindTexture(par1);
+	}
+	
+	public static enum WorldCompositeBindType {
+		TEXTURE, DEPTH, OPAQUEDEPTH, WATERMASK
+	}
+	
+	public static enum TerrainBindType {
+		TEXTURE, TEXTUREDEPTH
+	}
+}
