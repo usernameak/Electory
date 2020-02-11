@@ -36,19 +36,19 @@
 
 package electory.utils;
 
-
-import java.util.ArrayList;
-import java.util.Vector;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
+// TODO rewrite it
 public class Fmath{
 
         // PHYSICAL CONSTANTS
@@ -712,7 +712,7 @@ public class Fmath{
             if(!Fmath.isPlusInfinity(xDouble)){
                 if(!Fmath.isMinusInfinity(xDouble)){
                     if(xDouble!=0.0D){
-                        String xString = ((new Double(xDouble)).toString()).trim();
+                        String xString = Double.toString(xDouble).trim();
                         xTruncated = Double.parseDouble(truncateProcedure(xString, trunc));
                     }
                 }
@@ -728,7 +728,7 @@ public class Fmath{
             if(!Fmath.isPlusInfinity(xFloat)){
                 if(!Fmath.isMinusInfinity(xFloat)){
                     if(xFloat!=0.0D){
-                        String xString = ((new Float(xFloat)).toString()).trim();
+                        String xString = Float.toString(xFloat).trim();
                         xTruncated = Float.parseFloat(truncateProcedure(xString, trunc));
                     }
                 }
@@ -806,10 +806,10 @@ public class Fmath{
                         }
                         int preInt = Integer.parseInt(xPreDot);
                         preInt += xArray[0];
-                        xPreDot = (new Integer(preInt)).toString();
+                        xPreDot = Integer.toString(preInt);
                         tempString = "";
                         for(int i=1; i<=trunc; i++){
-                            tempString += (new Integer(xArray[i])).toString();
+                            tempString += Integer.toString(xArray[i]);
                         }
                         xPostDot = tempString;
                     }
@@ -821,7 +821,7 @@ public class Fmath{
                     if(tempDouble>=5.0){
                         int preInt = Integer.parseInt(xPreDot);
                         preInt++;
-                        xPreDot = (new Integer(preInt)).toString();
+                        xPreDot = Integer.toString(preInt);
                     }
                     xPostDot = "0";
                 }
@@ -1121,9 +1121,7 @@ public class Fmath{
         // Returns 1 if x > y
         // x and y are double
         public static int compare(double x, double y){
-            Double X = new Double(x);
-            Double Y = new Double(y);
-            return X.compareTo(Y);
+        	return Double.compare(x, x);
         }
 
         // Returns 0 if x == y
@@ -1131,9 +1129,7 @@ public class Fmath{
         // Returns 1 if x > y
         // x and y are int
         public static int compare(int x, int y){
-            Integer X = new Integer(x);
-            Integer Y = new Integer(y);
-            return X.compareTo(Y);
+            return Integer.compare(x, y);
         }
 
         // Returns 0 if x == y
@@ -1141,9 +1137,7 @@ public class Fmath{
         // Returns 1 if x > y
         // x and y are long
         public static int compare(long x, long y){
-            Long X = new Long(x);
-            Long Y = new Long(y);
-            return X.compareTo(Y);
+            return Long.compare(x, y);
         }
 
         // Returns 0 if x == y
@@ -1151,9 +1145,7 @@ public class Fmath{
         // Returns 1 if x > y
         // x and y are float
         public static int compare(float x, float y){
-            Float X = new Float(x);
-            Float Y = new Float(y);
-            return X.compareTo(Y);
+            return Float.compare(x, y);
         }
 
         // Returns 0 if x == y
@@ -1161,9 +1153,7 @@ public class Fmath{
         // Returns 1 if x > y
         // x and y are short
         public static int compare(byte x, byte y){
-            Byte X = new Byte(x);
-            Byte Y = new Byte(y);
-            return X.compareTo(Y);
+            return Byte.compare(x, y);
         }
 
         // Returns 0 if x == y
@@ -1171,9 +1161,7 @@ public class Fmath{
         // Returns 1 if x > y
         // x and y are short
         public static int compare(short x, short y){
-            Short X = new Short(x);
-            Short Y = new Short(y);
-            return X.compareTo(Y);
+            return Short.compare(x, y);
         }
 
         // COMPARE ARRAYS
@@ -1882,7 +1870,7 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i]==value){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){
@@ -1903,7 +1891,7 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i]==value){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){
@@ -1924,7 +1912,7 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i]==value){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){
@@ -1945,7 +1933,7 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i]==value){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){
@@ -1966,13 +1954,13 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i]==value){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){
                 indices = new int[numberOfIndices];
                 for(int i=0; i<numberOfIndices; i++){
-                    indices[i] = (arrayl.get(i)).intValue();
+                    indices[i] = (arrayl.get(i));
                 }
             }
             return indices;
@@ -1987,13 +1975,13 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i]==value){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){
                 indices = new int[numberOfIndices];
                 for(int i=0; i<numberOfIndices; i++){
-                    indices[i] = (arrayl.get(i)).intValue();
+                    indices[i] = (arrayl.get(i));
                 }
             }
             return indices;
@@ -2008,7 +1996,7 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i]==value){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){
@@ -2029,7 +2017,7 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i].equals(value)){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){
@@ -2050,7 +2038,7 @@ public class Fmath{
             for(int i=0; i<array.length; i++){
                 if(array[i].equals(value)){
                     numberOfIndices++;
-                    arrayl.add(new Integer(i));
+                    arrayl.add(i);
                 }
             }
             if(numberOfIndices!=0){

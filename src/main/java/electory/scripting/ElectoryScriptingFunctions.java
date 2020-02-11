@@ -3,7 +3,6 @@ package electory.scripting;
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;

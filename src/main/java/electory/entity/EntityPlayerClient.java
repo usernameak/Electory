@@ -1,6 +1,5 @@
 package electory.entity;
 
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import electory.client.TinyCraft;

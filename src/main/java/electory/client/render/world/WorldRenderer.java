@@ -17,7 +17,6 @@ import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.EXTPackedDepthStencil;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.NVCopyImage;
 
