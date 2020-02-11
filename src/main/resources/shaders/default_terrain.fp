@@ -30,5 +30,6 @@ void main() {
 		fc.rgb *= 0.5;
 	}*/
 	gl_FragData[0] = fc;
+	gl_FragData[1] = vPosition;
 	//gl_FragData[1] = vec4(ftov(depth*65025.0), fc.a);
 }

@@ -89,6 +89,8 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 		super.handleKeyEvent(event);
 
 	}
+	
+	
 
 	@Override
 	public boolean doesGuiPauseGame() {
@@ -153,5 +155,10 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	public void openGuiScreen() {
 		super.openGuiScreen();
 		// GLFW.GLFW_enableRepeatEvents(true); // FIXME:
+	}
+
+	@Override
+	public void handleTextInputEvent(String text) {
+		consoleInputString += text;
 	}
 }

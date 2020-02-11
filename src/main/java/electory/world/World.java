@@ -105,9 +105,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 				EntityBlockParticle particle = new EntityBlockParticle(this,
 						oldBlock.getAtlasSprite(EnumSide.getOrientation(random.nextInt(6))));
 				particle.setPosition(x + 0.5f, y + 0.5f, z + 0.5f, false);
-				particle.setVelocity(	random.nextFloat() * 0.1f - 0.05f,
-										random.nextFloat() * 0.1f - 0.05f,
-										random.nextFloat() * 0.1f - 0.05f);
+				particle.setVelocity(	random.nextFloat() * 2.f - 1.f,
+										random.nextFloat() * .5f,
+										random.nextFloat() * 2.f - 1.f);
 				addEntity(particle);
 			}
 		}
@@ -200,8 +200,8 @@ public abstract class World implements IChunkSaveStatusHandler {
 					: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
 			int startX = (((int) ppos.x) >> 4) - CHUNKLOAD_DISTANCE;
 			int startZ = (((int) ppos.z) >> 4) - CHUNKLOAD_DISTANCE;
-			for (int x = startX; x < startX + CHUNKLOAD_DISTANCE2; x++) {
-				for (int z = startZ; z < startZ + CHUNKLOAD_DISTANCE2; z++) {
+			for (int x = startX; x <= startX + CHUNKLOAD_DISTANCE2; x++) {
+				for (int z = startZ; z <= startZ + CHUNKLOAD_DISTANCE2; z++) {
 					chunksToLoad.add(ChunkPosition.createLong(x, z));
 				}
 			}
@@ -336,9 +336,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 		}
 	}
 
-	public BiomeGenBase getBiomeAt(int x, int z) {
+	public EnumWorldBiome getBiomeAt(int x, int z) {
 		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
-		return chunk == null ? BiomeGenBase.plains : chunk.getBiomeAt(x & 0xF, z & 0xF);
+		return chunk == null ? EnumWorldBiome.plains : chunk.getBiomeAt(x & 0xF, z & 0xF);
 	}
 
 	public short getHeightAt(int x, int z) {
@@ -360,6 +360,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 				Chunk chunk = it.next();
 				chunkProvider.unloadChunk(chunk, it, false);
 			}
+			chunkProvider.dispose();
 			entities.clear();
 		} catch (IOException e) {
 			throw new CrashException(e);

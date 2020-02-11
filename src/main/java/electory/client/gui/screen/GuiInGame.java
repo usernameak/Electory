@@ -184,4 +184,10 @@ public class GuiInGame extends GuiScreen {
 		}
 	}
 
+	@Override
+	public void handleTextInputEvent(String text) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

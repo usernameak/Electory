@@ -5,12 +5,14 @@ public class PerlinGenerator {
 	private int octaves;
 	private double lacunarity;
 	private double gain;
+	private boolean turbulence;
 
-	public PerlinGenerator(long seed, int octaves, double lacunarity, double gain) {
+	public PerlinGenerator(long seed, int octaves, double lacunarity, double gain, boolean turbulence) {
 		this.seed = seed;
 		this.octaves = octaves;
 		this.lacunarity = lacunarity;
 		this.gain = gain;
+		this.turbulence = turbulence;
 	}
 
 	private long xorshift64star(long x) {
@@ -66,7 +68,7 @@ public class PerlinGenerator {
 		double value = 0;
 		double amplitude = .5;
 		for (int i = 0; i < octaves; i++) {
-			value += amplitude * noise(s, t);
+			value += amplitude * (turbulence ? Math.abs(noise(s, t)) : noise(s, t));
 			s *= lacunarity;
 			t *= lacunarity;
 			amplitude *= gain;

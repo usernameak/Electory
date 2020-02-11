@@ -26,18 +26,29 @@ public abstract class EntityPlayer extends EntityLiving {
 	public transient IPlayerController playerController = null;
 
 	public ItemStack stackOnCursor = new ItemStack();
+
+	public boolean fly = false;
 	
 	@Override
 	public void update() {
+		
 		Vector3f movementVector = new Vector3f(0.0f, 0.0f, 0.0f);
 		
 		if(playerController != null) {
 			playerController.doMovement(this, movementVector);
 		}
 		
-		moveClipped(movementVector.x, movementVector.y, movementVector.z);
+		movementVector.mul(onGround ? 0.5f : 0.3f);
+		
+		// moveClipped(movementVector.x, movementVector.y, movementVector.z);
+		this.velocity.add(movementVector);
 		
 		super.update();
+	}
+	
+	@Override
+	public boolean hasGravity() {
+		return !fly;
 	}
 	
 	public float getEyeHeight() {

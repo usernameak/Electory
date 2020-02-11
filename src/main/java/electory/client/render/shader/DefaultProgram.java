@@ -24,15 +24,20 @@ public class DefaultProgram extends ShaderProgram {
 
 	public DefaultProgram(int... shaders) throws ShaderCompileException {
 		super(shaders);
-		GL20.glBindAttribLocation(handle, 0, "position");
-		GL20.glBindAttribLocation(handle, 1, "texCoord");
-		GL20.glBindAttribLocation(handle, 2, "color");
 		textureUniform = GL20.glGetUniformLocation(handle, "texture");
 		modelUniform = GL20.glGetUniformLocation(handle, "modelMatrix");
 		viewUniform = GL20.glGetUniformLocation(handle, "viewMatrix");
 		projectionUniform = GL20.glGetUniformLocation(handle, "projectionMatrix");
 		timerUniform = GL20.glGetUniformLocation(handle, "timer");
 		colorUniform = GL20.glGetUniformLocation(handle, "uColor");
+	}
+	
+	@Override
+	protected void bindAttributes() {
+		super.bindAttributes();
+		GL20.glBindAttribLocation(handle, 0, "position");
+		GL20.glBindAttribLocation(handle, 1, "texCoord");
+		GL20.glBindAttribLocation(handle, 2, "color");
 	}
 
 	public void bindTexture(String texture) {

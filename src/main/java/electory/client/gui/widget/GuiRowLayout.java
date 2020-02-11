@@ -50,7 +50,7 @@ public class GuiRowLayout extends GuiWidget {
 	public void handleMouseEvent(MouseEvent event) {
 		super.handleMouseEvent(event);
 		int x = 0;
-		for(GuiWidget child : children) {
+		for (GuiWidget child : children) {
 			child.handleMouseEvent(event.clipEvent(x, 0, child.getWidth(), child.getHeight()));
 			x += gap + child.getWidth();
 		}
@@ -70,7 +70,7 @@ public class GuiRowLayout extends GuiWidget {
 	public void relayout(int width, int height) {
 		cachedWidth = cachedHeight = 0;
 		ListIterator<GuiWidget> it = children.listIterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			// int i = it.nextIndex();
 			GuiWidget widget = it.next();
 			cachedWidth += widget.getWidth();
@@ -78,6 +78,11 @@ public class GuiRowLayout extends GuiWidget {
 			cachedHeight = h > cachedHeight ? h : cachedHeight;
 			children.add(widget);
 		}
+	}
+
+	@Override
+	public void handleTextInputEvent(String text) {
+		children.forEach(c -> c.handleTextInputEvent(text));
 	}
 
 }

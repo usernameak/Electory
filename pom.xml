@@ -57,6 +57,10 @@
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-opengl</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-stb</artifactId>
+		</dependency>
 
 		<!-- LWJGL3 natives -->
 
@@ -80,6 +84,11 @@
 			<artifactId>lwjgl-opengl</artifactId>
 			<classifier>natives-linux</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-stb</artifactId>
+			<classifier>natives-linux</classifier>
+		</dependency>
 
 		<dependency>
 			<groupId>org.lwjgl</groupId>
@@ -101,6 +110,11 @@
 			<artifactId>lwjgl-opengl</artifactId>
 			<classifier>natives-macos</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-stb</artifactId>
+			<classifier>natives-macos</classifier>
+		</dependency>
 
 		<dependency>
 			<groupId>org.lwjgl</groupId>
@@ -122,6 +136,11 @@
 			<artifactId>lwjgl-opengl</artifactId>
 			<classifier>natives-windows</classifier>
 		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-stb</artifactId>
+			<classifier>natives-windows</classifier>
+		</dependency>
 
 		<dependency>
 			<groupId>org.lwjgl</groupId>
@@ -141,6 +160,11 @@
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-opengl</artifactId>
+			<classifier>natives-windows-x86</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-stb</artifactId>
 			<classifier>natives-windows-x86</classifier>
 		</dependency>
 
@@ -171,19 +195,9 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.tehleo</groupId>
-			<artifactId>junion</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout-core</artifactId>
 			<version>5.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jcraft</groupId>
-			<artifactId>jorbis</artifactId>
-			<version>0.0.17</version>
 		</dependency>
 		<dependency>
 			<groupId>com.koloboke</groupId>

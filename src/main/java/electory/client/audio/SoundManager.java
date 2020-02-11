@@ -18,6 +18,7 @@ import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALC10;
 import org.lwjgl.openal.ALCCapabilities;
 
+import electory.client.TinyCraft;
 import electory.client.audio.decoder.AudioDecoder;
 import electory.client.audio.decoder.ModPlugDecoder;
 import electory.client.audio.decoder.VorbisDecoder;
@@ -113,11 +114,25 @@ public class SoundManager {
 
 	public void update() {
 		streaming.values().forEach(ISound::update);
+		streaming.values().stream().filter(ISound::isEndOfStream).forEach(ISound::destroy);
 		streaming.values().removeIf(ISound::isEndOfStream);
 	}
 
 	public void play(String name, AudioSource data) {
 		String realPath = getRealSoundPath(data.getPath());
+		
+		URL url = getClass().getResource(realPath);
+
+		AudioDecoder decoder = null;
+		String upath = url.getPath();
+		String ext = upath.substring(upath.lastIndexOf('.') + 1);
+		try {
+			decoder = decoders.get(ext).getConstructor(URL.class, boolean.class).newInstance(url, data.isLooping());
+		} catch (Exception e) {
+			// failed to find decoder. fail
+			TinyCraft.getInstance().logger.severe("failed to initialize audio decoder for format ." + ext);
+			return;
+		}
 
 		int source = AL10.alGenSources();
 
@@ -139,18 +154,7 @@ public class SoundManager {
 		}
 
 		sound.setLooping(data.isLooping());
-
-		AudioDecoder decoder;
-		URL url = getClass().getResource(realPath);
-
-		String upath = url.getPath();
-		String ext = upath.substring(upath.lastIndexOf('.') + 1);
-		try {
-			decoder = decoders.get(ext).getConstructor(URL.class, boolean.class).newInstance(url, data.isLooping());
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			throw new RuntimeException(e);
-		}
+		
 		sound.setDecoder(decoder);
 		sound.setSource(source);
 

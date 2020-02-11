@@ -22,6 +22,7 @@ import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCharCallbackI;
 import org.lwjgl.glfw.GLFWCursorPosCallbackI;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
@@ -32,6 +33,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import electory.block.Block;
 import electory.client.audio.AudioSource;
 import electory.client.audio.SoundManager;
 import electory.client.console.Console;
@@ -54,6 +56,7 @@ import electory.event.ElectoryInitEvent;
 import electory.event.EventRegistry;
 import electory.event.EventType;
 import electory.event.HandleEvent;
+import electory.event.RegisterBlocksEvent;
 import electory.nbt.ShortArrayTag;
 import electory.scripting.ScriptingEngine;
 import electory.utils.CrashException;
@@ -144,11 +147,12 @@ public class TinyCraft {
 	public static String getVersion() {
 		return version;
 	}
-	
+
 	public void initEvents() {
 		eventRegistry.registerEventType(new EventType("init", ElectoryInitEvent.class));
+		eventRegistry.registerEventType(new EventType("register_blocks", RegisterBlocksEvent.class));
 		eventRegistry.registerEventType(new EventType("key_event", KeyEvent.class));
-		
+
 		eventRegistry.registerHandler(this);
 	}
 
@@ -158,6 +162,7 @@ public class TinyCraft {
 			initEvents();
 			initRenderer();
 			initGame();
+			postInitRenderer();
 			initConsole();
 
 			while (!GLFW.glfwWindowShouldClose(window) && !shutdown) {
@@ -195,6 +200,10 @@ public class TinyCraft {
 		} catch (Exception e) {
 			showCrashReport(new CrashException(e));
 		}
+	}
+
+	private void postInitRenderer() {
+		AtlasManager.registerAllTerrainSprites();
 	}
 
 	private void initLogging() {
@@ -308,8 +317,19 @@ public class TinyCraft {
 		GLFW.glfwSetKeyCallback(window, new GLFWKeyCallbackI() {
 			@Override
 			public void invoke(long window, int key, int scancode, int action, int mods) {
+				// System.out.println("key " + key + " scancode" + scancode + " action " +
+				// action + " mods " + mods);
 				KeyEvent event = new KeyEvent(key, action != GLFW.GLFW_RELEASE);
 				eventRegistry.emit(event);
+			}
+		});
+
+		GLFW.glfwSetCharCallback(window, new GLFWCharCallbackI() {
+
+			@Override
+			public void invoke(long window, int codepoint) {
+				if (currentGui != null)
+					currentGui.handleTextInputEvent(String.valueOf((char) codepoint));
 			}
 		});
 
@@ -373,7 +393,6 @@ public class TinyCraft {
 
 		soundManager.init();
 		// ShaderManager.defaultProgram.use();
-		AtlasManager.registerAllTerrainSprites();
 	}
 
 	public void initGame() {
@@ -386,6 +405,7 @@ public class TinyCraft {
 			throw new RuntimeException(e);
 		}
 		eventRegistry.emit(new ElectoryInitEvent());
+		Block.registerBlocks();
 		openGui(new GuiMainMenu(this));
 		/*
 		 * try { world.load(); } catch (IOException e) { e.printStackTrace(); }

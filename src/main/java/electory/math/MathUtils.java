@@ -43,4 +43,8 @@ public abstract class MathUtils {
 		int tlval = (x == 0 || y == 0) ? 0 : partialSums[x - 1][y - 1];
 		return val - lval - tval + tlval;
 	}
+
+	public static double lerp(double relief, double minh, double maxh) {
+		return minh + relief * (maxh - minh);
+	}
 }

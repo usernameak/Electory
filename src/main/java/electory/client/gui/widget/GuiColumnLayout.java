@@ -79,4 +79,10 @@ public class GuiColumnLayout extends GuiWidget {
 		}
 	}
 
+	@Override
+	public void handleTextInputEvent(String text) {
+
+		children.stream().forEach(c -> c.handleTextInputEvent(text));
+	}
+
 }

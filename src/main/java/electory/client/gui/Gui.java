@@ -17,4 +17,6 @@ public abstract class Gui {
 	public abstract void handleKeyEvent(KeyEvent event);
 
 	public abstract void handleMouseEvent(MouseEvent event);
+
+	public abstract void handleTextInputEvent(String text);
 }

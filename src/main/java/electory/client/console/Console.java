@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import electory.client.TinyCraft;
 import electory.client.console.commands.CCClear;
 import electory.client.console.commands.CCExit;
+import electory.client.console.commands.CCFly;
 import electory.client.console.commands.CCHelp;
 import electory.client.console.commands.CCNoclip;
 import electory.client.console.commands.CCTp;
@@ -28,6 +29,7 @@ public class Console {
 		addCommand(new CCHelp(tc, gui, consoleCommands));
 		addCommand(new CCTp(tc, gui));
 		addCommand(new CCNoclip(tc, gui));
+		addCommand(new CCFly(tc, gui));
 	}
 
 	public void addCommand(ConsoleCommand command) {

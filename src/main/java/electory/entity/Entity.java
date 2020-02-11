@@ -67,18 +67,30 @@ public abstract class Entity {
 
 		isUnderwater = world.isAABBWithinLiquid(getAABB());
 
+		if(hasGravity()) {
+			velocity.y -= 0.0981f;
+		}
+/*
 		if (onGround && velocity.y < 0) {
 			velocity.y = 0f;
 		}
 		if (onCeiling && velocity.y > 0) {
 			velocity.y = 0f;
+		}*/
+		if (isUnderwater) {
+			velocity.y *= 0.6f;
 		}
-		if (!wasUnderwater && isUnderwater) {
-			velocity.y *= 0.05f;
+		if (isUnderwater) {
+			velocity.x *= 0.27f;
+			velocity.z *= 0.27f;
+		} else if (onGround) {
+			velocity.x *= 0.37f;
+			velocity.z *= 0.37f;
+		} else {
+			velocity.x *= 0.43f;
+			velocity.z *= 0.43f;
 		}
-
-		Vector3f affectedVel = getAcceleration();
-		velocity.add(affectedVel);
+		
 		moveClipped(velocity.x, velocity.y, velocity.z);
 	}
 
@@ -95,16 +107,14 @@ public abstract class Entity {
 		velocity.set(x, y, z);
 	}
 
-	public Vector3f getAcceleration() {
-		return new Vector3f(0f, (hasGravity() && !onGround) ? (isUnderwater ? -0.003f : -0.0981f) : 0f, 0f);
-	}
-
 	public void moveClipped(double xofs, double yofs, double zofs) {
 		if (!world.chunkProvider.isChunkLoaded(((int) newX) >> 4, ((int) newZ) >> 4)) {
 			return;
 		}
 
+		double origXOfs = xofs;
 		double origYOfs = yofs;
+		double origZOfs = zofs;
 
 		AABB paabb = getAABB();
 
@@ -132,33 +142,34 @@ public abstract class Entity {
 		} else {
 			paabb.move(xofs, yofs, zofs);
 		}
-
-		/**/
-
-		if (origYOfs < -0.05f) {
-			// Passive ground collision check
-			onGround = yofs > origYOfs;
+		
+		if(origYOfs != 0) {
+			// System.out.println("gravitating");
+			boolean collidedVertically = false;
+			onGround = false;
 			onCeiling = false;
-		} else if (origYOfs > 0.05f) {
-			// Passive ceiling collision check
-			onGround = false;
-			onCeiling = yofs < origYOfs;
-		} else {
-			// Active ground collision check
-			AABB gaabb = paabb.expand(0f, -0.01f, 0f);
-			double gofs = -0.005;
-			Set<AABB> gAABBs = world.getBlockAABBsWithinAABB(gaabb, true);
-
-			onGround = false;
-
-			for (AABB aabb : gAABBs) {
-				gofs = aabb.clipYCollide(paabb, gofs);
-				if (gofs >= -0.0025f) {
+			if(yofs != origYOfs) {
+				collidedVertically = true;
+				if(origYOfs < 0) {
 					onGround = true;
-					onCeiling = false;
+				} else {
+					onCeiling = true;
 				}
 			}
-
+			if(collidedVertically) {
+				velocity.y = 0;
+			}
+		}
+		
+		if(origXOfs != 0 || origZOfs != 0) {
+			boolean collidedHorizontally = false;
+			if(xofs != origXOfs || zofs != origZOfs) {
+				collidedHorizontally = true;
+			}
+			if(collidedHorizontally) {
+				velocity.x = 0;
+				velocity.z = 0;
+			}
 		}
 
 		/*

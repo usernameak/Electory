@@ -102,4 +102,10 @@ public class GuiWidgetInventoryCell extends GuiWidget {
 	public void relayout(int width, int height) {
 	}
 
+	@Override
+	public void handleTextInputEvent(String text) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
