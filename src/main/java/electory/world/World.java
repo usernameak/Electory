@@ -13,10 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-import com.koloboke.collect.LongCursor;
-import com.koloboke.collect.set.hash.HashLongSet;
-import com.koloboke.collect.set.hash.HashLongSets;
-
 import electory.block.Block;
 import electory.client.TinyCraft;
 import electory.client.audio.AudioSource;
@@ -34,6 +30,8 @@ import electory.nbt.NBTUtil;
 import electory.utils.CrashException;
 import electory.utils.EnumSide;
 import electory.world.gen.ChunkGenerator;
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 
 public abstract class World implements IChunkSaveStatusHandler {
 	private Set<Entity> entities = new HashSet<>();
@@ -194,7 +192,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 		chunkProvider.update();
 		generationChunkProvider.update();
 		
-		HashLongSet chunksToLoad = HashLongSets.newMutableSet();
+		LongOpenHashSet chunksToLoad = new LongOpenHashSet();
 		for (EntityPlayer player : getPlayers()) {
 			Vector3d ppos = player != null ? player.getInterpolatedPosition(0.0f)
 					: (playerToSpawn != null ? playerToSpawn.getInterpolatedPosition(0.0f) : spawnPoint);
@@ -206,17 +204,17 @@ public abstract class World implements IChunkSaveStatusHandler {
 				}
 			}
 		}
-		HashLongSet chunksToUnload = HashLongSets.newMutableSet(chunkProvider.getLoadedChunkMap().keySet());
+		LongOpenHashSet chunksToUnload = new LongOpenHashSet(chunkProvider.getLoadedChunkMap().keySet());
 		chunksToUnload.removeAll(chunksToLoad);
 
 		chunksToLoad.removeAll(chunkProvider.getLoadedChunkMap().keySet());
 		{
-			LongCursor it = chunksToLoad.cursor();
+			LongIterator it = chunksToLoad.iterator();
 			int needsLoadNext = Integer.MAX_VALUE;
 			while (!checkSpawnAreaLoaded() || needsLoadNext > 0) {
 				needsLoadNext--;
-				if (it.moveNext()) {
-					long cpos = it.elem();
+				if (it.hasNext()) {
+					long cpos = it.nextLong();
 					int cx = (int) (cpos & 4294967295L), cz = (int) ((cpos >> 32) & 4294967295L);
 					if (!chunkProvider.isLoading(cx, cz) && chunkProvider.canLoadChunk(cx, cz)) {
 						chunkProvider.loadChunk(cx, cz);
@@ -229,9 +227,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 			}
 		}
 		{
-			LongCursor it = chunksToUnload.cursor();
-			if (it.moveNext()) {
-				long cpos = it.elem();
+			LongIterator it = chunksToUnload.iterator();
+			if (it.hasNext()) {
+				long cpos = it.nextLong();
 				chunkProvider.unloadChunk(chunkProvider
 						.provideChunk((int) (cpos & 4294967295L), (int) ((cpos >> 32) & 4294967295L)), null, true);
 			}

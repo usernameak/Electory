@@ -3,7 +3,7 @@ package electory.world;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.koloboke.collect.map.LongObjMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 public interface IChunkProvider {
 	default void loadChunk(int cx, int cy) {
@@ -31,7 +31,7 @@ public interface IChunkProvider {
 
 	Collection<Chunk> getAllLoadedChunks();
 
-	LongObjMap<Chunk> getLoadedChunkMap();
+	Long2ObjectOpenHashMap<Chunk> getLoadedChunkMap();
 
 	boolean isChunkLoaded(int x, int z);
 

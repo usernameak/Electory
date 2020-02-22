@@ -118,8 +118,8 @@ public class GuiInGame extends GuiScreen {
 
 			Vector3f vel = new Vector3f(tc.player.getVelocity());
 			Vector3f svel = new Vector3f();
-			tc.player.playerController.doMovement(tc.player, svel);
-			vel.add(svel);
+			/*tc.player.playerController.doMovement(tc.player, svel);
+			vel.add(svel);*/
 
 			tc.fontRenderer.drawText(	rs,
 										"vel: "

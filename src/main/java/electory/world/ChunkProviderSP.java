@@ -18,19 +18,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import com.koloboke.collect.map.LongObjMap;
-import com.koloboke.collect.map.hash.HashLongObjMaps;
-
 import electory.profiling.ElectoryProfiler;
 import electory.utils.CrashException;
 import electory.utils.io.BufferedDataInputStream;
 import electory.utils.io.BufferedDataOutputStream;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 public class ChunkProviderSP implements IChunkProvider {
 
 	private World world;
 	private Map<ChunkPosition, Thread> savingChunks = new ConcurrentHashMap<>();
-	private LongObjMap<Chunk> loadedChunks = HashLongObjMaps.newMutableMap();
+	private Long2ObjectOpenHashMap<Chunk> loadedChunks = new Long2ObjectOpenHashMap<>();
 	private ExecutorService genExecutor = Executors.newSingleThreadExecutor();
 	private Queue<Chunk> chunksToLoad = new ConcurrentLinkedQueue<>();
 	private Set<ChunkPosition> loadingChunks = new HashSet<>();
@@ -195,7 +193,7 @@ public class ChunkProviderSP implements IChunkProvider {
 	}
 
 	@Override
-	public LongObjMap<Chunk> getLoadedChunkMap() {
+	public Long2ObjectOpenHashMap<Chunk> getLoadedChunkMap() {
 		return loadedChunks;
 	}
 

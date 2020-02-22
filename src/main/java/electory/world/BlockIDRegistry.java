@@ -2,17 +2,15 @@ package electory.world;
 
 import java.util.Map;
 
-import com.koloboke.collect.map.hash.HashObjIntMap;
-import com.koloboke.collect.map.hash.HashObjIntMaps;
-
 import electory.block.Block;
 import electory.nbt.CompoundTag;
 import electory.nbt.IntTag;
 import electory.nbt.Tag;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public class BlockIDRegistry {
 	private Block[] idToBlock = new Block[32768];
-	private HashObjIntMap<Block> blockToId = HashObjIntMaps.newMutableMap();
+	private Object2IntOpenHashMap<Block> blockToId = new Object2IntOpenHashMap<>();
 	private int nextId = 1;
 
 	public int getBlockId(Block block) {

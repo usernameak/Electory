@@ -2,17 +2,16 @@ package electory.network.packet;
 
 import java.io.IOException;
 
-import com.koloboke.collect.map.IntObjMap;
-import com.koloboke.collect.map.ObjIntMap;
-import com.koloboke.collect.map.hash.HashIntObjMaps;
-import com.koloboke.collect.map.hash.HashObjIntMaps;
-
 import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public abstract class Packet {
-	private static IntObjMap<Class<? extends Packet>> registeredPackets = HashIntObjMaps.newMutableMap();
-	private static ObjIntMap<Class<? extends Packet>> registeredPacketIDs = HashObjIntMaps.newMutableMap();
+	private static Int2ObjectMap<Class<? extends Packet>> registeredPackets = new Int2ObjectOpenHashMap<>();
+	private static Object2IntMap<Class<? extends Packet>> registeredPacketIDs = new Object2IntOpenHashMap<>();
 
 	public static int getPacketId(Class<? extends Packet> packet) {
 		return registeredPacketIDs.getInt(packet);

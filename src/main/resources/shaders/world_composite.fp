@@ -6,11 +6,12 @@ varying vec4 vColor;
 uniform sampler2D texture;
 uniform sampler2D watermask_texture;
 uniform sampler2D depth_texture;
-uniform sampler2D opaque_depth_texture;
-uniform sampler2D depth_shadow_texture;
+uniform sampler2D opaque_pos_texture;
+uniform sampler2D position_texture;
 uniform float timer;
 uniform float zFar;
 uniform float zNear;
+uniform vec3 uCameraPos;
 uniform bool isSubmergedUnderwater = false;
 
 float voronoi(vec2 st);
@@ -50,10 +51,10 @@ void main() {
 	
     // depth init
 
-	float depth = texture2D(depth_texture, tTexCoord).r;
-	float zDist = (zNear * zFar) / (zFar - depth * (zFar - zNear));
-	float opaquedepth = texture2D(opaque_depth_texture, tTexCoord).r;
-	float opaqueZDist = (zNear * zFar) / (zFar - opaquedepth * (zFar - zNear));
+	//float depth = texture2D(depth_texture, tTexCoord).r;
+	float zDist = distance(uCameraPos, texture2D(position_texture, tTexCoord).rgb);//(zNear * zFar) / (zFar - depth * (zFar - zNear));
+	//float opaquedepth = texture2D(opaque_pos_texture, tTexCoord).r;
+	float opaqueZDist = distance(uCameraPos, texture2D(opaque_pos_texture, tTexCoord).rgb);//(zNear * zFar) / (zFar - opaquedepth * (zFar - zNear));
 	
 	// world fog
 	
@@ -64,7 +65,7 @@ void main() {
 		} else {
 			worldZDist = 0;
 		}
-		float worldFogRamp = clamp((96 - worldZDist) / (96 - 80), 0.0, 1.0);
+		float worldFogRamp = clamp((128 - worldZDist) / (128 - 64), 0.0, 1.0);
 		fc.rgb = mix(vec3(0.52, 0.8, 0.92), fc.rgb, worldFogRamp);
 	}
 	

@@ -3,15 +3,14 @@ package electory.world.gen;
 import java.util.Collection;
 import java.util.Iterator;
 
-import com.koloboke.collect.map.LongObjMap;
-
 import electory.block.Block;
 import electory.math.MathUtils;
-import electory.world.EnumWorldBiome;
 import electory.world.Chunk;
+import electory.world.EnumWorldBiome;
 import electory.world.IChunkProvider;
 import electory.world.IChunkSaveStatusHandler;
 import electory.world.World;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 public class ChunkGenerator implements IChunkProvider {
 
@@ -35,7 +34,6 @@ public class ChunkGenerator implements IChunkProvider {
 		PerlinGenerator rgen = new PerlinGenerator(seed ^ 0xDEADBEEF, 6, 2, 0.5, false);
 
 		byte[] chunkData = new byte[65536];
-		// byte[] chunkDataExt = new byte[32768];
 		final byte[] biomeData = new byte[0x100];
 
 		int[][] pArrMin = new int[31][31];
@@ -72,7 +70,9 @@ public class ChunkGenerator implements IChunkProvider {
 
 		int sandId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("sand"));
 		int grassId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("grass"));
+		int dirtId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("dirt"));
 		int waterId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("water"));
+		int rootstoneId = world.blockIdRegistry.getBlockId(Block.REGISTRY.get("rootstone"));
 
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
@@ -87,7 +87,15 @@ public class ChunkGenerator implements IChunkProvider {
 				int maxZ = (int) MathUtils.lerp(relief, minh, maxh);
 
 				for (int z = 0; z < maxZ; z++) {
-					chunkData[i << 12 | j << 8 | (z & 0xFF)] = maxZ < 64 ? (byte) sandId : (byte) grassId;
+					if(maxZ < 64) {
+						chunkData[i << 12 | j << 8 | (z & 0xFF)] = (byte) sandId;
+					} else {
+						chunkData[i << 12 | j << 8 | (z & 0xFF)] = (z == maxZ - 1) ? (byte) grassId : (byte) dirtId;
+					}
+					
+					if(z == 0) {
+						chunkData[i << 12 | j << 8 | (z & 0xFF)] = (byte) rootstoneId; 
+					}
 				}
 				for (int z = maxZ; z < 64; z++) {
 					chunkData[i << 12 | j << 8 | (z & 0xFF)] = (byte) waterId;
@@ -157,7 +165,7 @@ public class ChunkGenerator implements IChunkProvider {
 	}
 
 	@Override
-	public LongObjMap<Chunk> getLoadedChunkMap() {
+	public Long2ObjectOpenHashMap<Chunk> getLoadedChunkMap() {
 		return null;
 	}
 
