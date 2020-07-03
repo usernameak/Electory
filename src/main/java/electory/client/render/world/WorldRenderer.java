@@ -1,27 +1,5 @@
 package electory.client.render.world;
 
-import static electory.math.MathUtils.deg2rad;
-
-import java.nio.IntBuffer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.ARBCopyImage;
-import org.lwjgl.opengl.ARBDrawBuffers;
-import org.lwjgl.opengl.EXTFramebufferBlit;
-import org.lwjgl.opengl.EXTFramebufferObject;
-import org.lwjgl.opengl.EXTPackedDepthStencil;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.NVCopyImage;
-
 import electory.client.TinyCraft;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;
@@ -32,6 +10,18 @@ import electory.client.render.shader.ShaderManager;
 import electory.utils.RenderUtilities;
 import electory.world.Chunk;
 import electory.world.World;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.*;
+
+import java.nio.IntBuffer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static electory.math.MathUtils.deg2rad;
 
 public class WorldRenderer {
 	private World world;
@@ -71,88 +61,22 @@ public class WorldRenderer {
 	}
 
 	public void preRenderPass(int pass) {
-		int[] width_ = new int[1];
-		int[] height_ = new int[1];
-
-		GLFW.glfwGetFramebufferSize(TinyCraft.getInstance().window, width_, height_);
-
-		int width = width_[0];
-		int height = height_[0];
-
 		if (pass == WorldRenderer.RENDERPASS_LIQUID1) {
-			if (GL.getCapabilities().GL_NV_copy_image) {
-				NVCopyImage
-						.glCopyImageSubDataNV(	TinyCraft.getInstance().textureManager
-								.getTextureUnit("/dynamic/framebuffer_world_position.png"),
-												GL11.GL_TEXTURE_2D,
-												0,
-												0,
-												0,
-												0,
-												TinyCraft.getInstance().textureManager
-														.getTextureUnit("/dynamic/framebuffer_world_opaque_pos.png"),
-												GL11.GL_TEXTURE_2D,
-												0,
-												0,
-												0,
-												0,
-												width,
-												height,
-												1);
-			} else if (GL.getCapabilities().GL_ARB_copy_image) {
-				ARBCopyImage.glCopyImageSubData(
-												TinyCraft.getInstance().textureManager
-														.getTextureUnit("/dynamic/framebuffer_world_position.png"),
-												GL11.GL_TEXTURE_2D,
-												0,
-												0,
-												0,
-												0,
-												TinyCraft.getInstance().textureManager
-														.getTextureUnit("/dynamic/framebuffer_world_opaque_pos.png"),
-												GL11.GL_TEXTURE_2D,
-												0,
-												0,
-												0,
-												0,
-												width,
-												height,
-												1);
-			} else {
-				EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferBlit.GL_DRAW_FRAMEBUFFER_EXT, framebuffer2);
-				EXTFramebufferBlit.glBlitFramebufferEXT(0,
-														0,
-														width,
-														height,
-														0,
-														0,
-														width,
-														height,
-														GL11.GL_COLOR_BUFFER_BIT,
-														GL11.GL_NEAREST);
-				EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferBlit.GL_DRAW_FRAMEBUFFER_EXT, framebuffer);
-			}
 			if (TinyCraft.getInstance().player.isHeadUnderwater()) {
 				GL11.glCullFace(GL11.GL_FRONT);
 			}
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			IntBuffer drawbuffers = BufferUtils.createIntBuffer(3);
+			IntBuffer drawbuffers = BufferUtils.createIntBuffer(2);
 			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT1_EXT);
-			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT);
 			drawbuffers.flip();
+			GL30.glColorMaski(1, false, false, false, false);
 			ARBDrawBuffers.glDrawBuffersARB(drawbuffers);
-			ShaderManager.waterProgram.use();
-			ShaderManager.waterProgram.setTimer(TinyCraft.getInstance().tickTimer.totalTicks
-					+ TinyCraft.getInstance().tickTimer.renderPartialTicks);
-			Vector3d vec = TinyCraft.getInstance().player
-					.getInterpolatedPosition(TinyCraft.getInstance().tickTimer.renderPartialTicks);
-			ShaderManager.waterProgram.setWaterPositionOffset((float) vec.x, 0, (float) vec.z);
 		} else if (pass == RENDERPASS_BASE) {
 			IntBuffer drawbuffers = BufferUtils.createIntBuffer(2);
 			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
-			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT);
+			drawbuffers.put(EXTFramebufferObject.GL_COLOR_ATTACHMENT1_EXT);
 			drawbuffers.flip();
 			ARBDrawBuffers.glDrawBuffersARB(drawbuffers);
 		} else if (pass == RENDERPASS_WIREFRAME) {
@@ -162,15 +86,16 @@ public class WorldRenderer {
 
 	public void postRenderPass(int pass) {
 		if (pass == WorldRenderer.RENDERPASS_LIQUID1) {
-			GL11.glDrawBuffer(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glCullFace(GL11.GL_BACK);
+			GL30.glColorMaski(1, true, true, true, true);
 		}
+		GL11.glDrawBuffer(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
 	}
 
 	public DefaultProgram getRenderPassShader(int pass) {
 		if (pass == WorldRenderer.RENDERPASS_LIQUID1) {
-			return ShaderManager.waterProgram;
+			return ShaderManager.terrainProgram;
 		} else if (pass == WorldRenderer.RENDERPASS_WIREFRAME) {
 			return ShaderManager.solidProgram;
 		}
@@ -215,10 +140,7 @@ public class WorldRenderer {
 			GL11.glClearColor(0.52f, 0.8f, 0.92f, 1.0f);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 			GL11.glDrawBuffer(EXTFramebufferObject.GL_COLOR_ATTACHMENT1_EXT);
-			GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-			GL11.glDrawBuffer(EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT);
-			GL11.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			GL11.glClearColor(10000.0f, 10000.0f, 10000.0f, 1.0f);
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
 			GL11.glDrawBuffer(EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT);
@@ -249,7 +171,7 @@ public class WorldRenderer {
 
 		{
 			RenderUtilities.pushDebugGroup("Entity rendering");
-			world.getEntities().stream().forEach(e -> {
+			world.getEntities().forEach(e -> {
 				WorldRenderState rs2 = new WorldRenderState(renderState);
 				Vector3d epos = e.getInterpolatedPosition(renderPartialTicks);
 				rs2.modelMatrix.translate(epos.x - pos.x, epos.y, epos.z - pos.z);
@@ -322,9 +244,7 @@ public class WorldRenderer {
 
 			ShaderManager.worldCompositeProgram.use();
 			ShaderManager.worldCompositeProgram.bindTexture("/dynamic/framebuffer_world.png");
-			ShaderManager.worldCompositeProgram.bindTextureWaterMask("/dynamic/framebuffer_world_watermask.png");
 			ShaderManager.worldCompositeProgram.bindTextureDepth("/dynamic/framebuffer_world_depth.png");
-			ShaderManager.worldCompositeProgram.bindTextureOpaquePos("/dynamic/framebuffer_world_opaque_pos.png");
 			ShaderManager.worldCompositeProgram.bindTexturePosition("/dynamic/framebuffer_world_position.png");
 			ShaderManager.worldCompositeProgram.setSubmergedInWater(TinyCraft.getInstance().player.isHeadUnderwater());
 			ShaderManager.worldCompositeProgram.setZNear(0.01f);
@@ -379,22 +299,6 @@ public class WorldRenderer {
 																.getTextureUnit("/dynamic/framebuffer_world.png"),
 														0);
 
-		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_watermask.png");
-		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_watermask.png",
-																	width,
-																	height,
-																	GL11.GL_RGBA,
-																	GL11.GL_RGBA,
-																	GL11.GL_UNSIGNED_BYTE);
-
-		EXTFramebufferObject
-				.glFramebufferTexture2DEXT(	EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
-											EXTFramebufferObject.GL_COLOR_ATTACHMENT1_EXT,
-											GL11.GL_TEXTURE_2D,
-											TinyCraft.getInstance().textureManager
-													.getTextureUnit("/dynamic/framebuffer_world_watermask.png"),
-											0);
-
 		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_position.png");
 		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_position.png",
 																	width,
@@ -405,7 +309,7 @@ public class WorldRenderer {
 
 		EXTFramebufferObject
 				.glFramebufferTexture2DEXT(	EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
-											EXTFramebufferObject.GL_COLOR_ATTACHMENT2_EXT,
+											EXTFramebufferObject.GL_COLOR_ATTACHMENT1_EXT,
 											GL11.GL_TEXTURE_2D,
 											TinyCraft.getInstance().textureManager
 													.getTextureUnit("/dynamic/framebuffer_world_position.png"),
@@ -425,39 +329,11 @@ public class WorldRenderer {
 																.getTextureUnit("/dynamic/framebuffer_world_depth.png"),
 														0);
 
-		TinyCraft.getInstance().textureManager.disposeTexture("/dynamic/framebuffer_world_opaque_pos.png");
-		TinyCraft.getInstance().textureManager.createVirtualTexture("/dynamic/framebuffer_world_opaque_pos.png",
-																	width,
-																	height,
-																	GL11.GL_RGBA,
-																	GL11.GL_RGBA,
-																	GL11.GL_UNSIGNED_BYTE);
-
 		int status = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT);
 		if (status != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT) {
 			throw new IllegalArgumentException("Framebuffer incomplete, error " + status);
 		}
 
-		// Framebuffer blit buffer
-
-		if (!GL.getCapabilities().GL_NV_copy_image && !GL.getCapabilities().GL_ARB_copy_image) {
-			if (framebuffer2 != 0) {
-				EXTFramebufferObject.glDeleteFramebuffersEXT(framebuffer2);
-			}
-			framebuffer2 = EXTFramebufferObject.glGenFramebuffersEXT();
-			EXTFramebufferObject.glBindFramebufferEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT, framebuffer2);
-			EXTFramebufferObject
-					.glFramebufferTexture2DEXT(	EXTFramebufferObject.GL_FRAMEBUFFER_EXT,
-												EXTFramebufferObject.GL_COLOR_ATTACHMENT0_EXT,
-												GL11.GL_TEXTURE_2D,
-												TinyCraft.getInstance().textureManager
-														.getTextureUnit("/dynamic/framebuffer_world_opaque_pos.png"),
-												0);
-			status = EXTFramebufferObject.glCheckFramebufferStatusEXT(EXTFramebufferObject.GL_FRAMEBUFFER_EXT);
-			if (status != EXTFramebufferObject.GL_FRAMEBUFFER_COMPLETE_EXT) {
-				throw new IllegalArgumentException("Framebuffer incomplete, error " + status);
-			}
-		}
 
 		// Unbind
 

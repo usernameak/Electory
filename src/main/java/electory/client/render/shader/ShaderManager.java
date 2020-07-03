@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL20;
 
 public class ShaderManager {
 	public static DefaultProgram defaultProgram;
-	public static WaterProgram waterProgram;
 	public static TerrainProgram terrainProgram;
 	public static CompositeProgram worldCompositeProgram;
 	public static DefaultProgram solidProgram;
@@ -21,11 +20,6 @@ public class ShaderManager {
 	public static void init() throws IOException, ShaderCompileException {
 		defaultProgram = new DefaultProgram(compile("/shaders/default.vp", GL20.GL_VERTEX_SHADER),
 				compile("/shaders/default.fp", GL20.GL_FRAGMENT_SHADER));
-		shadowTerrainProgram = new DefaultProgram(compile("/shaders/default.vp", GL20.GL_VERTEX_SHADER),
-		                    				compile("/shaders/shadow_terrain.fp", GL20.GL_FRAGMENT_SHADER));
-		waterProgram = new WaterProgram(compile("/shaders/default.vp", GL20.GL_VERTEX_SHADER),
-				compile("/shaders/fragment_library.fp", GL20.GL_FRAGMENT_SHADER),
-				compile("/shaders/default_water.fp", GL20.GL_FRAGMENT_SHADER));
 		terrainProgram = new TerrainProgram(compile("/shaders/default_terrain.vp", GL20.GL_VERTEX_SHADER),
 				compile("/shaders/default_terrain.fp", GL20.GL_FRAGMENT_SHADER));
 		worldCompositeProgram = new CompositeProgram(compile("/shaders/default.vp", GL20.GL_VERTEX_SHADER),

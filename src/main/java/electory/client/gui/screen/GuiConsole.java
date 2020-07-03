@@ -29,7 +29,6 @@ public class GuiConsole extends GuiWidgetScreen implements IActionListener {
 	protected ArrayList<String> consoleInput = new ArrayList<>();
 	protected ArrayList<String> consoleHistory = new ArrayList<>();
 	protected int consoleHistoryIndex = -1; // -1 = ""
-	
 
 	public GuiConsole(TinyCraft tc) {
 		super(tc);

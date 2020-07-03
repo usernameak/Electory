@@ -29,13 +29,6 @@ public class CompositeProgram extends DefaultProgram {
 		cameraPosUniform = GL20.glGetUniformLocation(handle, "uCameraPos");
 	}
 
-	public void bindTextureWaterMask(String texture) {
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		TinyCraft.getInstance().textureManager.bindTexture(texture);
-		use();
-		GL20.glUniform1i(waterMaskTextureUniform, 1);
-	}
-
 	public void bindTextureDepth(String texture) {
 		GL13.glActiveTexture(GL13.GL_TEXTURE2);
 		TinyCraft.getInstance().textureManager.bindTexture(texture);
@@ -48,13 +41,6 @@ public class CompositeProgram extends DefaultProgram {
 		TinyCraft.getInstance().textureManager.bindTexture(texture);
 		use();
 		GL20.glUniform1i(positionTextureUniform, 4);
-	}
-
-	public void bindTextureOpaquePos(String texture) {
-		GL13.glActiveTexture(GL13.GL_TEXTURE3);
-		TinyCraft.getInstance().textureManager.bindTexture(texture);
-		use();
-		GL20.glUniform1i(opaquePosTextureUniform, 3);
 	}
 
 	public void setSubmergedInWater(boolean value) {

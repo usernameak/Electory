@@ -201,8 +201,7 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
                 tile.sprite.atlasHeight = atlasHeight;
 			}
 		}
-		
-		ImageIO.write(outImg, "png", new File("test1902.png"));
+
 		TinyCraft.getInstance().textureManager.loadTexture(textureName, outImg);
 		TinyCraft.getInstance().logger.info("Stitched " + outImg.getWidth() + "x" + outImg.getHeight() + " atlas '" + textureName + "'");
 	}

@@ -46,37 +46,27 @@ public class ChunkProviderSP implements IChunkProvider {
 	public void loadChunk(int cx, int cy) {
 		ElectoryProfiler.INSTANCE.begin("chunkload");
 		loadingChunks.add(new ChunkPosition(cx, cy));
-		genExecutor.execute(new Runnable() {
-			@Override
-			public void run() {
-				File chunkFile = new File(world.getChunkSaveDir(), "c_" + cx + "_" + cy + ".sav.gz");
+		genExecutor.execute(() -> {
+			File chunkFile = new File(world.getChunkSaveDir(), "c_" + cx + "_" + cy + ".sav.gz");
 
-				if (chunkFile.isFile()) {
-					Chunk chunk = new Chunk(world, cx, cy);
-					try {
-						BufferedDataInputStream bdis = new BufferedDataInputStream(
-								new GZIPInputStream(new FileInputStream(chunkFile)));
-						chunk.readChunkData(bdis);
-						chunk.isPopulated = true;
-						bdis.close();
-					} catch (IOException e) {
+			if (chunkFile.isFile()) {
+				Chunk chunk = new Chunk(world, cx, cy);
+				try {
+					BufferedDataInputStream bdis = new BufferedDataInputStream(
+							new GZIPInputStream(new FileInputStream(chunkFile)));
+					chunk.readChunkData(bdis);
+					chunk.isPopulated = true;
+					bdis.close();
+				} catch (IOException ignored) {
 
-					}
-					chunksToLoad.add(chunk);
-				} else {
-					Chunk chunk = world.generationChunkProvider.loadChunkSynchronously(cx, cy);
-
-					chunksToLoad.add(chunk);
 				}
+				chunksToLoad.add(chunk);
+			} else {
+				Chunk chunk = world.generationChunkProvider.loadChunkSynchronously(cx, cy);
+
+				chunksToLoad.add(chunk);
 			}
 		});
-		/*
-		 * Lock lock = chunk.getNeighbourWriteLock();
-		 * 
-		 * lock.lock();
-		 */
-
-		// lock.unlock();
 
 		ElectoryProfiler.INSTANCE.end("chunkload");
 
