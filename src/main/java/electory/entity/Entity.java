@@ -1,14 +1,14 @@
 package electory.entity;
 
-import java.io.IOException;
-import java.util.Set;
-
+import electory.math.AABB;
+import electory.utils.io.ArrayDataInput;
+import electory.utils.io.ArrayDataOutput;
+import electory.world.World;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-import electory.math.AABB;
-import electory.nbt.CompoundTag;
-import electory.world.World;
+import java.io.IOException;
+import java.util.Set;
 
 public abstract class Entity {
 	protected double oldX;
@@ -211,18 +211,17 @@ public abstract class Entity {
 		return velocity;
 	}
 
-	public void writeEntityData(CompoundTag tag) throws IOException {
-		tag.putDouble("x", newX);
-		tag.putDouble("y", newY);
-		tag.putDouble("z", newZ);
-		tag.putFloat("vx", velocity.x);
-		tag.putFloat("vy", velocity.y);
-		tag.putFloat("vz", velocity.z);
-		tag.putBoolean("onGround", onGround);
-		tag.putBoolean("shouldDespawn", shouldDespawn);
-		tag.putBoolean("onCeiling", onCeiling);
-		tag.putBoolean("noclip", noclip);
-
+	public void writeEntityData(ArrayDataOutput tag) throws IOException {
+		tag.writeDouble(newX);
+		tag.writeDouble(newY);
+		tag.writeDouble(newZ);
+		tag.writeFloat(velocity.x);
+		tag.writeFloat(velocity.y);
+		tag.writeFloat(velocity.z);
+		tag.writeBoolean(onGround);
+		tag.writeBoolean(shouldDespawn);
+		tag.writeBoolean(onCeiling);
+		tag.writeBoolean(noclip);
 	}
 
 	public boolean canBlockPlacedInto() {
@@ -233,16 +232,16 @@ public abstract class Entity {
 		return true;
 	}
 
-	public void readEntityData(CompoundTag tag) throws IOException {
-		newX = x = oldX = tag.getDouble("x");
-		newY = y = oldY = tag.getDouble("y");
-		newZ = z = oldZ = tag.getDouble("z");
-		velocity.x = tag.getFloat("vx");
-		velocity.y = tag.getFloat("vy");
-		velocity.z = tag.getFloat("vz");
-		onGround = tag.getBoolean("onGround");
-		shouldDespawn = tag.getBoolean("shouldDespawn");
-		onCeiling = tag.getBoolean("onCeiling");
-		noclip = tag.getBoolean("noclip");
+	public void readEntityData(ArrayDataInput tag) throws IOException {
+		newX = x = oldX = tag.readDouble();
+		newY = y = oldY = tag.readDouble();
+		newZ = z = oldZ = tag.readDouble();
+		velocity.x = tag.readFloat();
+		velocity.y = tag.readFloat();
+		velocity.z = tag.readFloat();
+		onGround = tag.readBoolean();
+		shouldDespawn = tag.readBoolean();
+		onCeiling = tag.readBoolean();
+		noclip = tag.readBoolean();
 	}
 }

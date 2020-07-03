@@ -1,9 +1,12 @@
 package electory.utils;
 
-import electory.nbt.CompoundTag;
+import electory.utils.io.ArrayDataInput;
+import electory.utils.io.ArrayDataOutput;
+
+import java.io.IOException;
 
 public interface IMetaSerializable {
-	void writeToNBT(CompoundTag tag);
+	void writeToNBT(ArrayDataOutput tag) throws IOException;
 
-	void readFromNBT(CompoundTag tag);
+	void readFromNBT(ArrayDataInput tag) throws IOException;
 }

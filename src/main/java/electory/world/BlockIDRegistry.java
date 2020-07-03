@@ -1,12 +1,12 @@
 package electory.world;
 
-import java.util.Map;
-
 import electory.block.Block;
-import electory.nbt.CompoundTag;
-import electory.nbt.IntTag;
-import electory.nbt.Tag;
+import electory.utils.io.IllegalSerializedDataException;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.Map;
 
 public class BlockIDRegistry {
 	private Block[] idToBlock = new Block[32768];
@@ -34,20 +34,25 @@ public class BlockIDRegistry {
 		throw new IllegalArgumentException("no block id " + id);
 	}
 
-	public void save(CompoundTag tag) {
-		for (Map.Entry<Block, Integer> entry : blockToId.entrySet()) {
-			tag.putInt(entry.getKey().getRegistryName(), entry.getValue().intValue());
+	public void save(DataOutput dos) throws IOException {
+		dos.write(1); // version number
+		dos.writeInt(blockToId.size());
+		for (Map.Entry<Block, Integer> entry : blockToId.object2IntEntrySet()) {
+			dos.writeUTF(entry.getKey().getRegistryName());
+			dos.writeInt(entry.getValue());
 		}
 	}
 
-	public void load(CompoundTag compoundTag) {
-		for(int i = 0; i < idToBlock.length; i++) {
-			idToBlock[i] = null;
+	public void load(DataInput dis) throws IOException {
+		if(dis.readByte() != 1) {
+			throw new IllegalSerializedDataException("unsupported block id registry version");
 		}
+		Arrays.fill(idToBlock, null);
 		blockToId.clear();
-		for (Map.Entry<String, Tag<?>> entry : compoundTag.entrySet()) {
-			String blockName = entry.getKey();
-			int id = ((IntTag) entry.getValue()).asInt();
+		int size = dis.readInt();
+		for (int i = 0; i < size; i++) {
+			String blockName = dis.readUTF();
+			int id = dis.readInt();
 			Block block = Block.REGISTRY.get(blockName); // TODO: downgrade
 			if (id + 1 > nextId) {
 				nextId = id + 1;

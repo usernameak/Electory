@@ -2,9 +2,11 @@ package electory.inventory;
 
 import electory.entity.EntityPlayer;
 import electory.item.ItemStack;
-import electory.nbt.CompoundTag;
-import electory.nbt.ListTag;
 import electory.utils.IMetaSerializable;
+import electory.utils.io.ArrayDataInput;
+import electory.utils.io.ArrayDataOutput;
+
+import java.io.IOException;
 
 public class InventoryPlayer implements IInventory, IMetaSerializable {
 
@@ -12,7 +14,7 @@ public class InventoryPlayer implements IInventory, IMetaSerializable {
 
 	}
 
-	private ItemStack stacks[] = new ItemStack[45];
+	private ItemStack[] stacks = new ItemStack[45];
 	private int hotbarSlot = 0;
 
 	{
@@ -44,31 +46,19 @@ public class InventoryPlayer implements IInventory, IMetaSerializable {
 	}
 
 	@Override
-	public void writeToNBT(CompoundTag tag) {
-		ListTag<CompoundTag> stacksList = new ListTag<>(CompoundTag.class);
+	public void writeToNBT(ArrayDataOutput tag) throws IOException {
 		for (int i = 0; i < stacks.length; i++) {
-			CompoundTag stackTag = new CompoundTag();
-			stacks[i].writeToNBT(stackTag);
-			stacksList.add(stackTag);
+			stacks[i].writeToNBT(tag);
 		}
-		tag.put("stacks", stacksList);
-		tag.putInt("hotbarSlot", hotbarSlot);
+		tag.writeInt(hotbarSlot);
 	}
 
 	@Override
-	public void readFromNBT(CompoundTag tag) {
-		@SuppressWarnings("unchecked")
-		ListTag<CompoundTag> stacksList = (ListTag<CompoundTag>) tag.getListTag("stacks");
-
-		try {
-			for (int i = 0; i < stacks.length; i++) {
-				CompoundTag stackTag = stacksList.get(i);
-				stacks[i].readFromNBT(stackTag);
-			}
-		} catch (IndexOutOfBoundsException e) {
-			// nothing
+	public void readFromNBT(ArrayDataInput tag) throws IOException {
+		for (int i = 0; i < stacks.length; i++) {
+			stacks[i].readFromNBT(tag);
 		}
-		hotbarSlot = tag.getInt("hotbarSlot");
+		hotbarSlot = tag.readInt();
 	}
 
 	public boolean giveItem(ItemStack itemStack) {

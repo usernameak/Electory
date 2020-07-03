@@ -216,4 +216,8 @@ public class Block implements IRegistriable {
 	public String getRegistryName() {
 		return registryName;
 	}
+
+    public Class<?> getMetadataClass() {
+		return null;
+    }
 }

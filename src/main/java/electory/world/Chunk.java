@@ -1,27 +1,18 @@
 package electory.world;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import electory.block.Block;
 import electory.client.render.world.ChunkRenderer;
-import electory.nbt.ByteArrayTag;
-import electory.nbt.CompoundTag;
-import electory.nbt.ShortArrayTag;
-import electory.nbt.Tag;
 import electory.utils.EnumSide;
 import electory.utils.MetaSerializer;
 import electory.utils.MultiLock;
 import electory.utils.io.ArrayDataInput;
 import electory.utils.io.ArrayDataOutput;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Chunk {
 	private short blockArray[] = new short[16 * 256 * 16];
@@ -413,43 +404,42 @@ public class Chunk {
 		recalculateSkyLight(bfsSkyQueue);
 	}
 
-	private CompoundTag writeMetaArray() {
-		CompoundTag tag = new CompoundTag();
+	private void writeMetaArray(ArrayDataOutput dos) throws IOException {
 		for (int i = 0; i < metaArray.length; i++) {
 			if (metaArray[i] != null) {
-				tag.put(String.valueOf(i), MetaSerializer.serializeObject(metaArray[i]));
+				dos.writeByte(1);
+				MetaSerializer.serializeObject(dos, metaArray[i]);
+			} else {
+				dos.writeByte(0);
 			}
 		}
-		return tag;
 	}
 
-	private void readMetaArray(CompoundTag tag) {
+	private void readMetaArray(ArrayDataInput dis) throws IOException {
 		Arrays.fill(metaArray, null);
-		for (Map.Entry<String, Tag<?>> entry : tag) {
-			metaArray[Integer.parseInt(entry.getKey())] = MetaSerializer
-					.deserializeObject((CompoundTag) entry.getValue());
+		for (int i = 0; i < metaArray.length; i++) {
+			if (dis.readByte() == 1) {
+				MetaSerializer.deserializeObject(dis, world.blockIdRegistry.getBlockById(blockArray[i]).getMetadataClass());
+			}
 		}
 	}
 
 	public void writeChunkData(ArrayDataOutput dos) throws IOException {
-		CompoundTag tag = new CompoundTag();
-		tag.put("blockArray", new ShortArrayTag(blockArray));
-		tag.put("lightArray", new ShortArrayTag(lightArray));
-		tag.put("biomeArray", new ByteArrayTag(biomeArray));
-		tag.put("heightMap", new ShortArrayTag(heightMap));
-		tag.put("metaArray", writeMetaArray());
-		tag.putBoolean("isPopulated", isPopulated);
-		tag.serialize(dos, 0);
+		dos.write(blockArray);
+		dos.write(lightArray);
+		dos.write(biomeArray);
+		dos.write(heightMap);
+		writeMetaArray(dos);
+		dos.writeBoolean(isPopulated);
 	}
 
 	public void readChunkData(ArrayDataInput dis) throws IOException {
-		CompoundTag tag = (CompoundTag) Tag.deserialize(dis, 0);
-		blockArray = ((ShortArrayTag) tag.get("blockArray")).getValue();
-		lightArray = ((ShortArrayTag) tag.get("lightArray")).getValue();
-		biomeArray = ((ByteArrayTag) tag.get("biomeArray")).getValue();
-		heightMap = ((ShortArrayTag) tag.get("heightMap")).getValue();
-		readMetaArray(tag.getCompoundTag("metaArray"));
-		isPopulated = tag.getBoolean("isPopulated");
+		dis.read(blockArray);
+		dis.read(lightArray);
+		dis.read(biomeArray);
+		dis.read(heightMap);
+		readMetaArray(dis);
+		isPopulated = dis.readBoolean();
 		scheduleChunkUpdate();
 	}
 }

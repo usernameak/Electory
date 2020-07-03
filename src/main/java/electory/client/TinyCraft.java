@@ -1,38 +1,5 @@
 package electory.client;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.nio.ByteBuffer;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextPane;
-import javax.swing.border.EmptyBorder;
-
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCharCallbackI;
-import org.lwjgl.glfw.GLFWCursorPosCallbackI;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWKeyCallbackI;
-import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.EXTFramebufferObject;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-
 import electory.block.Block;
 import electory.client.audio.AudioSource;
 import electory.client.audio.SoundManager;
@@ -41,27 +8,34 @@ import electory.client.event.KeyEvent;
 import electory.client.gui.FontRenderer;
 import electory.client.gui.GuiRenderState;
 import electory.client.gui.ResolutionScaler;
-import electory.client.gui.screen.GuiConsole;
-import electory.client.gui.screen.GuiInGame;
-import electory.client.gui.screen.GuiMainMenu;
-import electory.client.gui.screen.GuiPause;
-import electory.client.gui.screen.GuiScreen;
+import electory.client.gui.screen.*;
 import electory.client.render.AtlasManager;
 import electory.client.render.shader.ShaderCompileException;
 import electory.client.render.shader.ShaderManager;
 import electory.client.render.texture.TextureManager;
 import electory.client.render.world.WorldRenderer;
 import electory.entity.EntityPlayer;
-import electory.event.ElectoryInitEvent;
-import electory.event.EventRegistry;
-import electory.event.EventType;
-import electory.event.HandleEvent;
-import electory.event.RegisterBlocksEvent;
-import electory.nbt.ShortArrayTag;
+import electory.event.*;
 import electory.scripting.ScriptingEngine;
 import electory.utils.CrashException;
 import electory.utils.TickTimer;
 import electory.world.World;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.EXTFramebufferObject;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class TinyCraft {
 	private static TinyCraft instance;
@@ -101,7 +75,7 @@ public class TinyCraft {
 	private boolean shutdown = false;
 
 	static {
-		ShortArrayTag.register();
+		// ShortArrayTag.register();
 	}
 
 	public static void main(String[] args) {

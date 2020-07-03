@@ -1,10 +1,12 @@
 package electory.item;
 
-import java.util.Objects;
-
-import electory.nbt.CompoundTag;
 import electory.utils.IMetaSerializable;
 import electory.utils.MetaSerializer;
+import electory.utils.io.ArrayDataInput;
+import electory.utils.io.ArrayDataOutput;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class ItemStack implements IMetaSerializable {
 
@@ -61,11 +63,11 @@ public class ItemStack implements IMetaSerializable {
 	}
 
 	@Override
-	public void writeToNBT(CompoundTag tag) {
-		tag.putString("item", item == null ? "" : item.getRegistryName());
-		tag.putInt("count", count);
-		if (meta != null) {
-			tag.put("meta", MetaSerializer.serializeObject(meta));
+	public void writeToNBT(ArrayDataOutput tag) throws IOException {
+		tag.writeUTF(item == null ? "" : item.getRegistryName());
+		tag.writeInt(count | (meta == null ? 0 : 0x80000000));
+		if(meta != null) {
+			MetaSerializer.serializeObject(tag, meta);
 		}
 	}
 
@@ -75,15 +77,21 @@ public class ItemStack implements IMetaSerializable {
 	}
 
 	@Override
-	public void readFromNBT(CompoundTag tag) {
-		String name = tag.getString("item");
+	public void readFromNBT(ArrayDataInput tag) throws IOException {
+		String name = tag.readUTF();
 		item = name.isEmpty() ? null : Item.REGISTRY.get(name);
-		count = tag.getInt("count");
-		if (tag.containsKey("meta")) {
-			meta = MetaSerializer.deserializeObject(tag.getCompoundTag("meta"));
+		if(item == null) {
+			count = 0;
+			meta = null;
+			return;
+		}
+		count = tag.readInt();
+		if ((count & 0x80000000) != 0) {
+			meta = MetaSerializer.deserializeObject(tag, item.getMetadataClass());
 		} else {
 			meta = null;
 		}
+		count &= 0x7FFFFFFF;
 	}
 
 }

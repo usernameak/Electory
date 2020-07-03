@@ -25,4 +25,7 @@ public class Item implements IRegistriable {
 		return this.registryName;
 	}
 
+	public Class<?> getMetadataClass() {
+		return null;
+	}
 }

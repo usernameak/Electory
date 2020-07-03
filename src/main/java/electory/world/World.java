@@ -1,7 +1,6 @@
 package electory.world;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,6 +9,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
+import electory.utils.io.BufferedDataInputStream;
+import electory.utils.io.BufferedDataOutputStream;
+import electory.utils.io.IllegalSerializedDataException;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
@@ -24,9 +26,6 @@ import electory.item.Item;
 import electory.item.ItemBlock;
 import electory.item.ItemStack;
 import electory.math.AABB;
-import electory.nbt.CompoundTag;
-import electory.nbt.ListTag;
-import electory.nbt.NBTUtil;
 import electory.utils.CrashException;
 import electory.utils.EnumSide;
 import electory.world.gen.ChunkGenerator;
@@ -255,57 +254,65 @@ public abstract class World implements IChunkSaveStatusHandler {
 			chunkProvider.save(this, chunk);
 		}
 		{
-			CompoundTag tag = new CompoundTag();
-			tag.putLong("seed", seed);
-			tag.putDouble("spawn_x", spawnPoint.x);
-			tag.putDouble("spawn_y", spawnPoint.y);
-			tag.putDouble("spawn_z", spawnPoint.z);
-			CompoundTag rtag = new CompoundTag();
-			blockIdRegistry.save(rtag);
-			tag.put("block_registry", rtag);
-			NBTUtil.writeTag(tag, new File(getWorldSaveDir(), "world_info.sav"), false);
+			FileOutputStream fos = new FileOutputStream(new File(getWorldSaveDir(), "world_info.sav"));
+			BufferedDataOutputStream dos = new BufferedDataOutputStream(fos);
+			dos.write(1); // version number
+			dos.writeLong(seed);
+			dos.writeDouble(spawnPoint.x);
+			dos.writeDouble(spawnPoint.y);
+			dos.writeDouble(spawnPoint.z);
+			blockIdRegistry.save(dos);
+			// NBTUtil.writeTag(tag, new File(getWorldSaveDir(), "world_info.sav"), false);
+			dos.close();
 		}
 		{
-			CompoundTag tag = new CompoundTag();
-			ListTag<CompoundTag> entityList = new ListTag<>(CompoundTag.class);
+			FileOutputStream fos = new FileOutputStream(new File(getWorldSaveDir(), "world_entities.sav"));
+			BufferedDataOutputStream dos = new BufferedDataOutputStream(fos);
+
 			for (Entity entity : getEntities()) {
 				if (entity.isPersistent()) {
-					CompoundTag entityTag = new CompoundTag();
-					entityTag.putInt("type", EntityMap.getEntityId(entity.getClass()));
-					entity.writeEntityData(entityTag);
-					entityList.add(entityTag);
+					dos.writeByte(EntityMap.getEntityId(entity.getClass()));
+					entity.writeEntityData(dos);
 				}
 			}
-			tag.put("entityList", entityList);
-			NBTUtil.writeTag(tag, new File(getWorldSaveDir(), "world_entities.sav"), false);
+			dos.writeByte(0);
 		}
 	}
 
 	public void load() throws IOException {
-		if (new File(getWorldSaveDir(), "world_info.sav").isFile()) {
+		File worldInfoFile = new File(getWorldSaveDir(), "world_info.sav");
+		if (worldInfoFile.isFile()) {
 			entities.clear();
 			chunkProvider.reset();
 			generationChunkProvider = null;
 			chunkProvider.coldUnloadAllChunks();
 			TinyCraft.getInstance().player = null;
 			{
-				CompoundTag tag = (CompoundTag) NBTUtil.readTag(new File(getWorldSaveDir(), "world_info.sav"));
-				seed = tag.getLong("seed");
-				spawnPoint.set(tag.getDouble("spawn_x"), tag.getDouble("spawn_y"), tag.getDouble("spawn_z"));
-				blockIdRegistry.load(tag.getCompoundTag("block_registry"));
+				FileInputStream fis = new FileInputStream(worldInfoFile);
+				BufferedDataInputStream dis = new BufferedDataInputStream(fis);
+
+				if(dis.readByte() != 1) {
+					throw new IllegalSerializedDataException("unsupported world info version");
+				}
+
+				seed = dis.readLong();
+				spawnPoint.set(dis.readDouble(), dis.readDouble(), dis.readDouble());
+				blockIdRegistry.load(dis);
 				generationChunkProvider = new ChunkGenerator(this, seed);
+				dis.close();
 			}
 			{
-				CompoundTag tag = (CompoundTag) NBTUtil.readTag(new File(getWorldSaveDir(), "world_entities.sav"));
-				@SuppressWarnings("unchecked")
-				ListTag<CompoundTag> entityList = (ListTag<CompoundTag>) tag.getListTag("entityList");
-				for (CompoundTag entityTag : entityList) {
-					int type = entityTag.getInt("type");
+
+				FileInputStream fis = new FileInputStream(new File(getWorldSaveDir(), "world_entities.sav"));
+				BufferedDataInputStream dis = new BufferedDataInputStream(fis);
+				while(true) {
+					byte type = dis.readByte();
+					if(type == 0) break;
 					Class<? extends Entity> clazz = EntityMap.getEntityById(type);
 					try {
 						Entity entity = EntityPlayer.class.isAssignableFrom(clazz) ? constructPlayer()
 								: clazz.getConstructor(World.class).newInstance(this);
-						entity.readEntityData(entityTag);
+						entity.readEntityData(dis);
 						if (entity instanceof EntityPlayer) {
 							playerToSpawn = (EntityPlayer) entity;
 						} else {
@@ -316,6 +323,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 						e.printStackTrace();
 					}
 				}
+				dis.close();
 			}
 		}
 	}

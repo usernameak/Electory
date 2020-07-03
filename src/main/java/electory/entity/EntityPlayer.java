@@ -1,15 +1,15 @@
 package electory.entity;
 
-import java.io.IOException;
-
-import org.joml.Vector3f;
-
 import electory.block.Block;
 import electory.inventory.IContainerProvider;
 import electory.inventory.InventoryPlayer;
 import electory.item.ItemStack;
-import electory.nbt.CompoundTag;
+import electory.utils.io.ArrayDataInput;
+import electory.utils.io.ArrayDataOutput;
 import electory.world.World;
+import org.joml.Vector3f;
+
+import java.io.IOException;
 
 public abstract class EntityPlayer extends EntityLiving {
 
@@ -65,17 +65,15 @@ public abstract class EntityPlayer extends EntityLiving {
 	}
 	
 	@Override
-	public void writeEntityData(CompoundTag tag) throws IOException {
+	public void writeEntityData(ArrayDataOutput tag) throws IOException {
 		super.writeEntityData(tag);
-		CompoundTag invTag = new CompoundTag();
-		inventory.writeToNBT(invTag);
-		tag.put("inventory", invTag);
+		inventory.writeToNBT(tag);
 	}
 	
 	@Override
-	public void readEntityData(CompoundTag tag) throws IOException {
+	public void readEntityData(ArrayDataInput tag) throws IOException {
 		super.readEntityData(tag);
-		inventory.readFromNBT(tag.getCompoundTag("inventory"));
+		inventory.readFromNBT(tag);
 	}
 
 }

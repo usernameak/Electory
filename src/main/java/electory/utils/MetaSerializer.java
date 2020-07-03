@@ -1,6 +1,9 @@
 package electory.utils;
 
-import electory.nbt.CompoundTag;
+import electory.utils.io.ArrayDataInput;
+import electory.utils.io.ArrayDataOutput;
+
+import java.io.IOException;
 
 public abstract class MetaSerializer {
 
@@ -8,39 +11,24 @@ public abstract class MetaSerializer {
 
 	}
 
-	public static CompoundTag serializeObject(Object object) {
-		String type = object.getClass().getName();
-		CompoundTag tag = new CompoundTag();
-		tag.putString("_Class", type);
+	public static void serializeObject(ArrayDataOutput tag, Object object) throws IOException {
+		if(object == null) return;
 		if (object instanceof IMetaSerializable) {
 			IMetaSerializable serializable = (IMetaSerializable) object;
 			serializable.writeToNBT(tag);
 		} else if (object instanceof Enum) {
-			tag.putString("EnumValue", ((Enum<?>) object).name());
+			tag.writeInt(((Enum<?>) object).ordinal());
 		} else {
 			throw new IllegalArgumentException();
 		}
-		return tag;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Object deserializeObject(CompoundTag tag) {
-		
-		if (!tag.containsKey("_Class")) {
-			return null;
-		}
-
-		String clazzName = tag.getString("_Class");
-		Class<?> clazz;
-		try {
-			clazz = Class.forName(clazzName);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
+	public static Object deserializeObject(ArrayDataInput tag, Class<?> clazz) throws IOException {
+		if(clazz == null) return null;
 
 		if (Enum.class.isAssignableFrom(clazz)) {
-			return Enum.valueOf((Class<? extends Enum>) clazz, tag.getString("EnumValue"));
+			return clazz.getEnumConstants()[tag.readInt()]; // TODO: optimize me
 		} else if (IMetaSerializable.class.isAssignableFrom(clazz)) {
 			IMetaSerializable meta;
 			try {

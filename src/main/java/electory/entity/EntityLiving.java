@@ -1,9 +1,10 @@
 package electory.entity;
 
-import java.io.IOException;
-
-import electory.nbt.CompoundTag;
+import electory.utils.io.ArrayDataInput;
+import electory.utils.io.ArrayDataOutput;
 import electory.world.World;
+
+import java.io.IOException;
 
 public abstract class EntityLiving extends Entity {
 	public float pitch;
@@ -14,17 +15,18 @@ public abstract class EntityLiving extends Entity {
 	}
 	
 	@Override
-	public void writeEntityData(CompoundTag tag) throws IOException {
+	public void writeEntityData(ArrayDataOutput tag) throws IOException {
 		super.writeEntityData(tag);
-		tag.putFloat("pitch", pitch);
-		tag.putFloat("yaw", yaw);
+		tag.writeFloat(pitch);
+		tag.writeFloat(yaw);
 	}
 	
 	@Override
-	public void readEntityData(CompoundTag tag) throws IOException {
+	public void readEntityData(ArrayDataInput tag) throws IOException {
 		super.readEntityData(tag);
-		pitch = tag.getFloat("pitch");
-		yaw = tag.getFloat("yaw");
+
+		pitch = tag.readFloat();
+		yaw = tag.readFloat();
 	}
 	
 }
