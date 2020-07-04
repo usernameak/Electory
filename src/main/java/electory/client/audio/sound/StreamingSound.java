@@ -78,9 +78,9 @@ public class StreamingSound implements ISound {
 
 	@Override
 	public void initialize() {
-		for (int i = 0; i < buffers.length; i++) {
+		for (int buffer : buffers) {
 			ByteBuffer data = decoder.fetchSoundData();
-			AL10.alBufferData(buffers[i], decoder.getFormat(), data, decoder.getSampleRate());
+			AL10.alBufferData(buffer, decoder.getFormat(), data, decoder.getSampleRate());
 		}
 		AL10.alSourceQueueBuffers(source, buffers);
 

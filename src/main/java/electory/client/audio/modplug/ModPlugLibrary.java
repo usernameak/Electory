@@ -28,7 +28,7 @@ import com.sun.jna.ptr.IntByReference;
 public interface ModPlugLibrary extends Library {
 	static String getLibraryName() {
 		if(Platform.isWindows()) {
-			return "modplug.dll";
+			return "libmodplug-1.dll";
 		}
 		if(Platform.isLinux()) {
 			return "libmodplug.so";

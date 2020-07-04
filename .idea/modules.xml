@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/tinycraft (1).iml" filepath="$PROJECT_DIR$/tinycraft (1).iml" />
-      <module fileurl="file://$PROJECT_DIR$/tinycraft (2).iml" filepath="$PROJECT_DIR$/tinycraft (2).iml" />
+      <module fileurl="file://$PROJECT_DIR$/electory.iml" filepath="$PROJECT_DIR$/electory.iml" />
     </modules>
   </component>
 </project>

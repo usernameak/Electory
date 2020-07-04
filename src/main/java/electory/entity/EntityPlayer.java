@@ -61,7 +61,7 @@ public abstract class EntityPlayer extends EntityLiving {
 	
 	public boolean isHeadUnderwater() {
 		Block block = world.getBlockAt((int) Math.floor(x), (int) Math.floor(y + getEyeHeight()), (int) Math.floor(z));
-		return block == null ? false : block.isLiquid();
+		return block != null && block.isLiquid();
 	}
 	
 	@Override

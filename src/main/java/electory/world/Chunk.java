@@ -275,43 +275,15 @@ public class Chunk {
 	}
 
 	public void notifyNeighbourChunks() {
-		Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkZ);
-		if (nearChunk != null) {
-			nearChunk.scheduleChunkUpdate();
+		for (int x = chunkX - 1; x <= chunkX + 1; x++) {
+			for (int z = chunkZ - 1; z <= chunkZ + 1; z++) {
+				if (x == chunkX && z == chunkZ) continue;
+				Chunk nearChunk = world.getChunkFromChunkCoord(x, z);
+				if (nearChunk != null) {
+					nearChunk.scheduleChunkUpdate();
+				}
+			}
 		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX + 1, chunkZ);
-		if (nearChunk != null) {
-			nearChunk.scheduleChunkUpdate();
-		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ - 1);
-		if (nearChunk != null) {
-			nearChunk.scheduleChunkUpdate();
-		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ + 1);
-		if (nearChunk != null) {
-			nearChunk.scheduleChunkUpdate();
-		}
-	}
-	
-	public Lock getNeighbourWriteLock() {
-		Set<Lock> locks = new HashSet<>();
-		Chunk nearChunk = world.getChunkFromChunkCoord(chunkX - 1, chunkZ);
-		if (nearChunk != null) {
-			locks.add(nearChunk.renderLock.writeLock());
-		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX + 1, chunkZ);
-		if (nearChunk != null) {
-			locks.add(nearChunk.renderLock.writeLock());
-		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ - 1);
-		if (nearChunk != null) {
-			locks.add(nearChunk.renderLock.writeLock());
-		}
-		nearChunk = world.getChunkFromChunkCoord(chunkX, chunkZ + 1);
-		if (nearChunk != null) {
-			locks.add(nearChunk.renderLock.writeLock());
-		}
-		return new MultiLock(locks);
 	}
 
 	public int getChunkX() {

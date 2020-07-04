@@ -130,6 +130,7 @@ public class SoundManager {
 		} catch (Exception e) {
 			// failed to find decoder. fail
 			TinyCraft.getInstance().logger.severe("failed to initialize audio decoder for format ." + ext);
+			e.printStackTrace();
 			return;
 		}
 

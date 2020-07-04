@@ -7,12 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="tinycraft (2)" />
-        <module name="tinycraft (1)" />
+        <module name="electory" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="tinycraft (1)" target="1.8" />
+      <module name="electory" target="1.8" />
       <module name="tinycraft (2)" target="1.8" />
     </bytecodeTargetLevel>
   </component>
