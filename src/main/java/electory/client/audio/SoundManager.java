@@ -122,6 +122,11 @@ public class SoundManager {
 		
 		URL url = getClass().getResource(realPath);
 
+		if(url == null) {
+			TinyCraft.getInstance().logger.warning("sound " + realPath + " not found");
+			return; // sound not found
+		}
+
 		AudioDecoder decoder = null;
 		String upath = url.getPath();
 		String ext = upath.substring(upath.lastIndexOf('.') + 1);

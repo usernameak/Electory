@@ -34,7 +34,7 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
 		public String name;
 	}
 
-	public class StitchedAtlasSprite implements IAtlasSprite {
+	public static class StitchedAtlasSprite implements IAtlasSprite {
 
 		private int x, y, side, atlasWidth, atlasHeight;
 
@@ -141,11 +141,7 @@ public class AtlasSpriteManagerImplStitch implements IAtlasSpriteManager {
 				int tileSlot = firstFreeSlot;
 				tile.x = tileSlot % nn * tile.side;
 				tile.y = tileSlot / nn * tile.side;
-				/*System.out.println("x " + tile.x);
-				System.out.println("y " + tile.y);
-				System.out.println("side " + tile.side);
-				System.out.println("slot " + tileSlot);
-				System.out.println("=================");*/
+
 				slots[tileSlot] = true;
 				for (int i = tileSlot + 1; i < slots.length; i++) {
 					if (!slots[i]) {

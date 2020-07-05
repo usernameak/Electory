@@ -180,8 +180,8 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public void update() {
 		getEntities().removeIf(Entity::shouldDespawn);
-		getEntities().stream().forEach(Entity::update);
-		getEntities().stream().forEach(Entity::postUpdate);
+		getEntities().forEach(Entity::update);
+		getEntities().forEach(Entity::postUpdate);
 		chunkLoadingTick();
 	}
 

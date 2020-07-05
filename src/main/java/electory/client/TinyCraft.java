@@ -103,18 +103,23 @@ public class TinyCraft {
 	}
 
 	static {
-		BufferedReader isr = new BufferedReader(
-				new InputStreamReader(TinyCraft.class.getResourceAsStream("/version.def")));
-		try {
-			version = isr.readLine().trim();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
+		InputStream stream = TinyCraft.class.getResourceAsStream("/version.def");
+		if(stream != null) {
+			BufferedReader isr = new BufferedReader(
+					new InputStreamReader(stream));
 			try {
-				isr.close();
+				version = isr.readLine().trim();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					isr.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+		} else {
+			version = "dev";
 		}
 	}
 
