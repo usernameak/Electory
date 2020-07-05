@@ -335,10 +335,10 @@ public abstract class World implements IChunkSaveStatusHandler {
 		return chunk == null ? 0 : chunk.getSunLightLevelAt(x & 0xF, y, z & 0xF);
 	}
 
-	public void setSunLightLevelAt(int x, int y, int z, int val) {
+	public void setSunLightLevelAt(int x, int y, int z, int val, int flags) {
 		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
 		if (chunk != null) {
-			chunk.setSunLightLevelAt(x & 0xF, y, z & 0xF, val);
+			chunk.setSunLightLevelAt(x & 0xF, y, z & 0xF, val, 0);
 		}
 	}
 
