@@ -348,7 +348,9 @@ public class Chunk {
 
                 if (lightIntensityAdjacent >= oldSkyLightLevel) {
                     int newSkyLightLevel = lightIntensityAdjacent - realOpacity;
-                    if (newSkyLightLevel > skyLightLevel) {
+                    if(oldSkyLightLevel == 15 && lightIntensityAdjacent == 15 && side == EnumSide.DOWN) {
+                        // direct sky light removal, this block should be empty
+                    } else if (newSkyLightLevel > skyLightLevel) {
                         skyLightLevel = newSkyLightLevel;
                     }
                 }
@@ -364,7 +366,8 @@ public class Chunk {
         if (skyLightLevel < oldSkyLightLevel) { // light level decreased
             for (EnumSide side : EnumSide.VALID_DIRECTIONS) {
                 int lightIntensityAdjacent = getWorldSunLightLevelFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (lightIntensityAdjacent < oldSkyLightLevel) {
+                if (lightIntensityAdjacent < oldSkyLightLevel
+                        || (side == EnumSide.DOWN && lightIntensityAdjacent == 15 && oldSkyLightLevel == 15)) {
                     bfsSkyQueue.add(new WorldPosition(x + side.offsetX, y + side.offsetY, z + side.offsetZ));
                 }
             }
