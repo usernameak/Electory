@@ -112,7 +112,7 @@ public class ChunkGenerator implements IChunkProvider {
 										z,
 										j,
 										world.blockIdRegistry.getBlockById(chunkData[i << 12 | j << 8 | (z & 0xFF)]),
-										World.FLAG_SKIP_UPDATE);
+										World.FLAG_SKIP_UPDATE | World.FLAG_FAST_LIGHT_UPDATE);
 				}
 				chunk.setBiomeAt(i, j, EnumWorldBiome.biomeList[biomeData[j << 4 | i]]);
 			}

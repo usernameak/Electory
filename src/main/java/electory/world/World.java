@@ -43,6 +43,7 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	public static final int FLAG_SKIP_RENDER_UPDATE = 1;
 	public static final int FLAG_SKIP_LIGHT_UPDATE = 2;
+	public static final int FLAG_FAST_LIGHT_UPDATE = 4;
 	public static final int FLAG_SKIP_UPDATE = FLAG_SKIP_LIGHT_UPDATE | FLAG_SKIP_RENDER_UPDATE;
 
 	public static final int LIGHT_LEVEL_TYPE_SKY = 0;

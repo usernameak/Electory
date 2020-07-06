@@ -30,6 +30,8 @@ public enum EnumSide {
 	public final EnumAxis axis;
 	public final int flag;
 	public static final EnumSide[] VALID_DIRECTIONS = { DOWN, UP, NORTH, SOUTH, WEST, EAST };
+	public static final EnumSide[] VALID_DIRECTIONS_UPFIRST = { UP, NORTH, SOUTH, WEST, EAST, DOWN };
+	public static final EnumSide[] VALID_DIRECTIONS_DOWNFIRST = { DOWN, EAST, WEST, SOUTH, NORTH, UP };
 	public static final int[] OPPOSITES = { 1, 0, 3, 2, 5, 4, 6 };
 	// Left hand rule rotation matrix for all possible axes of rotation
 	public static final int[][] ROTATION_MATRIX = { { 0, 1, 4, 5, 3, 2, 6 }, { 0, 1, 5, 4, 2, 3, 6 },

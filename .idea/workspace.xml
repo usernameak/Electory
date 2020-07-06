@@ -32,18 +32,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cbc8b5a1-dae4-4e40-8ab2-20f20702d3dd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/electory/client/console/commands/CCGive.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/electory/utils/EMath.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/electory/world/LightingQueueEntry.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/electory/block/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/block/Block.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/electory/block/BlockTallGrass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/block/BlockTallGrass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/electory/block/BlockWater.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/block/BlockWater.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/electory/client/console/Console.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/client/console/Console.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/electory/client/render/block/BlockRenderAOCube.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/client/render/block/BlockRenderAOCube.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/electory/client/render/block/BlockRendererCube.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/client/render/block/BlockRendererCube.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/electory/client/render/block/BlockRendererPlant.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/client/render/block/BlockRendererPlant.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/electory/client/render/world/ChunkRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/client/render/world/ChunkRenderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/electory/utils/EnumSide.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/utils/EnumSide.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/electory/world/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/world/Chunk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/electory/world/ChunkProviderSP.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/world/ChunkProviderSP.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/electory/world/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/world/World.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/electory/world/gen/ChunkGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/electory/world/gen/ChunkGenerator.java" afterDir="false" />
     </list>
@@ -85,7 +78,7 @@
     <configuration name="Electory" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="electory.client.TinyCraft" />
       <module name="tinycraft.main" />
-      <option name="VM_PARAMETERS" value="-Djava.library.path=$ProjectFileDir$/build/libs" />
+      <option name="VM_PARAMETERS" value="-Djava.library.path=$ProjectFileDir$/build/libs -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=print,*Chunk.recalculateLightStep" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/build/libs" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -106,7 +99,10 @@
       <workItem from="1593971259384" duration="954000" />
       <workItem from="1593980365654" duration="7310000" />
       <workItem from="1593989810774" duration="4259000" />
-      <workItem from="1594031083596" duration="3322000" />
+      <workItem from="1594031083596" duration="4849000" />
+      <workItem from="1594038586992" duration="251000" />
+      <workItem from="1594042519142" duration="1765000" />
+      <workItem from="1594056965207" duration="527000" />
     </task>
     <servers />
   </component>
@@ -126,10 +122,10 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="294" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594031877288">
+    <state x="294" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594044116089">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state x="294" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1594031877288" />
+    <state x="294" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1594044116089" />
     <state x="620" y="210" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1593955099565">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
@@ -142,38 +138,22 @@
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
     <state x="245" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1593991744884" />
-    <state width="1637" height="336" key="GridCell.Tab.0.bottom" timestamp="1594034062336">
+    <state width="1637" height="336" key="GridCell.Tab.0.bottom" timestamp="1594057385074">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1637" height="336" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1594034062336" />
-    <state width="1637" height="336" key="GridCell.Tab.0.center" timestamp="1594034062335">
+    <state width="1637" height="336" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1594057385074" />
+    <state width="1637" height="336" key="GridCell.Tab.0.center" timestamp="1594057385074">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1637" height="336" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1594034062335" />
-    <state width="1637" height="336" key="GridCell.Tab.0.left" timestamp="1594034062335">
+    <state width="1637" height="336" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1594057385074" />
+    <state width="1637" height="336" key="GridCell.Tab.0.left" timestamp="1594057385073">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1637" height="336" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1594034062335" />
-    <state width="1637" height="336" key="GridCell.Tab.0.right" timestamp="1594034062335">
+    <state width="1637" height="336" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1594057385073" />
+    <state width="1637" height="336" key="GridCell.Tab.0.right" timestamp="1594057385074">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
-    <state width="1637" height="336" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1594034062335" />
-    <state width="1637" height="336" key="GridCell.Tab.1.bottom" timestamp="1594034062336">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state width="1637" height="336" key="GridCell.Tab.1.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1594034062336" />
-    <state width="1637" height="336" key="GridCell.Tab.1.center" timestamp="1594034062336">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state width="1637" height="336" key="GridCell.Tab.1.center/0.0.1680.1010@0.0.1680.1010" timestamp="1594034062336" />
-    <state width="1637" height="336" key="GridCell.Tab.1.left" timestamp="1594034062336">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state width="1637" height="336" key="GridCell.Tab.1.left/0.0.1680.1010@0.0.1680.1010" timestamp="1594034062336" />
-    <state width="1637" height="336" key="GridCell.Tab.1.right" timestamp="1594034062336">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state width="1637" height="336" key="GridCell.Tab.1.right/0.0.1680.1010@0.0.1680.1010" timestamp="1594034062336" />
+    <state width="1637" height="336" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1594057385074" />
     <state x="420" y="248" key="IDE.errors.dialog" timestamp="1593955145707">
       <screen x="0" y="0" width="1680" height="1010" />
     </state>
