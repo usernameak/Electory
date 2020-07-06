@@ -118,7 +118,7 @@ public class ChunkGenerator implements IChunkProvider {
 			}
 		}
 
-		chunk.recalculateSkyLight();
+		chunk.recalculateLight(World.LIGHT_LEVEL_TYPE_SKY);
 		chunk.buildHeightMap();
 
 		return chunk;

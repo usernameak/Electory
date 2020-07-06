@@ -1,7 +1,6 @@
 package electory.world;
 
 import electory.block.Block;
-import electory.client.TinyCraft;
 import electory.client.render.world.ChunkRenderer;
 import electory.profiling.ElectoryProfiler;
 import electory.utils.EnumSide;
@@ -134,37 +133,43 @@ public class Chunk {
         return world.blockIdRegistry.getBlockById(blockArray[cx + y * 16 + cz * 16 * 256]);
     }
 
-    public int getSunLightLevelAt(int x, int y, int z) {
+    public int getLightLevelAt(int x, int y, int z, int lightLevelType) {
         if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
-            return 0xF;
+            return lightLevelType == World.LIGHT_LEVEL_TYPE_SKY ? 0xF : 0x0;
         }
 
-        return (byte) (lightArray[x + y * 16 + z * 16 * 256] & 0xF);
+        int shift = lightLevelType << 2;
+        int mask = 0xF << shift;
+
+        return (byte) ((lightArray[x + y * 16 + z * 16 * 256] & mask) >> shift);
     }
 
-    public int getWorldSunLightLevelFast(int x, int y, int z) {
+    public int getWorldLightLevelFast(int x, int y, int z, int lightLevelType) {
         int cx = x - getChunkBlockCoordX();
         int cz = z - getChunkBlockCoordZ();
         if (y < 0) {
             return 0;
         }
         if (y >= 256) {
-            return 15;
+            return lightLevelType == World.LIGHT_LEVEL_TYPE_SKY ? 0xF : 0x0;
         }
         if (cx < 0 || cz < 0 || cx >= 16 || cz >= 16) {
-            return world.getSunLightLevelAt(x, y, z);
+            return world.getLightLevelAt(x, y, z, lightLevelType);
         }
-        return (byte) (lightArray[cx + y * 16 + cz * 16 * 256] & 0xF);
+        return getLightLevelAt(cx, y, cz, lightLevelType);
     }
 
-    public void setSunLightLevelAt(int x, int y, int z, int val, int flags) {
+    public void setLightLevelAt(int x, int y, int z, int lightLevelType, int val, int flags) {
         if (x < 0 || y < 0 || z < 0 || x >= 16 || y >= 256 || z >= 16) {
             return;
         }
         Lock lock = renderLock.writeLock();
         lock.lock();
         try {
-            lightArray[x + y * 16 + z * 16 * 256] = (short) ((lightArray[x + y * 16 + z * 16 * 256] & 0xFFF0) | val);
+            int shift = lightLevelType << 2;
+            int mask = 0xFFFF & ~(0xF << shift);
+
+            lightArray[x + y * 16 + z * 16 * 256] = (short) ((lightArray[x + y * 16 + z * 16 * 256] & mask) | (val << shift));
 
             if ((flags & World.FLAG_SKIP_RENDER_UPDATE) == 0) {
                 scheduleRenderUpdateForBlockAndAdjacents(x, z);
@@ -174,14 +179,14 @@ public class Chunk {
         }
     }
 
-    public void setWorldSunLightLevelFast(int x, int y, int z, int val, int flags) {
+    public void setWorldLightLevelFast(int x, int y, int z, int lightLevelType, int val, int flags) {
         int cx = x - getChunkBlockCoordX();
         int cz = z - getChunkBlockCoordZ();
         if (cx < 0 || y < 0 || cz < 0 || cx >= 16 || y >= 256 || cz >= 16) {
-            world.setSunLightLevelAt(x, y, z, val, flags);
+            world.setLightLevelAt(x, y, z, lightLevelType, val, flags);
             return;
         }
-        setSunLightLevelAt(cx, y, cz, val, flags);
+        setLightLevelAt(cx, y, cz, lightLevelType, val, flags);
     }
 
     @SuppressWarnings("unchecked")
@@ -237,7 +242,7 @@ public class Chunk {
             lock.unlock();
         }
         if ((flags & World.FLAG_SKIP_LIGHT_UPDATE) == 0) {
-            recalculateSkyLightForBlock(x, y, z);
+            recalculateLightForBlock(x, y, z);
         }
         if ((flags & World.FLAG_SKIP_RENDER_UPDATE) == 0) {
             scheduleRenderUpdateForBlockAndAdjacents(x, z);
@@ -247,14 +252,14 @@ public class Chunk {
 
     private void scheduleRenderUpdateForBlockAndAdjacents(int x, int z) {
         scheduleChunkUpdate();
-        for(int xx = chunkX - 1; xx <= chunkX + 1; xx++) {
-            for(int zz = chunkZ - 1; zz <= chunkZ + 1; zz++) {
-                if(xx == chunkX && zz == chunkZ) continue;
+        for (int xx = chunkX - 1; xx <= chunkX + 1; xx++) {
+            for (int zz = chunkZ - 1; zz <= chunkZ + 1; zz++) {
+                if (xx == chunkX && zz == chunkZ) continue;
                 boolean shouldUpdate = true;
-                if(xx == chunkX - 1) shouldUpdate &= x == 0;
-                if(xx == chunkX + 1) shouldUpdate &= x == 15;
-                if(zz == chunkZ - 1) shouldUpdate &= z == 0;
-                if(zz == chunkZ + 1) shouldUpdate &= z == 15;
+                if (xx == chunkX - 1) shouldUpdate &= x == 0;
+                if (xx == chunkX + 1) shouldUpdate &= x == 15;
+                if (zz == chunkZ - 1) shouldUpdate &= z == 0;
+                if (zz == chunkZ + 1) shouldUpdate &= z == 15;
                 Chunk nearChunk = world.getChunkFromChunkCoord(xx, zz);
                 if (nearChunk != null) {
                     nearChunk.scheduleChunkUpdate();
@@ -311,41 +316,41 @@ public class Chunk {
         return chunkZ << 4;
     }
 
-    private void recalculateSkyLight(Queue<WorldPosition> bfsSkyQueue) {
+    private void recalculateLight(int lightLevelType, Queue<WorldPosition> bfsSkyQueue) {
         ElectoryProfiler.INSTANCE.begin("skyLight");
         while (!bfsSkyQueue.isEmpty()) {
             WorldPosition pos = bfsSkyQueue.poll();
 
-            recalculateSkyLightStep(pos.x, pos.y, pos.z, bfsSkyQueue);
+            recalculateLightStep(lightLevelType, pos.x, pos.y, pos.z, bfsSkyQueue);
         }
         ElectoryProfiler.INSTANCE.end("skyLight");
     }
 
-    private void recalculateSkyLightStep(int x, int y, int z, Queue<WorldPosition> bfsSkyQueue) {
+    private void recalculateLightStep(int lightLevelType, int x, int y, int z, Queue<WorldPosition> bfsSkyQueue) {
         if (y >= 256 || y < 0) return;
 
         if (x >> 4 != chunkX || z >> 4 != chunkZ)
             if (!world.chunkProvider.isChunkLoaded(x >> 4, z >> 4)) return;
 
-        int oldSkyLightLevel = getWorldSunLightLevelFast(x, y, z);
+        int oldLightLevel = getWorldLightLevelFast(x, y, z, lightLevelType);
 
         Block block = getWorldBlockFast(x, y, z);
 
-        int skyLightLevel = 0;
+        int lightLevel = lightLevelType == World.LIGHT_LEVEL_TYPE_SKY ? 0 : (block == null ? 0 : block.getLightValue());
 
         // get block opacity
-        int opacity = block == null ? 0 : block.getSkyLightOpacity();
+        int opacity = block == null ? 0 : block.getLightOpacity(lightLevelType);
 
         if (opacity != 15) {
             // find most affecting light source
             for (EnumSide side : EnumSide.VALID_DIRECTIONS) {
                 int realOpacity = opacity;
 
-                int lightIntensityAdjacent = getWorldSunLightLevelFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (side == EnumSide.UP) {
+                int lightIntensityAdjacent = getWorldLightLevelFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ, lightLevelType);
+                if (lightLevelType == World.LIGHT_LEVEL_TYPE_SKY && side == EnumSide.UP) {
                     // when level 15 skylight propagates from above, light level below will be 15 too
                     // this should not affect local (block) light
-                    int lightIntensityAbove = y == 255 ? 15 : getWorldSunLightLevelFast(x, y + 1, z);
+                    int lightIntensityAbove = y == 255 ? 15 : getWorldLightLevelFast(x, y + 1, z, lightLevelType);
                     if (lightIntensityAbove != 15 && realOpacity == 0) {
                         // fade light if above light level is not 15
                         realOpacity = 1;
@@ -355,36 +360,48 @@ public class Chunk {
                     realOpacity = 1;
                 }
 
-                if (lightIntensityAdjacent >= oldSkyLightLevel) {
-                    int newSkyLightLevel = lightIntensityAdjacent - realOpacity;
-                    if(oldSkyLightLevel == 15 && lightIntensityAdjacent == 15 && side == EnumSide.DOWN) {
+                if (lightLevelType == World.LIGHT_LEVEL_TYPE_BLOCK) {
+                    System.out.println("side " + side.name() + "; real opacity " + realOpacity + "; intensity " + lightIntensityAdjacent);
+                }
+
+                if (lightIntensityAdjacent >= oldLightLevel) {
+                    int newLightLevel = lightIntensityAdjacent - realOpacity;
+                    //noinspection StatementWithEmptyBody
+                    if (lightLevelType == World.LIGHT_LEVEL_TYPE_SKY
+                            && oldLightLevel == 15
+                            && lightIntensityAdjacent == 15
+                            && side == EnumSide.DOWN) {
                         // direct sky light removal, this block should be empty
-                    } else if (newSkyLightLevel > skyLightLevel) { // note that this always avoids negative light level
-                        skyLightLevel = newSkyLightLevel;
+                    } else if (newLightLevel > lightLevel) { // note that this always avoids negative light level
+                        lightLevel = newLightLevel;
                     }
                 }
             }
         }
 
-        setWorldSunLightLevelFast(x, y, z, skyLightLevel, 0); // update light level
+        if (lightLevelType == World.LIGHT_LEVEL_TYPE_BLOCK) {
+            System.out.println(lightLevel);
+        }
 
-        if (skyLightLevel < oldSkyLightLevel) { // light level decreased
+        setWorldLightLevelFast(x, y, z, lightLevelType, lightLevel, 0); // update light level
+
+        if (lightLevel < oldLightLevel) { // light level decreased
             for (EnumSide side : EnumSide.VALID_DIRECTIONS) {
-                // find all possible adjacents to decrease their skylight level
-                int lightIntensityAdjacent = getWorldSunLightLevelFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (lightIntensityAdjacent < oldSkyLightLevel
-                        || (side == EnumSide.DOWN && lightIntensityAdjacent == 15 && oldSkyLightLevel == 15)) {
+                // find all possible adjacents to decrease their light level
+                int lightIntensityAdjacent = getWorldLightLevelFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ, lightLevelType);
+                if (lightIntensityAdjacent < oldLightLevel
+                        || (lightLevelType == World.LIGHT_LEVEL_TYPE_SKY && side == EnumSide.DOWN && lightIntensityAdjacent == 15 && oldLightLevel == 15)) {
                     // add them to BFS queue
                     bfsSkyQueue.add(new WorldPosition(x + side.offsetX, y + side.offsetY, z + side.offsetZ));
                 }
             }
-        } else if (skyLightLevel > oldSkyLightLevel) { // light level increased
+        } else if (lightLevel > oldLightLevel) { // light level increased
             for (EnumSide side : EnumSide.VALID_DIRECTIONS) {
-                // find all possible adjacents to increase their skylight level
+                // find all possible adjacents to increase their light level
                 Block adjBlock = getWorldBlockFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                int adjOpacity = adjBlock == null ? 0 : adjBlock.getSkyLightOpacity();
-                if (side == EnumSide.DOWN) {
-                    if (skyLightLevel != 15 && adjOpacity == 0) {
+                int adjOpacity = adjBlock == null ? 0 : adjBlock.getLightOpacity(lightLevelType);
+                if (lightLevelType == World.LIGHT_LEVEL_TYPE_SKY && side == EnumSide.DOWN) {
+                    if (lightLevel != 15 && adjOpacity == 0) {
                         // fade light if above light level is not 15
                         adjOpacity = 1;
                     }
@@ -392,10 +409,11 @@ public class Chunk {
                     // fade light if it's not from above
                     adjOpacity = 1;
                 }
-                int lightIntensityAdjacent = getWorldSunLightLevelFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
-                if (lightIntensityAdjacent < skyLightLevel - adjOpacity) {  // add only if skylight level of adjacents is
-                                                                            // below the possible level assuming this side
-                                                                            // is picked as the most affecting light source
+                int lightIntensityAdjacent = getWorldLightLevelFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ, lightLevelType);
+                if (lightIntensityAdjacent < lightLevel - adjOpacity) {
+                    // add only if light level of adjacents is
+                    // below the possible level assuming this side
+                    // is picked as the most affecting light source
                     // add them to BFS queue
                     bfsSkyQueue.add(new WorldPosition(x + side.offsetX, y + side.offsetY, z + side.offsetZ)); // kinda needs light update
                 }
@@ -403,22 +421,27 @@ public class Chunk {
         }
     }
 
-    public void recalculateSkyLight() {
+    public void recalculateLight(int lightLevelType) {
         Queue<WorldPosition> bfsSkyQueue = new LinkedList<>();
         for (int x = getChunkBlockCoordX(); x < getChunkBlockCoordX() + 16; x++) {
             for (int z = getChunkBlockCoordZ(); z < getChunkBlockCoordZ() + 16; z++) {
                 bfsSkyQueue.add(new WorldPosition(x, 255, z));
             }
         }
-        recalculateSkyLight(bfsSkyQueue);
+        recalculateLight(lightLevelType, bfsSkyQueue);
     }
 
-    public void recalculateSkyLightForBlock(int x, int y, int z) {
+    public void recalculateLightForBlock(int lightLevelType, int x, int y, int z) {
         Queue<WorldPosition> bfsSkyQueue = new LinkedList<>();
         int wx = x + getChunkBlockCoordX();
         int wz = z + getChunkBlockCoordZ();
         bfsSkyQueue.add(new WorldPosition(wx, y, wz));
-        recalculateSkyLight(bfsSkyQueue);
+        recalculateLight(lightLevelType, bfsSkyQueue);
+    }
+
+    public void recalculateLightForBlock(int x, int y, int z) {
+        recalculateLightForBlock(World.LIGHT_LEVEL_TYPE_SKY, x, y, z);
+        recalculateLightForBlock(World.LIGHT_LEVEL_TYPE_BLOCK, x, y, z);
     }
 
     private void writeMetaArray(ArrayDataOutput dos) throws IOException {

@@ -14,7 +14,7 @@ public class BlockTallGrass extends Block {
 	}
 
 	@Override
-	public byte getSkyLightOpacity() {
+	public byte getLightOpacity(int lightLevelType) {
 		return 0;
 	}
 	

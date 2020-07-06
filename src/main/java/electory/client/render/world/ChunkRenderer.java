@@ -4,12 +4,12 @@ import java.nio.BufferOverflowException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 
+import electory.world.World;
 import org.lwjgl.opengl.ARBVertexArrayObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.NVConditionalRender;
 
 import electory.block.Block;
 import electory.client.TinyCraft;
@@ -30,6 +30,10 @@ public class ChunkRenderer {
 	private int query = 0;
 
 	public static final int[] lightColors = new int[] { 0xff0f0f0f, 0xff1f1f1f, 0xff2f2f2f, 0xff3f3f3f, 0xff4f4f4f,
+			0xff5f5f5f, 0xff6f6f6f, 0xff7f7f7f, 0xff8f8f8f, 0xff9f9f9f, 0xffafafaf, 0xffbfbfbf, 0xffcfcfcf, 0xffdfdfdf,
+			0xffefefef, 0xffffffff };
+
+	public static final int[] lightColorsBlock = new int[] { 0xff0f0f0f, 0xff1f1f1f, 0xff2f2f2f, 0xff3f3f3f, 0xff4f4f4f,
 			0xff5f5f5f, 0xff6f6f6f, 0xff7f7f7f, 0xff8f8f8f, 0xff9f9f9f, 0xffafafaf, 0xffbfbfbf, 0xffcfcfcf, 0xffdfdfdf,
 			0xffefefef, 0xffffffff };
 
@@ -202,7 +206,7 @@ public class ChunkRenderer {
 										for (int z = 0; z < 16; z++) {
 											Block block = chunk.getBlockAt(x, y, z);
 											if (block != null && block.shouldRenderInVBO(i)) {
-												qb.setColor(lightColors[chunk.getSunLightLevelAt(x, y, z)]);
+												qb.setColor(lightColors[chunk.getLightLevelAt(x, y, z, World.LIGHT_LEVEL_TYPE_SKY)]);
 												block.getRenderer()
 														.getTriangles(	chunk.world,
 																		block,

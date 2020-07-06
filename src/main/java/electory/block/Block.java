@@ -14,6 +14,7 @@ import electory.utils.EnumSide;
 import electory.utils.IRegistriable;
 import electory.utils.NamedRegistry;
 import electory.world.World;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -29,6 +30,11 @@ public class Block implements IRegistriable {
 	private boolean liquid = false;
 	private boolean impassable = true;
 	private BlockSound sound = SOUND_WOOD;
+
+	@Getter
+	@Setter
+	@Accessors(chain = true)
+	private int lightValue = 0;
 
 	protected IAtlasSprite blockSprite;
 
@@ -107,7 +113,7 @@ public class Block implements IRegistriable {
 		return vbo == WorldRenderer.VBO_BASE;
 	}
 
-	public byte getSkyLightOpacity() {
+	public byte getLightOpacity(int lightLevelType) {
 		return 15;
 	}
 
@@ -144,6 +150,7 @@ public class Block implements IRegistriable {
 		REGISTRY.register("tallgrass", new BlockTallGrass().setSpriteName("/img/blocks/tallgrass.png").setSolid(false).setImpassable(false));
 		REGISTRY.register("sapling", new BlockSapling().setSpriteName("/img/blocks/sapling.png").setSolid(false).setImpassable(false));
 		REGISTRY.register("sandstone", new Block().setSpriteName("/img/blocks/sandstone.png"));
+		REGISTRY.register("glowstone", new Block().setSpriteName("/img/blocks/glowstone.png").setLightValue(15));
 		
 		TinyCraft.getInstance().eventRegistry.emit(new RegisterBlocksEvent());
 		

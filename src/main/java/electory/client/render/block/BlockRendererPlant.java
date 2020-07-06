@@ -8,6 +8,7 @@ import electory.client.render.TriangleBuffer;
 import electory.client.render.shader.ShaderManager;
 import electory.client.render.texture.TextureManager;
 import electory.client.render.world.ChunkRenderer;
+import electory.utils.EMath;
 import electory.utils.EnumSide;
 import electory.world.World;
 
@@ -19,8 +20,9 @@ public class BlockRendererPlant implements IBlockRenderer {
 
 	public void getTriangles(World world, Block block, ChunkRenderer renderer, int x, int y, int z, int cx, int cz,
 			TriangleBuffer buffer) {
-		int skyLightLevel = renderer.getChunk().getWorldSunLightLevelFast(x, y, z);
-		buffer.setColor(ChunkRenderer.lightColors[skyLightLevel]);
+		int skyLightLevel = renderer.getChunk().getWorldLightLevelFast(x, y, z, World.LIGHT_LEVEL_TYPE_SKY);
+		int blockLightLevel = renderer.getChunk().getWorldLightLevelFast(x, y, z, World.LIGHT_LEVEL_TYPE_BLOCK);
+		buffer.setColor(EMath.addIntColors(ChunkRenderer.lightColors[skyLightLevel], ChunkRenderer.lightColorsBlock[blockLightLevel]));
 		IAtlasSprite sprite = block.getAtlasSprite(world, x, y, z, EnumSide.SOUTH);
 
 		buffer.addQuadVertexWithUV(cx, y, cz, sprite.getMinU(), sprite.getMaxV());

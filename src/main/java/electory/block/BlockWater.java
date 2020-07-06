@@ -9,7 +9,7 @@ public class BlockWater extends Block {
 		super();
 	}
 
-	public byte getSkyLightOpacity() {
+	public byte getLightOpacity(int lightLevelType) {
 		return 1;
 	}
 	

@@ -8,7 +8,9 @@ import electory.client.render.TriangleBuffer;
 import electory.client.render.shader.ShaderManager;
 import electory.client.render.texture.TextureManager;
 import electory.client.render.world.ChunkRenderer;
+import electory.utils.EMath;
 import electory.utils.EnumSide;
+import electory.world.Chunk;
 import electory.world.World;
 
 public class BlockRendererCube implements IBlockRenderer {
@@ -34,8 +36,10 @@ public class BlockRendererCube implements IBlockRenderer {
 					|| (!adjBlock.isSolidOnSide(EnumSide.getOrientation(EnumSide.OPPOSITES[dir.ordinal()]))
 							&& !(adjBlock == block))) {
 				int skyLightLevel = renderer.getChunk()
-						.getWorldSunLightLevelFast(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
-				buffer.setColor(ChunkRenderer.lightColors[skyLightLevel]);
+						.getWorldLightLevelFast(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, World.LIGHT_LEVEL_TYPE_SKY);
+				int blockLightLevel = renderer.getChunk()
+						.getWorldLightLevelFast(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, World.LIGHT_LEVEL_TYPE_BLOCK);
+				buffer.setColor(EMath.addIntColors(ChunkRenderer.lightColors[skyLightLevel], ChunkRenderer.lightColorsBlock[blockLightLevel]));
 				bakeBlockSide(	world,
 								block,
 								renderer,
@@ -47,13 +51,14 @@ public class BlockRendererCube implements IBlockRenderer {
 								z,
 								buffer,
 								skyLightLevel,
+								blockLightLevel,
 								block.getAtlasSprite(world, x, y, z, dir));
 			}
 		}
 	}
 
 	public void bakeBlockSide2(World world, Block block, ChunkRenderer renderer, EnumSide dir, int x, int y, int z, int wx, int wz,
-			TriangleBuffer buffer, int lightLevel, IAtlasSprite sprite) {
+			TriangleBuffer buffer, int skyLightLevel, int blockLightLevel, IAtlasSprite sprite) {
 		if (dir == EnumSide.UP) {
 			buffer.addQuadVertexWithUV(x, y + 1, z, sprite.getMinU(), sprite.getMinV());
 			buffer.addQuadVertexWithUV(x, y + 1, z + 1, sprite.getMinU(), sprite.getMaxV());
@@ -88,8 +93,8 @@ public class BlockRendererCube implements IBlockRenderer {
 	}
 
 	public void bakeBlockSide(World world, Block block, ChunkRenderer renderer, EnumSide dir, int x, int y, int z,
-			int wx, int wz, TriangleBuffer buffer, int lightLevel, IAtlasSprite sprite) {
-		bakeBlockSide2(world, block, renderer, dir, x, y, z, wx, wz, buffer, lightLevel, sprite);
+			int wx, int wz, TriangleBuffer buffer, int skyLightLevel, int blockLightLevel, IAtlasSprite sprite) {
+		bakeBlockSide2(world, block, renderer, dir, x, y, z, wx, wz, buffer, skyLightLevel, blockLightLevel, sprite);
 	}
 
 	@Override
@@ -107,7 +112,7 @@ public class BlockRendererCube implements IBlockRenderer {
 		TriangleBuffer buffer = Tessellator.instance.getBuffer();
 
 		for (EnumSide dir : EnumSide.VALID_DIRECTIONS) {
-			bakeBlockSide2(null, block, null, dir, 0, 0, 0, 0, 0, buffer, 15, block.getAtlasSprite(dir));
+			bakeBlockSide2(null, block, null, dir, 0, 0, 0, 0, 0, buffer, 15, 0, block.getAtlasSprite(dir));
 		}
 
 		Tessellator.instance.draw();

@@ -45,6 +45,9 @@ public abstract class World implements IChunkSaveStatusHandler {
 	public static final int FLAG_SKIP_LIGHT_UPDATE = 2;
 	public static final int FLAG_SKIP_UPDATE = FLAG_SKIP_LIGHT_UPDATE | FLAG_SKIP_RENDER_UPDATE;
 
+	public static final int LIGHT_LEVEL_TYPE_SKY = 0;
+	public static final int LIGHT_LEVEL_TYPE_BLOCK = 1;
+
 	public static final int CHUNKLOAD_DISTANCE = 8;
 	public static final int CHUNKLOAD_DISTANCE2 = CHUNKLOAD_DISTANCE * 2;
 
@@ -330,15 +333,15 @@ public abstract class World implements IChunkSaveStatusHandler {
 
 	protected abstract EntityPlayer constructPlayer();
 
-	public int getSunLightLevelAt(int x, int y, int z) {
+	public int getLightLevelAt(int x, int y, int z, int lightLevelType) {
 		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
-		return chunk == null ? 0 : chunk.getSunLightLevelAt(x & 0xF, y, z & 0xF);
+		return chunk == null ? 0x0 : chunk.getLightLevelAt(x & 0xF, y, z & 0xF, lightLevelType);
 	}
 
-	public void setSunLightLevelAt(int x, int y, int z, int val, int flags) {
+	public void setLightLevelAt(int x, int y, int z, int lightLevelType, int val, int flags) {
 		Chunk chunk = chunkProvider.provideChunk(x >> 4, z >> 4);
 		if (chunk != null) {
-			chunk.setSunLightLevelAt(x & 0xF, y, z & 0xF, val, 0);
+			chunk.setLightLevelAt(x & 0xF, y, z & 0xF, lightLevelType, val, 0);
 		}
 	}
 
