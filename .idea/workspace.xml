@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="BranchesTreeState">
     <expand>
       <path>
@@ -60,31 +63,46 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
   <component name="ProjectId" id="1eGjp3IB1BW36YcS6FnDy4loYOZ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="extract.method.default.visibility" value="private" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="show.unlinked.gradle.project.popup" value="true" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.electory [:electory.client.TinyCraft.main()].executor": "Debug",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/src/electory/electory",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "MavenSettings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
   <component name="RunManager">
     <configuration name="Electory" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="electory.client.TinyCraft" />
       <module name="tinycraft.main" />
-      <option name="VM_PARAMETERS" value="-Djava.library.path=$ProjectFileDir$/build/libs -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=print,*Chunk.recalculateLightStep" />
+      <option name="VM_PARAMETERS" value="-Djava.library.path=$ProjectFileDir$/build/libs" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/build/libs" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23339.11" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23339.11" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -103,11 +121,12 @@
       <workItem from="1594038586992" duration="251000" />
       <workItem from="1594042519142" duration="1765000" />
       <workItem from="1594056965207" duration="527000" />
+      <workItem from="1742534887579" duration="160000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="2" />
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -119,60 +138,5 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="294" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594044116089">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="294" y="160" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1594044116089" />
-    <state x="620" y="210" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1593955099565">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="620" y="210" key="#com.intellij.ide.macro.MacrosDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1593955099565" />
-    <state x="569" y="295" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1593955079880">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="569" y="295" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1593955079880" />
-    <state x="245" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1593991744884">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="245" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1680.1010@0.0.1680.1010" timestamp="1593991744884" />
-    <state width="1637" height="336" key="GridCell.Tab.0.bottom" timestamp="1594057385074">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state width="1637" height="336" key="GridCell.Tab.0.bottom/0.0.1680.1010@0.0.1680.1010" timestamp="1594057385074" />
-    <state width="1637" height="336" key="GridCell.Tab.0.center" timestamp="1594057385074">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state width="1637" height="336" key="GridCell.Tab.0.center/0.0.1680.1010@0.0.1680.1010" timestamp="1594057385074" />
-    <state width="1637" height="336" key="GridCell.Tab.0.left" timestamp="1594057385073">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state width="1637" height="336" key="GridCell.Tab.0.left/0.0.1680.1010@0.0.1680.1010" timestamp="1594057385073" />
-    <state width="1637" height="336" key="GridCell.Tab.0.right" timestamp="1594057385074">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state width="1637" height="336" key="GridCell.Tab.0.right/0.0.1680.1010@0.0.1680.1010" timestamp="1594057385074" />
-    <state x="420" y="248" key="IDE.errors.dialog" timestamp="1593955145707">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="420" y="248" key="IDE.errors.dialog/0.0.1680.1010@0.0.1680.1010" timestamp="1593955145707" />
-    <state x="655" y="439" key="ReplaceDuplicatesPrompt" timestamp="1593986378551">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="655" y="439" key="ReplaceDuplicatesPrompt/0.0.1680.1010@0.0.1680.1010" timestamp="1593986378551" />
-    <state x="570" y="269" key="extract.method.dialog" timestamp="1593986374072">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="570" y="269" key="extract.method.dialog/0.0.1680.1010@0.0.1680.1010" timestamp="1593986374072" />
-    <state x="547" y="238" width="585" height="534" key="find.popup" timestamp="1593958655265">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="547" y="238" width="585" height="534" key="find.popup/0.0.1680.1010@0.0.1680.1010" timestamp="1593958655265" />
-    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup" timestamp="1593992995498">
-      <screen x="0" y="0" width="1680" height="1010" />
-    </state>
-    <state x="503" y="217" width="672" height="678" key="search.everywhere.popup/0.0.1680.1010@0.0.1680.1010" timestamp="1593992995498" />
   </component>
 </project>
