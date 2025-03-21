@@ -341,7 +341,7 @@ public class Chunk {
         Block block = getWorldBlockFast(x, y, z);
 
         int lightLevel = lightLevelType == World.LIGHT_LEVEL_TYPE_SKY ? 0 : (block == null ? 0 : block.getLightValue());
-        if(isDefinitelyIncreasing) {
+        if (isDefinitelyIncreasing) {
             lightLevel = oldLightLevel;
         }
 
@@ -366,10 +366,6 @@ public class Chunk {
                 } else if (realOpacity == 0) {
                     // fade light if it's not from above
                     realOpacity = 1;
-                }
-
-                if (lightLevelType == World.LIGHT_LEVEL_TYPE_BLOCK) {
-                    System.out.println("side " + side.name() + "; real opacity " + realOpacity + "; intensity " + lightIntensityAdjacent);
                 }
 
                 if (lightIntensityAdjacent >= oldLightLevel) {
@@ -408,7 +404,7 @@ public class Chunk {
                 // find all possible adjacents to increase their light level
                 Block adjBlock = getWorldBlockFast(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
                 int adjOpacity = adjBlock == null ? 0 : adjBlock.getLightOpacity(lightLevelType);
-                if(adjOpacity == 15) {
+                if (adjOpacity == 15) {
                     // opaque; skip.
                     continue;
                 }
@@ -447,8 +443,8 @@ public class Chunk {
 
     public void recalculateLightForBlock(int lightLevelType, int x, int y, int z, boolean fast) {
         Block block = getBlockAt(x, y, z);
-        if(fast && (block == null || block.getLightValue() != 15)) {
-            if(getLightLevelAt(x, y, z, lightLevelType) == 0) {
+        if (fast && (block == null || block.getLightValue() != 15)) {
+            if (getLightLevelAt(x, y, z, lightLevelType) == 0) {
                 return; // no need in recalculating lights
             }
         }
